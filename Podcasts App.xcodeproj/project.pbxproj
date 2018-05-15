@@ -16,6 +16,7 @@
 		D429ED7020AB85FC008C66DD /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED6F20AB85FC008C66DD /* SearchViewController.swift */; };
 		D429ED7220AB8606008C66DD /* FavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7120AB8606008C66DD /* FavoriteViewController.swift */; };
 		D429ED7620AB87CF008C66DD /* DownloadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7520AB87CF008C66DD /* DownloadViewController.swift */; };
+		D429ED7A20AB8C66008C66DD /* Podcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7920AB8C66008C66DD /* Podcast.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		D429ED6F20AB85FC008C66DD /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		D429ED7120AB8606008C66DD /* FavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteViewController.swift; sourceTree = "<group>"; };
 		D429ED7520AB87CF008C66DD /* DownloadViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadViewController.swift; sourceTree = "<group>"; };
+		D429ED7920AB8C66008C66DD /* Podcast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Podcast.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,11 +103,9 @@
 		D429ED3D20AB81FA008C66DD /* Podcasts App */ = {
 			isa = PBXGroup;
 			children = (
+				D429ED7820AB8C51008C66DD /* Controllers */,
+				D429ED7720AB8C4A008C66DD /* Models */,
 				D429ED3E20AB81FA008C66DD /* AppDelegate.swift */,
-				D429ED6C20AB826F008C66DD /* MainTabBarController.swift */,
-				D429ED6F20AB85FC008C66DD /* SearchViewController.swift */,
-				D429ED7120AB8606008C66DD /* FavoriteViewController.swift */,
-				D429ED7520AB87CF008C66DD /* DownloadViewController.swift */,
 				D429ED4520AB81FC008C66DD /* Assets.xcassets */,
 				D429ED4720AB81FC008C66DD /* LaunchScreen.storyboard */,
 				D429ED4A20AB81FC008C66DD /* Info.plist */,
@@ -129,6 +129,25 @@
 				D429ED6020AB81FC008C66DD /* Info.plist */,
 			);
 			path = "Podcasts AppUITests";
+			sourceTree = "<group>";
+		};
+		D429ED7720AB8C4A008C66DD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D429ED7920AB8C66008C66DD /* Podcast.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D429ED7820AB8C51008C66DD /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				D429ED6C20AB826F008C66DD /* MainTabBarController.swift */,
+				D429ED6F20AB85FC008C66DD /* SearchViewController.swift */,
+				D429ED7520AB87CF008C66DD /* DownloadViewController.swift */,
+				D429ED7120AB8606008C66DD /* FavoriteViewController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,6 +282,7 @@
 			files = (
 				D429ED7020AB85FC008C66DD /* SearchViewController.swift in Sources */,
 				D429ED6D20AB826F008C66DD /* MainTabBarController.swift in Sources */,
+				D429ED7A20AB8C66008C66DD /* Podcast.swift in Sources */,
 				D429ED7220AB8606008C66DD /* FavoriteViewController.swift in Sources */,
 				D429ED3F20AB81FA008C66DD /* AppDelegate.swift in Sources */,
 				D429ED7620AB87CF008C66DD /* DownloadViewController.swift in Sources */,

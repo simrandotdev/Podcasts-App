@@ -17,8 +17,8 @@ class MainTabBarController : UITabBarController
         
         viewControllers =
         [
-            favoriteNavController,
             searchNavController,
+            favoriteNavController,
             downloadNavController
         ]
     }
