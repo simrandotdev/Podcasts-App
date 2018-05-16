@@ -60,8 +60,10 @@ extension SearchViewController
 {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
-        let url = "https://itunes.apple.com/search"
-        searchPodcast(url, searchText: searchText)
+        APIService.shared.fetchPodcast(searchText: searchText) { (podcasts) in
+            self.podcasts = podcasts
+            self.tableView.reloadData()
+        }
     }
     
     fileprivate func searchPodcast(_ url: String, searchText: String) {
