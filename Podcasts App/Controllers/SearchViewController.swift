@@ -17,7 +17,9 @@ class SearchViewController: UITableViewController, UISearchBarDelegate
     
     fileprivate func setupTableView()
     {
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
+//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
+        let nib = UINib(nibName: "PodcastCell", bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: cellId)
     }
     
     fileprivate func setupSearchBar()
@@ -34,6 +36,10 @@ class SearchViewController: UITableViewController, UISearchBarDelegate
 // MARK:- TableView methods
 extension SearchViewController
 {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return podcasts.count
@@ -41,17 +47,9 @@ extension SearchViewController
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        var cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
-        let podcast = podcasts[indexPath.row]
-        setupCell(cell: &cell, index: indexPath.row, podcast: podcast)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! PodcastCell
+        cell.podcast = podcasts[indexPath.row]
         return cell
-    }
-    
-    fileprivate func setupCell( cell: inout UITableViewCell, index: Int, podcast: Podcast)
-    {
-        cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.text = "\(podcast.trackName ?? "")\n\(podcast.artistName ?? "")"
-        cell.imageView?.image = #imageLiteral(resourceName: "appicon")
     }
 }
 
