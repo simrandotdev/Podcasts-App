@@ -3,7 +3,7 @@ import Alamofire
 
 class SearchViewController: UITableViewController, UISearchBarDelegate
 {
-    private let podcasts = Podcast.mockPodcasts
+    private var podcasts = [Podcast]()
     
     private let cellId = "cellId"
     override func viewDidLoad()
@@ -11,6 +11,8 @@ class SearchViewController: UITableViewController, UISearchBarDelegate
         super.viewDidLoad() 
         setupTableView()
         setupSearchBar()
+        let url = "https://itunes.apple.com/search?term=Android"
+        searchPodcast(url, searchText: "Android")
     }
     
     fileprivate func setupTableView()
@@ -48,7 +50,7 @@ extension SearchViewController
     fileprivate func setupCell( cell: inout UITableViewCell, index: Int, podcast: Podcast)
     {
         cell.textLabel?.numberOfLines = 0
-        cell.textLabel?.text = "\(podcast.name)\n\(podcast.artistName)"
+        cell.textLabel?.text = "\(podcast.trackName ?? "")\n\(podcast.artistName ?? "")"
         cell.imageView?.image = #imageLiteral(resourceName: "appicon")
     }
 }
@@ -58,9 +60,15 @@ extension SearchViewController
 {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
-        let url = "https://itunes.apple.com/search?term=\(searchText)"
+        let url = "https://itunes.apple.com/search"
+        searchPodcast(url, searchText: searchText)
+    }
+    
+    fileprivate func searchPodcast(_ url: String, searchText: String) {
+        let parameters = ["term": searchText, "media": "podcast"]
         
-        Alamofire.request(url).responseData { (dataResponse) in
+        Alamofire.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: nil)
+            .responseData { (dataResponse) in
             if let err = dataResponse.error
             {
                 print("Failed to contact yahoo", err)
@@ -68,8 +76,15 @@ extension SearchViewController
             }
             
             guard let data = dataResponse.data else { return }
-            let dummyString = String(data: data, encoding: .utf8)
-            print(dummyString ?? "")
+            
+            do
+            {
+                let searchResults = try JSONDecoder().decode(SearchResults.self, from: data)
+                self.podcasts = searchResults.results
+                self.tableView.reloadData()
+            } catch let decodeErr {
+                print("Failed to decode: ", decodeErr)
+            }
         }
     }
 }

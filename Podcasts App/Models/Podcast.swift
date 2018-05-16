@@ -1,15 +1,15 @@
 import Foundation
 
-struct Podcast
+struct Podcast : Codable
 {
-    let name: String
-    let artistName: String
+    var trackName: String?
+    var artistName: String?
     
     static let mockPodcasts = [
-        Podcast(name: "Let's Build that App", artistName: "Brian Voong"),
-        Podcast(name: "Fragmented Podcasts", artistName: "Kaushik and Don"),
-        Podcast(name: "Swift by Sundell", artistName: "John Sundell"),
-        Podcast(name: "Swift Unwrapped", artistName: "JP & Jesse"),
-        Podcast(name: "Android Developers Backstage", artistName: "Android Developers")
+        Podcast(trackName: "Let's Build that App", artistName: "Brian Voong"),
+        Podcast(trackName: "Fragmented Podcasts", artistName: "Kaushik and Don"),
+        Podcast(trackName: "Swift by Sundell", artistName: "John Sundell"),
+        Podcast(trackName: "Swift Unwrapped", artistName: "JP & Jesse"),
+        Podcast(trackName: "Android Developers Backstage", artistName: "Android Developers")
     ]
 }

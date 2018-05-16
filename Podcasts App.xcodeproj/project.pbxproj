@@ -20,6 +20,7 @@
 		D429ED7220AB8606008C66DD /* FavoriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7120AB8606008C66DD /* FavoriteViewController.swift */; };
 		D429ED7620AB87CF008C66DD /* DownloadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7520AB87CF008C66DD /* DownloadViewController.swift */; };
 		D429ED7A20AB8C66008C66DD /* Podcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7920AB8C66008C66DD /* Podcast.swift */; };
+		D429ED7C20AC61F8008C66DD /* SearchResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7B20AC61F8008C66DD /* SearchResults.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		D429ED7120AB8606008C66DD /* FavoriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteViewController.swift; sourceTree = "<group>"; };
 		D429ED7520AB87CF008C66DD /* DownloadViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadViewController.swift; sourceTree = "<group>"; };
 		D429ED7920AB8C66008C66DD /* Podcast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Podcast.swift; sourceTree = "<group>"; };
+		D429ED7B20AC61F8008C66DD /* SearchResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResults.swift; sourceTree = "<group>"; };
 		D6B9436A832FDD757DAA2E43 /* Pods_Podcasts_AppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Podcasts_AppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD0CF3F4D9BCD4487E4F79F6 /* Pods-Podcasts AppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Podcasts AppTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Podcasts AppTests/Pods-Podcasts AppTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -162,6 +164,7 @@
 			isa = PBXGroup;
 			children = (
 				D429ED7920AB8C66008C66DD /* Podcast.swift */,
+				D429ED7B20AC61F8008C66DD /* SearchResults.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -483,6 +486,7 @@
 				D429ED6D20AB826F008C66DD /* MainTabBarController.swift in Sources */,
 				D429ED7A20AB8C66008C66DD /* Podcast.swift in Sources */,
 				D429ED7220AB8606008C66DD /* FavoriteViewController.swift in Sources */,
+				D429ED7C20AC61F8008C66DD /* SearchResults.swift in Sources */,
 				D429ED3F20AB81FA008C66DD /* AppDelegate.swift in Sources */,
 				D429ED7620AB87CF008C66DD /* DownloadViewController.swift in Sources */,
 			);
@@ -654,7 +658,10 @@
 				DEVELOPMENT_TEAM = 3GTE9X3BX2;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "app.simran.Podcasts-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -671,7 +678,10 @@
 				DEVELOPMENT_TEAM = 3GTE9X3BX2;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "app.simran.Podcasts-App";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -687,7 +697,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Podcasts AppTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "app.simran.Podcasts-AppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -704,7 +718,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Podcasts AppTests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "app.simran.Podcasts-AppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -720,7 +738,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Podcasts AppUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "app.simran.Podcasts-AppUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
@@ -736,7 +758,11 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "Podcasts AppUITests/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "app.simran.Podcasts-AppUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
