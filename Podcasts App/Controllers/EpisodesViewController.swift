@@ -4,23 +4,35 @@ class EpisodesViewController: UITableViewController
 {
     private let cellId = "cellId"
     
-    private let episodes = Episode.mockEpisodes
-    
     var podcast: Podcast? {
         didSet {
             navigationItem.title = podcast?.trackName
         }
     }
     
+    private var episodes = [Episode]()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
         setupTableView()
+        fetchEpisodes()
     }
     
     fileprivate func setupTableView()
     {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
+    }
+    
+    fileprivate func fetchEpisodes()
+    {
+        guard let feedUrl = podcast?.feedUrl else { return }
+        APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
+            self.episodes = episodes.items
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
     }
 }
 
