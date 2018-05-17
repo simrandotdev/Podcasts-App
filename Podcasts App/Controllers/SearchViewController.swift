@@ -11,15 +11,23 @@ class SearchViewController: UITableViewController, UISearchBarDelegate
         super.viewDidLoad() 
         setupTableView()
         setupSearchBar()
-        let url = "https://itunes.apple.com/search?term=Android"
-        searchPodcast(url, searchText: "Android")
+    }
+    
+    fileprivate func loadTableView(searchText: String) {
+        APIService.shared.fetchPodcast(searchText: searchText) { (podcasts) in
+            DispatchQueue.main.async {
+                self.podcasts = podcasts
+                self.tableView.reloadData()
+            }
+        }
     }
     
     fileprivate func setupTableView()
     {
-//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
         let nib = UINib(nibName: "PodcastCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
+        
+        loadTableView(searchText: "podcast")
     }
     
     fileprivate func setupSearchBar()
@@ -36,7 +44,8 @@ class SearchViewController: UITableViewController, UISearchBarDelegate
 // MARK:- TableView methods
 extension SearchViewController
 {
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+    {
         return UITableViewAutomaticDimension
     }
     
@@ -58,33 +67,6 @@ extension SearchViewController
 {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
-        APIService.shared.fetchPodcast(searchText: searchText) { (podcasts) in
-            self.podcasts = podcasts
-            self.tableView.reloadData()
-        }
-    }
-    
-    fileprivate func searchPodcast(_ url: String, searchText: String) {
-        let parameters = ["term": searchText, "media": "podcast"]
-        
-        Alamofire.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: nil)
-            .responseData { (dataResponse) in
-            if let err = dataResponse.error
-            {
-                print("Failed to contact yahoo", err)
-                return
-            }
-            
-            guard let data = dataResponse.data else { return }
-            
-            do
-            {
-                let searchResults = try JSONDecoder().decode(SearchResults.self, from: data)
-                self.podcasts = searchResults.results
-                self.tableView.reloadData()
-            } catch let decodeErr {
-                print("Failed to decode: ", decodeErr)
-            }
-        }
+        loadTableView(searchText: searchText)
     }
 }

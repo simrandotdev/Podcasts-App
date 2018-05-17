@@ -26,7 +26,7 @@
                         </constraints>
                     </imageView>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="R1B-qH-MJt">
-                        <rect key="frame" x="128" y="11" width="221" height="58"/>
+                        <rect key="frame" x="128" y="30.5" width="221" height="58"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Trackname" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uSo-yh-za3">
                                 <rect key="frame" x="0.0" y="0.0" width="221" height="16"/>
@@ -52,15 +52,17 @@
                 <constraints>
                     <constraint firstItem="R1B-qH-MJt" firstAttribute="leading" secondItem="mC3-9z-ELk" secondAttribute="trailing" constant="8" id="2RF-Uf-iD6"/>
                     <constraint firstItem="mC3-9z-ELk" firstAttribute="centerY" secondItem="sK5-HI-sQS" secondAttribute="centerY" id="EAX-Zp-kkE"/>
-                    <constraint firstItem="R1B-qH-MJt" firstAttribute="top" secondItem="sK5-HI-sQS" secondAttribute="topMargin" id="Rl7-qB-deG"/>
+                    <constraint firstAttribute="bottom" secondItem="mC3-9z-ELk" secondAttribute="bottom" constant="9.5" id="NE2-Zh-ZU4"/>
                     <constraint firstAttribute="trailingMargin" secondItem="R1B-qH-MJt" secondAttribute="trailing" constant="20" id="YzX-Cb-MWI"/>
+                    <constraint firstItem="mC3-9z-ELk" firstAttribute="top" secondItem="sK5-HI-sQS" secondAttribute="top" constant="9" id="arg-Lb-e6z"/>
+                    <constraint firstItem="R1B-qH-MJt" firstAttribute="centerY" secondItem="sK5-HI-sQS" secondAttribute="centerY" id="dqj-OC-gPi"/>
                     <constraint firstItem="mC3-9z-ELk" firstAttribute="leading" secondItem="sK5-HI-sQS" secondAttribute="leading" constant="20" id="ew4-9S-6xb"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
                 <outlet property="artistNameLabel" destination="h2h-tn-nxG" id="VzI-80-iXT"/>
                 <outlet property="numberOfEpisodesLabel" destination="cMd-jN-Knf" id="XS0-bQ-oAa"/>
-                <outlet property="podcastThumbnailImage" destination="mC3-9z-ELk" id="F3x-T5-Rg0"/>
+                <outlet property="thumbnailImage" destination="mC3-9z-ELk" id="F3x-T5-Rg0"/>
                 <outlet property="trackNameLabel" destination="uSo-yh-za3" id="5SS-G2-HSL"/>
             </connections>
             <point key="canvasLocation" x="-143" y="10"/>

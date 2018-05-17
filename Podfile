@@ -7,6 +7,7 @@ target 'Podcasts App' do
 
   # Pods for Podcasts App
   pod 'Alamofire', '~> 4.5'
+  pod 'SDWebImage', '~> 4.0'
   
   target 'Podcasts AppTests' do
     inherit! :search_paths
