@@ -13,7 +13,8 @@ class SearchViewController: UITableViewController, UISearchBarDelegate
         setupSearchBar()
     }
     
-    fileprivate func loadTableView(searchText: String) {
+    fileprivate func loadTableView(searchText: String)
+    {
         APIService.shared.fetchPodcast(searchText: searchText) { (podcasts) in
             DispatchQueue.main.async {
                 self.podcasts = podcasts
@@ -59,6 +60,14 @@ extension SearchViewController
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! PodcastCell
         cell.podcast = podcasts[indexPath.row]
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        let selectedPodcast = podcasts[indexPath.row]
+        let controller = EpisodesViewController()
+        controller.podcast = selectedPodcast
+        navigationController?.pushViewController(controller, animated: true)
     }
 }
 
