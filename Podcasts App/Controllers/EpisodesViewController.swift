@@ -1,4 +1,5 @@
 import UIKit
+import SDWebImage
 
 class EpisodesViewController: UITableViewController
 {
@@ -74,6 +75,8 @@ extension EpisodesViewController
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
         cell.episode = episodes[indexPath.row]
+        guard let url = URL(string: podcast?.artworkUrl600 ?? "") else { return cell }
+        cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
         return cell
     }
     
