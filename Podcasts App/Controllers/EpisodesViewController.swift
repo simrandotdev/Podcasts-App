@@ -4,6 +4,8 @@ class EpisodesViewController: UITableViewController
 {
     private let cellId = "cellId"
     
+    private var searchController: UISearchController?
+    
     var podcast: Podcast? {
         didSet {
             navigationItem.title = podcast?.trackName
@@ -15,20 +17,39 @@ class EpisodesViewController: UITableViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        setupNavigationbar()
         setupTableView()
+        setupSearchBar()
         fetchEpisodes()
     }
     
     fileprivate func setupTableView()
     {
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
+        let nib = UINib(nibName: "EpisodeCell", bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: cellId)
+    }
+    
+    fileprivate func setupSearchBar()
+    {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController?.dimsBackgroundDuringPresentation = false
+        searchController?.searchBar.delegate = self
+        
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+    }
+    
+    fileprivate func setupNavigationbar()
+    {
+        navigationController?.isNavigationBarHidden = false
     }
     
     fileprivate func fetchEpisodes()
     {
         guard let feedUrl = podcast?.feedUrl else { return }
         APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
-            self.episodes = episodes.items
+            self.episodes = episodes.items.reversed()
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -41,7 +62,7 @@ extension EpisodesViewController
 {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        return 60.0
+        return UITableViewAutomaticDimension
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -51,9 +72,26 @@ extension EpisodesViewController
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
-        let episode = episodes[indexPath.row]
-        cell.textLabel?.text = "\(episode.title)"
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
+        cell.episode = episodes[indexPath.row]
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        let episode = episodes[indexPath.row]
+        print(episode.title)
+    }
+}
+
+// MARK: Searchbar methods
+extension EpisodesViewController: UISearchBarDelegate
+{
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
+    {
+        episodes = self.episodes.filter { (episode) -> Bool in
+            episode.title.lowercased().contains(searchText.lowercased())
+        }
+        tableView.reloadData()
     }
 }

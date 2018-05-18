@@ -34,7 +34,11 @@ class APIService
     func fetchEpisodes(forPodcast rssUrl: String, completion: @escaping (FeedResponse) -> Void)
     {
         let url = "https://api.rss2json.com/v1/api.json"
-        let parameters = ["rss_url" : rssUrl]
+        let parameters = [
+            "rss_url" : rssUrl,
+            "api_key" : "xxqfpf12qwnled9dz1bri3ezzgwce9ri8wx6z0lc",
+            "count": 1000
+            ] as [String : Any]
         
         Alamofire.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: nil)
             .responseData { (dataResponse) in

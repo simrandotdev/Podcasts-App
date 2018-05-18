@@ -1,9 +1,11 @@
 import UIKit
 import Alamofire
 
-class SearchViewController: UITableViewController, UISearchBarDelegate
+class SearchViewController: UITableViewController
 {
     private var podcasts = [Podcast]()
+    private var searchController: UISearchController?
+    
     
     private let cellId = "cellId"
     override func viewDidLoad()
@@ -11,6 +13,12 @@ class SearchViewController: UITableViewController, UISearchBarDelegate
         super.viewDidLoad() 
         setupTableView()
         setupSearchBar()
+    }
+    
+    override func viewDidAppear(_ animated: Bool)
+    {
+        super.viewDidAppear(animated)
+        reSetupSearchbar()
     }
     
     fileprivate func loadTableView(searchText: String)
@@ -33,12 +41,19 @@ class SearchViewController: UITableViewController, UISearchBarDelegate
     
     fileprivate func setupSearchBar()
     {
-        let searchController = UISearchController(searchResultsController: nil)
-        searchController.dimsBackgroundDuringPresentation = false
-        searchController.searchBar.delegate = self
+        searchController = UISearchController(searchResultsController: nil)
+        searchController?.dimsBackgroundDuringPresentation = false
+        searchController?.searchBar.delegate = self
         
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+    }
+    
+    fileprivate func reSetupSearchbar()
+    {
+        let previousText = searchController?.searchBar.text
+        setupSearchBar()
+        searchController?.searchBar.text = previousText
     }
 }
 
@@ -72,7 +87,7 @@ extension SearchViewController
 }
 
 // MARK: SearchBar methods
-extension SearchViewController
+extension SearchViewController : UISearchBarDelegate
 {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
