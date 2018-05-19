@@ -11,7 +11,7 @@ class EpisodeCell: UITableViewCell
     var episode : Episode! {
         didSet {
             titleLabel.text = episode?.title
-            publishedDateLabel.text = episode?.pubDate
+            publishedDateLabel.text = episode?.pubDate?.toDate().toFormat(format: "MMM dd, YYYY")
             descriptionLabel.text = episode?.description
             
             guard let url = URL(string: episode?.thumbnail ?? "") else { return }

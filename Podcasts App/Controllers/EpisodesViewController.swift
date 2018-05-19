@@ -83,7 +83,16 @@ extension EpisodesViewController
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         let episode = episodes[indexPath.row]
-        print(episode.title)
+        showPlayerDetailsView(withEpisode: episode)
+    }
+    
+    fileprivate func showPlayerDetailsView(withEpisode episode: Episode)
+    {
+        let window = UIApplication.shared.keyWindow
+        let playerDetailsView = Bundle.main.loadNibNamed("PlayerDetailsView", owner: self, options: nil)?.first as! PlayerDetailsView
+        playerDetailsView.frame = self.view.frame
+        playerDetailsView.episode = episode
+        window?.addSubview(playerDetailsView)
     }
 }
 
@@ -93,7 +102,7 @@ extension EpisodesViewController: UISearchBarDelegate
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
         episodes = self.episodes.filter { (episode) -> Bool in
-            episode.title.lowercased().contains(searchText.lowercased())
+            (episode.title?.lowercased().contains(searchText.lowercased()))!
         }
         tableView.reloadData()
     }
