@@ -106,4 +106,9 @@ extension EpisodesViewController: UISearchBarDelegate
         }
         tableView.reloadData()
     }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar)
+    {
+        
+    }
 }

@@ -39,6 +39,5 @@ class MainTabBarController : UITabBarController
     {
         view.backgroundColor = .white
         tabBar.tintColor = .purple
-        UINavigationBar.appearance().prefersLargeTitles = true
     }
 }

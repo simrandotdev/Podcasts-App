@@ -1,5 +1,6 @@
 import UIKit
 import SDWebImage
+import AVKit
 
 class PlayerDetailsView : UIView
 {
@@ -7,19 +8,66 @@ class PlayerDetailsView : UIView
         didSet {
             episodeTitleLabel.text = episode?.title
             authorLabel.text = episode?.author ?? ""
+            playEpisode()
             guard let url = URL(string: episode?.thumbnail ?? "") else { return }
             episodeImageView.sd_setImage(with: url, completed: nil)
             
         }
     }
     
+    let player: AVPlayer = {
+        let player = AVPlayer()
+        player.automaticallyWaitsToMinimizeStalling = false
+        return player
+    }()
+    
     @IBOutlet weak var episodeImageView: UIImageView!
     @IBOutlet weak var episodeTitleLabel: UILabel!
     @IBOutlet weak var authorLabel: UILabel!
+    @IBOutlet weak var playPauseButton: UIButton! {
+        didSet {
+            playPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
+        }
+    }
     
     @IBAction func handleDismiss(_ sender: UIButton)
     {
         self.removeFromSuperview()
+    }
+    
+    @objc func handlePlayPause()
+    {
+        print("Handle Play Pause")
+        if player.timeControlStatus == .paused
+        {
+            play()
+        }
+        else
+        {
+            pause()
+        }
+    }
+    
+    fileprivate func playEpisode()
+    {
+        print("Trying to play episode at url: \(episode?.enclosure?.link ?? "")")
+        guard let url = URL(string: self.episode?.enclosure?.link ?? "") else { return }
+        
+        let playerItem = AVPlayerItem(url: url)
+        player.replaceCurrentItem(with: playerItem)
+        play()
+    }
+    
+    fileprivate func play()
+    {
+        player.play()
+        playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+    }
+    
+    fileprivate func pause()
+    {
+        player.pause()
+        playPauseButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
     }
     
 }
