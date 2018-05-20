@@ -13,6 +13,9 @@ class SearchViewController: UITableViewController
         super.viewDidLoad() 
         setupTableView()
         setupSearchBar()
+        #if DEBUG
+        searchBar((searchController?.searchBar)!, textDidChange: "Fragmented Podcast")
+        #endif
     }
     
     override func viewDidAppear(_ animated: Bool)
