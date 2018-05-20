@@ -7,6 +7,7 @@ struct Episode : Codable
     let thumbnail: String?
     let description: String?
     let content: String?
+    let author: String?
     let enclosure: Enclosure?
     
     static let mockEpisodes = [Episode]()
