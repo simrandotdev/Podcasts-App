@@ -30,18 +30,27 @@
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Trackname" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uSo-yh-za3">
                                 <rect key="frame" x="0.0" y="0.0" width="221" height="16"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="32" id="d9N-0D-ekW"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" name="HiraginoSans-W6" family="Hiragino Sans" pointSize="16"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artist name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h2h-tn-nxG">
                                 <rect key="frame" x="0.0" y="24" width="221" height="14"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="14" id="wM3-Ah-gAu"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" name="HiraginoSans-W3" family="Hiragino Sans" pointSize="14"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Episodes" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cMd-jN-Knf">
                                 <rect key="frame" x="0.0" y="46" width="221" height="12"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="12" id="5cw-Se-9hd"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" name="HiraginoSans-W3" family="Hiragino Sans" pointSize="12"/>
                                 <color key="textColor" red="0.34901960780000002" green="0.34901960780000002" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -50,10 +59,10 @@
                     </stackView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="mC3-9z-ELk" firstAttribute="top" secondItem="sK5-HI-sQS" secondAttribute="top" constant="9" id="1ph-fU-pvA"/>
                     <constraint firstItem="R1B-qH-MJt" firstAttribute="top" secondItem="sK5-HI-sQS" secondAttribute="topMargin" id="bbn-g4-3lc"/>
                     <constraint firstItem="mC3-9z-ELk" firstAttribute="leading" secondItem="sK5-HI-sQS" secondAttribute="leading" constant="20" id="dH8-GI-Qxj"/>
-                    <constraint firstAttribute="bottom" secondItem="mC3-9z-ELk" secondAttribute="bottom" constant="9.5" id="feH-9p-Ypx"/>
+                    <constraint firstAttribute="bottom" secondItem="mC3-9z-ELk" secondAttribute="bottom" constant="9.5" id="dQM-Jg-307"/>
+                    <constraint firstItem="mC3-9z-ELk" firstAttribute="top" secondItem="sK5-HI-sQS" secondAttribute="top" constant="9" id="g7Q-SL-7eV"/>
                     <constraint firstItem="R1B-qH-MJt" firstAttribute="leading" secondItem="mC3-9z-ELk" secondAttribute="trailing" constant="8" id="jQj-Cs-7jf"/>
                     <constraint firstAttribute="trailingMargin" secondItem="R1B-qH-MJt" secondAttribute="trailing" constant="20" id="xHw-kM-ZPu"/>
                 </constraints>

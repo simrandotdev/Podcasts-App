@@ -85,7 +85,7 @@ extension SearchViewController
         let selectedPodcast = podcasts[indexPath.row]
         let controller = EpisodesViewController()
         controller.podcast = selectedPodcast
-        navigationController?.pushViewController(controller, animated: true)
+        self.navigationController?.pushViewController(controller, animated: true)
     }
 }
 

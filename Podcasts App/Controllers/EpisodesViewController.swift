@@ -92,7 +92,11 @@ extension EpisodesViewController
         let playerDetailsView = Bundle.main.loadNibNamed("PlayerDetailsView", owner: self, options: nil)?.first as! PlayerDetailsView
         playerDetailsView.frame = self.view.frame
         playerDetailsView.episode = episode
-        window?.addSubview(playerDetailsView)
+        
+        UIView.animate(withDuration: 0.60) {
+            window?.addSubview(playerDetailsView)
+        }
+        
     }
 }
 
