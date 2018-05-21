@@ -51,6 +51,7 @@ class EpisodesViewController: UITableViewController
         guard let feedUrl = podcast?.feedUrl else { return }
         APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
             self.episodes = episodes.items.reversed()
+            
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -92,8 +93,9 @@ extension EpisodesViewController
         let playerDetailsView = Bundle.main.loadNibNamed("PlayerDetailsView", owner: self, options: nil)?.first as! PlayerDetailsView
         playerDetailsView.frame = self.view.frame
         playerDetailsView.episode = episode
+        playerDetailsView.thumbnail = podcast?.artworkUrl600
         
-        UIView.animate(withDuration: 0.60) {
+        UIView.animate(withDuration: 1.20) {
             window?.addSubview(playerDetailsView)
         }
         

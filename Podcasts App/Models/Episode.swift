@@ -4,7 +4,7 @@ struct Episode : Codable
 {
     let title: String?
     let pubDate: String?
-    let thumbnail: String?
+    var thumbnail: String?
     let description: String?
     let content: String?
     let author: String?

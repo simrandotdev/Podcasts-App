@@ -9,9 +9,13 @@ class PlayerDetailsView : UIView
             episodeTitleLabel.text = episode?.title
             authorLabel.text = episode?.author ?? ""
             playEpisode()
-            guard let url = URL(string: episode?.thumbnail ?? "") else { return }
+        }
+    }
+    
+    var thumbnail: String? {
+        didSet {
+            guard let url = URL(string: thumbnail ?? "") else { return }
             episodeImageView.sd_setImage(with: url, completed: nil)
-            
         }
     }
     
