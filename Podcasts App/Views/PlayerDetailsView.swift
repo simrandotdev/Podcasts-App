@@ -29,15 +29,14 @@ class PlayerDetailsView : UIView
     {
         super.awakeFromNib()
         
-        // This let's up know when the episode started playing
-        let time = CMTime(value: 1, timescale: 3)
-        let times = [NSValue(time: time)]
-        player.addBoundaryTimeObserver(forTimes: times, queue: .main) {
-            print("Episode started playing")
-            self.enlargeEpisodeView()
-        }
+        observePlayerCurrentTime()
+        
+        observePlayerStartPlaying()
     }
     
+    @IBOutlet weak var currentTimeSlider: UISlider!
+    @IBOutlet weak var durationLabel: UILabel!
+    @IBOutlet weak var currentTimeLabel: UILabel!
     @IBOutlet weak var episodeImageView: UIImageView! {
         didSet {
             self.shrinkEpisodeView()
@@ -109,6 +108,42 @@ class PlayerDetailsView : UIView
             let scale: CGFloat = 0.7
             self.episodeImageView.transform = CGAffineTransform(scaleX: scale, y: scale)
         })
+    }
+    
+    fileprivate func observePlayerCurrentTime()
+    {
+        let interval = CMTimeMake(1, 1)
+        player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { (time) in
+            let currentTime = time.toDisplayString()
+            let durationTime = self.player.currentItem?.duration.toDisplayString()
+            
+            self.currentTimeLabel.text = currentTime
+            self.durationLabel.text = durationTime
+            
+            self.updateCurrentTimeSlider()
+        }
+    }
+    
+    fileprivate func updateCurrentTimeSlider()
+    {
+        let currentTimeSeconds = CMTimeGetSeconds(player.currentTime())
+        let durationSeconds = CMTimeGetSeconds(player.currentItem?.duration ?? CMTimeMake(1, 1))
+        
+        let percentage = currentTimeSeconds / durationSeconds
+        currentTimeSlider.value = Float(percentage)
+        
+    }
+    
+    
+    fileprivate func observePlayerStartPlaying()
+    {
+        // This let's up know when the episode started playing
+        let time = CMTime(value: 1, timescale: 3)
+        let times = [NSValue(time: time)]
+        player.addBoundaryTimeObserver(forTimes: times, queue: .main) {
+            print("Episode started playing")
+            self.enlargeEpisodeView()
+        }
     }
     
 }

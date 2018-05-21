@@ -34,7 +34,7 @@
                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="appicon" translatesAutoresizingMaskIntoConstraints="NO" id="YJ1-qT-h4B">
                             <rect key="frame" x="0.0" y="52" width="272" height="179"/>
                         </imageView>
-                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="oUe-Ah-F71">
+                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="oUe-Ah-F71">
                             <rect key="frame" x="-2" y="239" width="276" height="37"/>
                             <color key="tintColor" red="0.58188301320000002" green="0.21569153669999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
@@ -163,11 +163,14 @@
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <connections>
                 <outlet property="authorLabel" destination="DIc-bx-LXO" id="QqV-pc-iPy"/>
+                <outlet property="currentTimeLabel" destination="TqV-A3-VUQ" id="wiK-22-e2Y"/>
+                <outlet property="currentTimeSlider" destination="oUe-Ah-F71" id="PYc-lU-Dew"/>
+                <outlet property="durationLabel" destination="qhq-iv-Kzh" id="1eT-aq-nkL"/>
                 <outlet property="episodeImageView" destination="YJ1-qT-h4B" id="YDs-fJ-QsO"/>
                 <outlet property="episodeTitleLabel" destination="Tln-mY-LXI" id="Kg4-mi-2Hv"/>
                 <outlet property="playPauseButton" destination="ZNL-5N-PeS" id="E4K-FH-v59"/>
             </connections>
-            <point key="canvasLocation" x="-280" y="70"/>
+            <point key="canvasLocation" x="-102" y="85"/>
         </view>
     </objects>
     <resources>

@@ -12,6 +12,7 @@
 		5E0B9A6A6F74FC7821F9031A /* Pods_Podcasts_AppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B9436A832FDD757DAA2E43 /* Pods_Podcasts_AppTests.framework */; };
 		846F224520AFDE8400CA2FC9 /* PlayerDetailsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 846F224420AFDE8400CA2FC9 /* PlayerDetailsView.xib */; };
 		846F224720AFE15700CA2FC9 /* PlayerDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F224620AFE15700CA2FC9 /* PlayerDetailsView.swift */; };
+		846FC96120B25DCE00791331 /* CMTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846FC96020B25DCE00791331 /* CMTime.swift */; };
 		84A4329420AF3101004F32AD /* EpisodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A4329220AF3101004F32AD /* EpisodeCell.swift */; };
 		84A4329520AF3101004F32AD /* EpisodeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84A4329320AF3101004F32AD /* EpisodeCell.xib */; };
 		84A4329E20AF5CC6004F32AD /* UIImageViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A4329720AF5CC5004F32AD /* UIImageViewExtensions.swift */; };
@@ -62,6 +63,7 @@
 		324332480BA6CE4E1D00C662 /* Pods-Podcasts AppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Podcasts AppTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Podcasts AppTests/Pods-Podcasts AppTests.release.xcconfig"; sourceTree = "<group>"; };
 		846F224420AFDE8400CA2FC9 /* PlayerDetailsView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlayerDetailsView.xib; sourceTree = "<group>"; };
 		846F224620AFE15700CA2FC9 /* PlayerDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailsView.swift; sourceTree = "<group>"; };
+		846FC96020B25DCE00791331 /* CMTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMTime.swift; sourceTree = "<group>"; };
 		8491FD472AE3FA6313F17A18 /* Pods-Podcasts AppUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Podcasts AppUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-Podcasts AppUITests/Pods-Podcasts AppUITests.release.xcconfig"; sourceTree = "<group>"; };
 		84A4329220AF3101004F32AD /* EpisodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeCell.swift; sourceTree = "<group>"; };
 		84A4329320AF3101004F32AD /* EpisodeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EpisodeCell.xib; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				84A4329C20AF5CC6004F32AD /* DateExtensions.swift */,
 				84A4329820AF5CC5004F32AD /* StringExtension.swift */,
 				84A4329720AF5CC5004F32AD /* UIImageViewExtensions.swift */,
+				846FC96020B25DCE00791331 /* CMTime.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -563,6 +566,7 @@
 				D4397CE620ADBC3F00FF7839 /* EpisodesViewController.swift in Sources */,
 				D429ED7020AB85FC008C66DD /* SearchViewController.swift in Sources */,
 				D429ED6D20AB826F008C66DD /* MainTabBarController.swift in Sources */,
+				846FC96120B25DCE00791331 /* CMTime.swift in Sources */,
 				D429ED7A20AB8C66008C66DD /* Podcast.swift in Sources */,
 				D429ED7220AB8606008C66DD /* FavoriteViewController.swift in Sources */,
 				84A432A320AF5CC6004F32AD /* DateExtensions.swift in Sources */,
