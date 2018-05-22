@@ -51,10 +51,39 @@ class PlayerDetailsView : UIView
             playPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
         }
     }
+    @IBOutlet weak var volumeSlider: UISlider!
     
     @IBAction func handleDismiss(_ sender: UIButton)
     {
         self.removeFromSuperview()
+    }
+    
+    @IBAction func handleCurrentTimeSliderChange(_ sender: Any)
+    {
+        let percentage = currentTimeSlider.value
+        
+        guard let duration = player.currentItem?.duration else { return }
+        let durationInSeconds = CMTimeGetSeconds(duration)
+        let seekTimeInSeconds = Float64(percentage) * Float64(durationInSeconds)
+        let seekTime = CMTimeMakeWithSeconds(seekTimeInSeconds, Int32(NSEC_PER_SEC))
+        player.seek(to: seekTime)
+    }
+    
+    @IBAction func handleRewind(_ sender: Any)
+    {
+        let seekTime = CMTimeAdd(player.currentTime(), CMTimeMake(-15, 1))
+        player.seek(to: seekTime)
+    }
+    
+    @IBAction func handleForward(_ sender: Any)
+    {
+        let seekTime = CMTimeAdd(player.currentTime(), CMTimeMake(15, 1))
+        player.seek(to: seekTime)
+    }
+    
+    @IBAction func handleVolumeChanged(_ sender: Any)
+    {
+        player.volume = volumeSlider.value
     }
     
     @objc func handlePlayPause()
@@ -113,14 +142,17 @@ class PlayerDetailsView : UIView
     fileprivate func observePlayerCurrentTime()
     {
         let interval = CMTimeMake(1, 1)
-        player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { (time) in
+        player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] (time) in
+            guard let duration = self?.player.currentItem?.duration else { return }
+            if duration.flags.contains(CMTimeFlags.indefinite) { return }
+            
             let currentTime = time.toDisplayString()
-            let durationTime = self.player.currentItem?.duration.toDisplayString()
+            let durationTime = duration.toDisplayString()
             
-            self.currentTimeLabel.text = currentTime
-            self.durationLabel.text = durationTime
+            self?.currentTimeLabel.text = currentTime
+            self?.durationLabel.text = durationTime
             
-            self.updateCurrentTimeSlider()
+            self?.updateCurrentTimeSlider()
         }
     }
     
@@ -140,9 +172,9 @@ class PlayerDetailsView : UIView
         // This let's up know when the episode started playing
         let time = CMTime(value: 1, timescale: 3)
         let times = [NSValue(time: time)]
-        player.addBoundaryTimeObserver(forTimes: times, queue: .main) {
+        player.addBoundaryTimeObserver(forTimes: times, queue: .main) { [weak self] in
             print("Episode started playing")
-            self.enlargeEpisodeView()
+            self?.enlargeEpisodeView()
         }
     }
     

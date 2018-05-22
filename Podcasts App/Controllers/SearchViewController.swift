@@ -5,7 +5,7 @@ class SearchViewController: UITableViewController
 {
     private var podcasts = [Podcast]()
     private var searchController: UISearchController?
-    
+    fileprivate var timer : Timer?
     
     private let cellId = "cellId"
     override func viewDidLoad()
@@ -92,8 +92,13 @@ extension SearchViewController
 // MARK: SearchBar methods
 extension SearchViewController : UISearchBarDelegate
 {
+    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
-        loadTableView(searchText: searchText)
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false, block: { (_) in
+            self.loadTableView(searchText: searchText)
+        })
+        
     }
 }

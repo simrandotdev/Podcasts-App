@@ -87,6 +87,19 @@ extension EpisodesViewController
         showPlayerDetailsView(withEpisode: episode)
     }
     
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView?
+    {
+        let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        activityIndicatorView.color = .darkGray
+        activityIndicatorView.startAnimating()
+        return activityIndicatorView
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
+    {
+        return episodes.isEmpty ? 200 : 0
+    }
+    
     fileprivate func showPlayerDetailsView(withEpisode episode: Episode)
     {
         let window = UIApplication.shared.keyWindow
@@ -95,7 +108,7 @@ extension EpisodesViewController
         playerDetailsView.episode = episode
         playerDetailsView.thumbnail = podcast?.artworkUrl600
         
-        UIView.animate(withDuration: 1.20) {
+        UIView.animate(withDuration: 0.72) {
             window?.addSubview(playerDetailsView)
         }
         
