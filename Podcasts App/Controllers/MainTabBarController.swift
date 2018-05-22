@@ -8,19 +8,7 @@ class MainTabBarController : UITabBarController
         super.viewDidLoad()
         setupTabBarController()
         
-        let favoriteNavController =
-            setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoriteViewController())
-        let searchNavController =
-            setupTabBarNavigationController(title: "Search", image: #imageLiteral(resourceName: "search"), viewController: SearchViewController())
-        let downloadNavController =
-            setupTabBarNavigationController(title: "Downloads", image: #imageLiteral(resourceName: "downloads"), viewController: DownloadViewController())
-        
-        viewControllers =
-        [
-            searchNavController,
-            favoriteNavController,
-            downloadNavController
-        ]
+        setupViewController()
     }
     
     // MARK:- Setup methods
@@ -39,5 +27,22 @@ class MainTabBarController : UITabBarController
     {
         view.backgroundColor = .white
         tabBar.tintColor = .purple
+    }
+    
+    fileprivate func setupViewController()
+    {
+        let favoriteNavController =
+            setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoriteViewController())
+        let searchNavController =
+            setupTabBarNavigationController(title: "Search", image: #imageLiteral(resourceName: "search"), viewController: SearchViewController())
+        let downloadNavController =
+            setupTabBarNavigationController(title: "Downloads", image: #imageLiteral(resourceName: "downloads"), viewController: DownloadViewController())
+        
+        viewControllers =
+            [
+                searchNavController,
+                favoriteNavController,
+                downloadNavController
+        ]
     }
 }
