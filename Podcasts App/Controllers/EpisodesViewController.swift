@@ -103,7 +103,7 @@ extension EpisodesViewController
     fileprivate func showPlayerDetailsView(withEpisode episode: Episode)
     {
         let window = UIApplication.shared.keyWindow
-        let playerDetailsView = Bundle.main.loadNibNamed("PlayerDetailsView", owner: self, options: nil)?.first as! PlayerDetailsView
+        let playerDetailsView = PlayerDetailsView.initFromNib()
         playerDetailsView.frame = self.view.frame
         playerDetailsView.episode = episode
         playerDetailsView.thumbnail = podcast?.artworkUrl600

@@ -34,6 +34,11 @@ class PlayerDetailsView : UIView
         observePlayerStartPlaying()
     }
     
+    static func initFromNib() -> PlayerDetailsView
+    {
+        return Bundle.main.loadNibNamed("PlayerDetailsView", owner: self, options: nil)?.first as! PlayerDetailsView
+    }
+    
     @IBOutlet weak var currentTimeSlider: UISlider!
     @IBOutlet weak var durationLabel: UILabel!
     @IBOutlet weak var currentTimeLabel: UILabel!
