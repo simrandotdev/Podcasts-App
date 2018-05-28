@@ -13,8 +13,6 @@ class MainTabBarController : UITabBarController
         setupTabBarController()
         setupViewController()
         setupPlayerDetailsView()
-
-        perform(#selector(maximizePlayerDetails), with: nil, afterDelay: 1)
     }
     
     // MARK: Handlers
@@ -24,17 +22,21 @@ class MainTabBarController : UITabBarController
         minimizeTopAnchorConstraint.isActive = true
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.view.layoutIfNeeded()
+            self.tabBar.transform = .identity
         }, completion: nil)
     }
     
-    @objc func maximizePlayerDetails()
+    func maximizePlayerDetails(episode: Episode?)
     {
         minimizeTopAnchorConstraint.isActive = false
         maximizeTopAnchorConstraint.constant = 0
         maximizeTopAnchorConstraint.isActive = true
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+        playerDetailsView.episode = episode
+        
+        UIView.animate(withDuration: 1.15, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.view.layoutIfNeeded()
+            self.tabBar.transform = CGAffineTransform(translationX: 0, y: 100)
         }, completion: nil)
     }
 

@@ -89,7 +89,11 @@ extension EpisodesViewController
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         let episode = episodes[indexPath.row]
-        showPlayerDetailsView(withEpisode: episode)
+//        showPlayerDetailsView(withEpisode: episode)
+        
+        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+        mainTabBarController?.maximizePlayerDetails(episode: episode)
+        
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView?
