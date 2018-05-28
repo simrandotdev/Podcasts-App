@@ -24,7 +24,8 @@ class SearchViewController: UITableViewController
         reSetupSearchbar()
     }
     
-    fileprivate func loadTableView(searchText: String)
+    fileprivate
+    func loadTableView(searchText: String)
     {
         APIService.shared.fetchPodcast(searchText: searchText) { (podcasts) in
             DispatchQueue.main.async {
@@ -34,7 +35,8 @@ class SearchViewController: UITableViewController
         }
     }
     
-    fileprivate func setupTableView()
+    fileprivate
+    func setupTableView()
     {
         let nib = UINib(nibName: "PodcastCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
@@ -42,7 +44,8 @@ class SearchViewController: UITableViewController
         loadTableView(searchText: "podcast")
     }
     
-    fileprivate func setupSearchBar()
+    fileprivate
+    func setupSearchBar()
     {
         searchController = UISearchController(searchResultsController: nil)
         searchController?.dimsBackgroundDuringPresentation = false
@@ -52,7 +55,8 @@ class SearchViewController: UITableViewController
         navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    fileprivate func reSetupSearchbar()
+    fileprivate
+    func reSetupSearchbar()
     {
         let previousText = searchController?.searchBar.text
         setupSearchBar()

@@ -15,7 +15,8 @@ class EpisodesViewController: UITableViewController
     
     private var episodes = [Episode]()
     
-    override func viewDidLoad()
+    override
+    func viewDidLoad()
     {
         super.viewDidLoad()
         
@@ -25,13 +26,15 @@ class EpisodesViewController: UITableViewController
         fetchEpisodes()
     }
     
-    fileprivate func setupTableView()
+    fileprivate
+    func setupTableView()
     {
         let nib = UINib(nibName: "EpisodeCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
     }
     
-    fileprivate func setupSearchBar()
+    fileprivate
+    func setupSearchBar()
     {
         searchController = UISearchController(searchResultsController: nil)
         searchController?.dimsBackgroundDuringPresentation = false
@@ -41,12 +44,14 @@ class EpisodesViewController: UITableViewController
         navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    fileprivate func setupNavigationbar()
+    fileprivate
+    func setupNavigationbar()
     {
         navigationController?.isNavigationBarHidden = false
     }
     
-    fileprivate func fetchEpisodes()
+    fileprivate
+    func fetchEpisodes()
     {
         guard let feedUrl = podcast?.feedUrl else { return }
         APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
@@ -100,7 +105,8 @@ extension EpisodesViewController
         return episodes.isEmpty ? 200 : 0
     }
     
-    fileprivate func showPlayerDetailsView(withEpisode episode: Episode)
+    fileprivate
+    func showPlayerDetailsView(withEpisode episode: Episode)
     {
         let window = UIApplication.shared.keyWindow
         let playerDetailsView = PlayerDetailsView.initFromNib()
@@ -111,7 +117,6 @@ extension EpisodesViewController
         UIView.animate(withDuration: 0.72) {
             window?.addSubview(playerDetailsView)
         }
-        
     }
 }
 

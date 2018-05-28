@@ -7,8 +7,30 @@ class MainTabBarController : UITabBarController
     {
         super.viewDidLoad()
         setupTabBarController()
-        
         setupViewController()
+        setupPlayerDetailsView()
+
+        perform(#selector(maximizePlayerDetails), with: nil, afterDelay: 1)
+    }
+    
+    @objc func minimizePlayerDetails()
+    {
+        maximizeTopAnchorConstraint.isActive = false
+        minimizeTopAnchorConstraint.isActive = true
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
+    }
+    
+    @objc func maximizePlayerDetails()
+    {
+        minimizeTopAnchorConstraint.isActive = false
+        maximizeTopAnchorConstraint.constant = 0
+        maximizeTopAnchorConstraint.isActive = true
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: nil)
     }
     
     // MARK:- Setup methods
@@ -29,7 +51,8 @@ class MainTabBarController : UITabBarController
         tabBar.tintColor = .purple
     }
     
-    fileprivate func setupViewController()
+    fileprivate
+    func setupViewController()
     {
         let favoriteNavController =
             setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoriteViewController())
@@ -44,5 +67,25 @@ class MainTabBarController : UITabBarController
                 favoriteNavController,
                 downloadNavController
         ]
+    }
+    var maximizeTopAnchorConstraint: NSLayoutConstraint!
+    var minimizeTopAnchorConstraint: NSLayoutConstraint!
+    
+    fileprivate
+    func setupPlayerDetailsView()
+    {
+        let playerDetailsView = PlayerDetailsView.initFromNib()
+        view.insertSubview(playerDetailsView, belowSubview: tabBar)
+        playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
+        
+        maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height)
+        maximizeTopAnchorConstraint.isActive = true
+        
+        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
+        
+        playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        playerDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        
     }
 }
