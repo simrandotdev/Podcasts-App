@@ -2,6 +2,10 @@ import UIKit
 
 class MainTabBarController : UITabBarController
 {
+    let playerDetailsView = PlayerDetailsView.initFromNib()
+    var maximizeTopAnchorConstraint: NSLayoutConstraint!
+    var minimizeTopAnchorConstraint: NSLayoutConstraint!
+    
     override
     func viewDidLoad()
     {
@@ -13,6 +17,7 @@ class MainTabBarController : UITabBarController
         perform(#selector(maximizePlayerDetails), with: nil, afterDelay: 1)
     }
     
+    // MARK: Handlers
     @objc func minimizePlayerDetails()
     {
         maximizeTopAnchorConstraint.isActive = false
@@ -32,6 +37,7 @@ class MainTabBarController : UITabBarController
             self.view.layoutIfNeeded()
         }, completion: nil)
     }
+
     
     // MARK:- Setup methods
     fileprivate
@@ -68,13 +74,11 @@ class MainTabBarController : UITabBarController
                 downloadNavController
         ]
     }
-    var maximizeTopAnchorConstraint: NSLayoutConstraint!
-    var minimizeTopAnchorConstraint: NSLayoutConstraint!
     
     fileprivate
     func setupPlayerDetailsView()
     {
-        let playerDetailsView = PlayerDetailsView.initFromNib()
+        
         view.insertSubview(playerDetailsView, belowSubview: tabBar)
         playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
         

@@ -30,8 +30,9 @@ class PlayerDetailsView : UIView
         super.awakeFromNib()
         
         observePlayerCurrentTime()
-        
         observePlayerStartPlaying()
+        
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapMaximize)))
     }
     
     static func initFromNib() -> PlayerDetailsView
@@ -60,7 +61,9 @@ class PlayerDetailsView : UIView
     
     @IBAction func handleDismiss(_ sender: UIButton)
     {
-        self.removeFromSuperview()
+//        self.removeFromSuperview()
+        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+        mainTabBarController?.minimizePlayerDetails()
     }
     
     @IBAction func handleCurrentTimeSliderChange(_ sender: Any)
@@ -102,6 +105,12 @@ class PlayerDetailsView : UIView
         {
             pause()
         }
+    }
+    
+    @objc func handleTapMaximize()
+    {
+        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+        mainTabBarController?.maximizePlayerDetails()
     }
     
     fileprivate func playEpisode()
