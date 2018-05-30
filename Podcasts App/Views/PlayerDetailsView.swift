@@ -7,6 +7,7 @@ class PlayerDetailsView : UIView
     var episode: Episode? {
         didSet {
             episodeTitleLabel.text = episode?.title
+            miniTitleLabel.text = episode?.title
             authorLabel.text = episode?.author ?? ""
             playEpisode()
         }
@@ -16,6 +17,7 @@ class PlayerDetailsView : UIView
         didSet {
             guard let url = URL(string: thumbnail ?? "") else { return }
             episodeImageView.sd_setImage(with: url, completed: nil)
+            miniEpisodeImageView.sd_setImage(with: url, completed: nil)
         }
     }
     
@@ -40,6 +42,25 @@ class PlayerDetailsView : UIView
         return Bundle.main.loadNibNamed("PlayerDetailsView", owner: self, options: nil)?.first as! PlayerDetailsView
     }
     
+    // MARK: IBActions
+    @IBOutlet weak var maximizedStackView: UIStackView!
+    @IBOutlet weak var minimizedStackView: UIStackView!
+    
+    @IBOutlet weak var miniFastForwardButton: UIButton!
+    @IBOutlet weak var miniPlayPauseButton: UIButton!  {
+        didSet {
+            miniPlayPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
+        }
+    }
+    @IBOutlet weak var miniTitleLabel: UILabel!
+    @IBOutlet weak var miniEpisodeImageView: UIImageView!  {
+        didSet {
+            self.shrinkEpisodeView()
+            miniEpisodeImageView.layer.cornerRadius = 10
+            miniEpisodeImageView.clipsToBounds = true
+        }
+    }
+    
     @IBOutlet weak var currentTimeSlider: UISlider!
     @IBOutlet weak var durationLabel: UILabel!
     @IBOutlet weak var currentTimeLabel: UILabel!
@@ -61,7 +82,6 @@ class PlayerDetailsView : UIView
     
     @IBAction func handleDismiss(_ sender: UIButton)
     {
-//        self.removeFromSuperview()
         let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
         mainTabBarController?.minimizePlayerDetails()
     }
@@ -122,12 +142,14 @@ class PlayerDetailsView : UIView
         player.replaceCurrentItem(with: playerItem)
         player.play()
         playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
     }
     
     fileprivate func play()
     {
         player.play()
         playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
         enlargeEpisodeView()
     }
     
@@ -135,6 +157,7 @@ class PlayerDetailsView : UIView
     {
         player.pause()
         playPauseButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
+        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
         shrinkEpisodeView()
     }
     

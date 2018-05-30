@@ -23,6 +23,8 @@ class MainTabBarController : UITabBarController
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.view.layoutIfNeeded()
             self.tabBar.transform = .identity
+            self.playerDetailsView.maximizedStackView.alpha = 0.0
+            self.playerDetailsView.minimizedStackView.alpha = 1.0
         }, completion: nil)
     }
     
@@ -32,11 +34,15 @@ class MainTabBarController : UITabBarController
         maximizeTopAnchorConstraint.constant = 0
         maximizeTopAnchorConstraint.isActive = true
         
-        playerDetailsView.episode = episode
+        if let episode = episode {
+            playerDetailsView.episode = episode
+        }
         
-        UIView.animate(withDuration: 1.15, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.view.layoutIfNeeded()
             self.tabBar.transform = CGAffineTransform(translationX: 0, y: 100)
+            self.playerDetailsView.maximizedStackView.alpha = 1.0
+            self.playerDetailsView.minimizedStackView.alpha = 0.0
         }, completion: nil)
     }
 
