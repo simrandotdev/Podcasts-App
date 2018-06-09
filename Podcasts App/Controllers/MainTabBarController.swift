@@ -16,7 +16,8 @@ class MainTabBarController : UITabBarController
     }
     
     // MARK: Handlers
-    @objc func minimizePlayerDetails()
+    @objc
+    func minimizePlayerDetails()
     {
         maximizeTopAnchorConstraint.isActive = false
         minimizeTopAnchorConstraint.isActive = true

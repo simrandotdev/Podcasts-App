@@ -18,7 +18,8 @@ class SearchViewController: UITableViewController
         #endif
     }
     
-    override func viewDidAppear(_ animated: Bool)
+    override
+    func viewDidAppear(_ animated: Bool)
     {
         super.viewDidAppear(animated)
         reSetupSearchbar()
@@ -67,24 +68,28 @@ class SearchViewController: UITableViewController
 // MARK:- TableView methods
 extension SearchViewController
 {
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+    override
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return UITableViewAutomaticDimension
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    override
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return podcasts.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    override
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! PodcastCell
         cell.podcast = podcasts[indexPath.row]
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    override
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         let selectedPodcast = podcasts[indexPath.row]
         let controller = EpisodesViewController()

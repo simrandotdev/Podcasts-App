@@ -27,7 +27,8 @@ class PlayerDetailsView : UIView
         return player
     }()
     
-    override func awakeFromNib()
+    override
+    func awakeFromNib()
     {
         super.awakeFromNib()
         
@@ -43,17 +44,27 @@ class PlayerDetailsView : UIView
     }
     
     // MARK: IBActions
-    @IBOutlet weak var maximizedStackView: UIStackView!
-    @IBOutlet weak var minimizedStackView: UIStackView!
+    @IBOutlet
+    weak var maximizedStackView: UIStackView!
     
-    @IBOutlet weak var miniFastForwardButton: UIButton!
-    @IBOutlet weak var miniPlayPauseButton: UIButton!  {
+    @IBOutlet
+    weak var minimizedStackView: UIStackView!
+    
+    @IBOutlet
+    weak var miniFastForwardButton: UIButton!
+    
+    @IBOutlet
+    weak var miniPlayPauseButton: UIButton!  {
         didSet {
             miniPlayPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
         }
     }
-    @IBOutlet weak var miniTitleLabel: UILabel!
-    @IBOutlet weak var miniEpisodeImageView: UIImageView!  {
+    
+    @IBOutlet
+    weak var miniTitleLabel: UILabel!
+    
+    @IBOutlet
+    weak var miniEpisodeImageView: UIImageView!  {
         didSet {
             self.shrinkEpisodeView()
             miniEpisodeImageView.layer.cornerRadius = 10
@@ -61,32 +72,49 @@ class PlayerDetailsView : UIView
         }
     }
     
-    @IBOutlet weak var currentTimeSlider: UISlider!
-    @IBOutlet weak var durationLabel: UILabel!
-    @IBOutlet weak var currentTimeLabel: UILabel!
-    @IBOutlet weak var episodeImageView: UIImageView! {
+    @IBOutlet
+    weak var currentTimeSlider: UISlider!
+    
+    @IBOutlet
+    weak var durationLabel: UILabel!
+    
+    @IBOutlet
+    weak var currentTimeLabel: UILabel!
+    
+    @IBOutlet
+    weak var episodeImageView: UIImageView! {
         didSet {
             self.shrinkEpisodeView()
             episodeImageView.layer.cornerRadius = 10
             episodeImageView.clipsToBounds = true
         }
     }
-    @IBOutlet weak var episodeTitleLabel: UILabel!
-    @IBOutlet weak var authorLabel: UILabel!
-    @IBOutlet weak var playPauseButton: UIButton! {
+    
+    @IBOutlet
+    weak var episodeTitleLabel: UILabel!
+    
+    @IBOutlet
+    weak var authorLabel: UILabel!
+    
+    @IBOutlet
+    weak var playPauseButton: UIButton! {
         didSet {
             playPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
         }
     }
-    @IBOutlet weak var volumeSlider: UISlider!
     
-    @IBAction func handleDismiss(_ sender: UIButton)
+    @IBOutlet
+    weak var volumeSlider: UISlider!
+    
+    @IBAction
+    func handleDismiss(_ sender: UIButton)
     {
         let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
         mainTabBarController?.minimizePlayerDetails()
     }
     
-    @IBAction func handleCurrentTimeSliderChange(_ sender: Any)
+    @IBAction
+    func handleCurrentTimeSliderChange(_ sender: Any)
     {
         let percentage = currentTimeSlider.value
         
@@ -97,24 +125,28 @@ class PlayerDetailsView : UIView
         player.seek(to: seekTime)
     }
     
-    @IBAction func handleRewind(_ sender: Any)
+    @IBAction
+    func handleRewind(_ sender: Any)
     {
         let seekTime = CMTimeAdd(player.currentTime(), CMTimeMake(-15, 1))
         player.seek(to: seekTime)
     }
     
-    @IBAction func handleForward(_ sender: Any)
+    @IBAction
+    func handleForward(_ sender: Any)
     {
         let seekTime = CMTimeAdd(player.currentTime(), CMTimeMake(15, 1))
         player.seek(to: seekTime)
     }
     
-    @IBAction func handleVolumeChanged(_ sender: Any)
+    @IBAction
+    func handleVolumeChanged(_ sender: Any)
     {
         player.volume = volumeSlider.value
     }
     
-    @objc func handlePlayPause()
+    @objc
+    func handlePlayPause()
     {
         print("Handle Play Pause")
         if player.timeControlStatus == .paused
@@ -127,13 +159,15 @@ class PlayerDetailsView : UIView
         }
     }
     
-    @objc func handleTapMaximize()
+    @objc
+    func handleTapMaximize()
     {
         let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: nil)
     }
     
-    fileprivate func playEpisode()
+    fileprivate
+    func playEpisode()
     {
         print("Trying to play episode at url: \(episode?.enclosure?.link ?? "")")
         guard let url = URL(string: self.episode?.enclosure?.link ?? "") else { return }
@@ -145,7 +179,8 @@ class PlayerDetailsView : UIView
         miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
     }
     
-    fileprivate func play()
+    fileprivate
+    func play()
     {
         player.play()
         playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
@@ -153,7 +188,8 @@ class PlayerDetailsView : UIView
         enlargeEpisodeView()
     }
     
-    fileprivate func pause()
+    fileprivate
+    func pause()
     {
         player.pause()
         playPauseButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
@@ -161,14 +197,16 @@ class PlayerDetailsView : UIView
         shrinkEpisodeView()
     }
     
-    fileprivate func enlargeEpisodeView()
+    fileprivate
+    func enlargeEpisodeView()
     {
         UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.episodeImageView.transform = .identity
         })
     }
     
-    fileprivate func shrinkEpisodeView()
+    fileprivate
+    func shrinkEpisodeView()
     {
         UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             let scale: CGFloat = 0.7
@@ -176,7 +214,8 @@ class PlayerDetailsView : UIView
         })
     }
     
-    fileprivate func observePlayerCurrentTime()
+    fileprivate
+    func observePlayerCurrentTime()
     {
         let interval = CMTimeMake(1, 1)
         player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] (time) in
@@ -193,7 +232,8 @@ class PlayerDetailsView : UIView
         }
     }
     
-    fileprivate func updateCurrentTimeSlider()
+    fileprivate
+    func updateCurrentTimeSlider()
     {
         let currentTimeSeconds = CMTimeGetSeconds(player.currentTime())
         let durationSeconds = CMTimeGetSeconds(player.currentItem?.duration ?? CMTimeMake(1, 1))
@@ -204,7 +244,8 @@ class PlayerDetailsView : UIView
     }
     
     
-    fileprivate func observePlayerStartPlaying()
+    fileprivate
+    func observePlayerStartPlaying()
     {
         // This let's up know when the episode started playing
         let time = CMTime(value: 1, timescale: 3)

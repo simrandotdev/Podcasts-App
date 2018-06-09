@@ -2,7 +2,8 @@ import UIKit
 
 class FavoriteViewController: UIViewController
 {
-    override func viewDidLoad()
+    override
+    func viewDidLoad()
     {
         super.viewDidLoad()
         view.backgroundColor = .orange

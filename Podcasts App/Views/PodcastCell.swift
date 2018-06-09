@@ -3,10 +3,17 @@ import SDWebImage
 
 class PodcastCell: UITableViewCell
 {
-    @IBOutlet weak var thumbnailImage: UIImageView!
-    @IBOutlet weak var trackNameLabel: UILabel!
-    @IBOutlet weak var artistNameLabel: UILabel!
-    @IBOutlet weak var numberOfEpisodesLabel: UILabel!
+    @IBOutlet
+    weak var thumbnailImage: UIImageView!
+    
+    @IBOutlet
+    weak var trackNameLabel: UILabel!
+    
+    @IBOutlet
+    weak var artistNameLabel: UILabel!
+    
+    @IBOutlet
+    weak var numberOfEpisodesLabel: UILabel!
     
     var podcast: Podcast! {
         didSet {
@@ -19,13 +26,15 @@ class PodcastCell: UITableViewCell
     }
     
     
-    override func awakeFromNib()
+    override
+    func awakeFromNib()
     {
         super.awakeFromNib()
         // Initialization code
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool)
+    override
+    func setSelected(_ selected: Bool, animated: Bool)
     {
         super.setSelected(selected, animated: animated)
 
