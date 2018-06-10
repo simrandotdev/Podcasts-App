@@ -1,9 +1,11 @@
 import UIKit
 import SDWebImage
 import AVKit
+import MediaPlayer
 
 class PlayerDetailsView : UIView
 {
+    // MARK:- Properties
     var episode: Episode? {
         didSet {
             episodeTitleLabel.text = episode?.title
@@ -27,16 +29,15 @@ class PlayerDetailsView : UIView
         return player
     }()
     
+    // MARK:- Initializers
     override
     func awakeFromNib()
     {
         super.awakeFromNib()
-        
+        setupRemoteControl()
         setupAudioSession()
-        
         observePlayerCurrentTime()
         observePlayerStartPlaying()
-        
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapMaximize)))
     }
     
@@ -45,69 +46,7 @@ class PlayerDetailsView : UIView
         return Bundle.main.loadNibNamed("PlayerDetailsView", owner: self, options: nil)?.first as! PlayerDetailsView
     }
     
-    // MARK: IBActions
-    @IBOutlet
-    weak var maximizedStackView: UIStackView!
-    
-    @IBOutlet
-    weak var minimizedStackView: UIStackView!
-    
-    @IBOutlet
-    weak var miniFastForwardButton: UIButton!
-    
-    @IBOutlet
-    weak var miniPlayPauseButton: UIButton!  {
-        didSet {
-            miniPlayPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
-        }
-    }
-    
-    @IBOutlet
-    weak var miniTitleLabel: UILabel!
-    
-    @IBOutlet
-    weak var miniEpisodeImageView: UIImageView!  {
-        didSet {
-            self.shrinkEpisodeView()
-            miniEpisodeImageView.layer.cornerRadius = 10
-            miniEpisodeImageView.clipsToBounds = true
-        }
-    }
-    
-    @IBOutlet
-    weak var currentTimeSlider: UISlider!
-    
-    @IBOutlet
-    weak var durationLabel: UILabel!
-    
-    @IBOutlet
-    weak var currentTimeLabel: UILabel!
-    
-    @IBOutlet
-    weak var episodeImageView: UIImageView! {
-        didSet {
-            self.shrinkEpisodeView()
-            episodeImageView.layer.cornerRadius = 10
-            episodeImageView.clipsToBounds = true
-        }
-    }
-    
-    @IBOutlet
-    weak var episodeTitleLabel: UILabel!
-    
-    @IBOutlet
-    weak var authorLabel: UILabel!
-    
-    @IBOutlet
-    weak var playPauseButton: UIButton! {
-        didSet {
-            playPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
-        }
-    }
-    
-    @IBOutlet
-    weak var volumeSlider: UISlider!
-    
+    // MARK:- IBActions
     @IBAction
     func handleDismiss(_ sender: UIButton)
     {
@@ -168,6 +107,7 @@ class PlayerDetailsView : UIView
         mainTabBarController?.maximizePlayerDetails(episode: nil)
     }
     
+    // MARK:- Private Methods
     fileprivate
     func playEpisode()
     {
@@ -269,5 +209,74 @@ class PlayerDetailsView : UIView
             print("Failed to activate sessions: ", sessionError)
         }
     }
+    
+    fileprivate
+    func setupRemoteControl()
+    {
+       
+    }
+    
+    // MARK:- IBOutlet
+    @IBOutlet
+    weak var maximizedStackView: UIStackView!
+    
+    @IBOutlet
+    weak var minimizedStackView: UIStackView!
+    
+    @IBOutlet
+    weak var miniFastForwardButton: UIButton!
+    
+    @IBOutlet
+    weak var miniPlayPauseButton: UIButton!  {
+        didSet {
+            miniPlayPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
+        }
+    }
+    
+    @IBOutlet
+    weak var miniTitleLabel: UILabel!
+    
+    @IBOutlet
+    weak var miniEpisodeImageView: UIImageView!  {
+        didSet {
+            self.shrinkEpisodeView()
+            miniEpisodeImageView.layer.cornerRadius = 10
+            miniEpisodeImageView.clipsToBounds = true
+        }
+    }
+    
+    @IBOutlet
+    weak var currentTimeSlider: UISlider!
+    
+    @IBOutlet
+    weak var durationLabel: UILabel!
+    
+    @IBOutlet
+    weak var currentTimeLabel: UILabel!
+    
+    @IBOutlet
+    weak var episodeImageView: UIImageView! {
+        didSet {
+            self.shrinkEpisodeView()
+            episodeImageView.layer.cornerRadius = 10
+            episodeImageView.clipsToBounds = true
+        }
+    }
+    
+    @IBOutlet
+    weak var episodeTitleLabel: UILabel!
+    
+    @IBOutlet
+    weak var authorLabel: UILabel!
+    
+    @IBOutlet
+    weak var playPauseButton: UIButton! {
+        didSet {
+            playPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
+        }
+    }
+    
+    @IBOutlet
+    weak var volumeSlider: UISlider!
     
 }
