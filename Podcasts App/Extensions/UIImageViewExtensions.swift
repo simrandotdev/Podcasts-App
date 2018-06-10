@@ -1,6 +1,7 @@
 import UIKit
 
-extension UIImageView {
+extension UIImageView
+{
     static func imageFromFirstCharacter(ofString inputString: String, withPlaceholderImage placeHolder: UIImage) -> UIImage {
         
         if let firstChacter = inputString.lowercased().first {            

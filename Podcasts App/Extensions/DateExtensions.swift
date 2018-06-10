@@ -2,7 +2,8 @@ import Foundation
 
 extension Date {
     
-    static func utcDate(fromString dateString: String) -> Date? {
+    static func utcDate(fromString dateString: String) -> Date?
+    {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd'T'HH:mm:ss.SZ"
         dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
@@ -10,7 +11,8 @@ extension Date {
         return dateFormatter.date(from: dateString)
     }
     
-    func toFormat(format: String) -> String? {
+    func toFormat(format: String) -> String?
+    {
         
         let inputDF = DateFormatter()
         inputDF.dateFormat = "YYYY-MM-dd'T'HH:mm:ss.SZ"
@@ -26,7 +28,8 @@ extension Date {
         return nil
     }
     
-    static func from(date: String) -> Date {
+    static func from(date: String) -> Date
+    {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
@@ -35,14 +38,16 @@ extension Date {
     }
     
     
-    static func from(date dateStr: String, inFormat format: String) -> Date {
+    static func from(date dateStr: String, inFormat format: String) -> Date
+    {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
         dateFormatter.timeZone = TimeZone.current
         return dateFormatter.date(from: dateStr)!
     }
     
-    func toString() -> String? {
+    func toString() -> String?
+    {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd'T'HH:mm:ss.S"
         dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
@@ -51,7 +56,8 @@ extension Date {
     }
     
     
-    func toLocalDate() -> Date? {
+    func toLocalDate() -> Date?
+    {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd'T'HH:mm:ss.S"
         dateFormatter.timeZone = TimeZone.current
@@ -60,25 +66,29 @@ extension Date {
         return dateFormatter.date(from: dateString)
     }
     
-    func isLesserThan(date: Date)  -> Bool{
+    func isLesserThan(date: Date)  -> Bool
+    {
         let result = self.compare(date)
         
         return result == .orderedAscending
     }
     
-    func isGreaterThan(date: Date)  -> Bool{
+    func isGreaterThan(date: Date)  -> Bool
+    {
         let result = self.compare(date)
         
         return result == .orderedDescending
     }
     
-    func isEqual(date: Date) -> Bool {
+    func isEqual(date: Date) -> Bool
+    {
         let result = self.compare(date)
         
         return result == .orderedSame
     }
     
-    var millisecondsSince1970:Int {
+    var millisecondsSince1970:Int
+    {
         return Int((self.timeIntervalSince1970 * 1000.0).rounded())
     }
 }

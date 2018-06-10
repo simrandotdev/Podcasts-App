@@ -2,7 +2,8 @@ import Foundation
 
 extension String {
     // Converts the JSON string to specified Model object
-    func fromJsonString<T : Decodable>(to type: T.Type) throws -> T {
+    func fromJsonString<T : Decodable>(to type: T.Type) throws -> T
+    {
         guard let jsonData = self.data(using: .utf8) else { return T.self as! T }
         return try JSONDecoder().decode(T.self, from: jsonData)
     }
@@ -14,23 +15,28 @@ extension String {
         return emailTest.evaluate(with: self)
     }
     
-    func isOfLength(length: Int) -> Bool {
+    func isOfLength(length: Int) -> Bool
+    {
         return self.count == length
     }
     
-    func isOfLengthOrGreater(length : Int) -> Bool {
+    func isOfLengthOrGreater(length : Int) -> Bool
+    {
         return self.count >= length
     }
     
-    func isOfLengthOrSmaller(length: Int)-> Bool {
+    func isOfLengthOrSmaller(length: Int)-> Bool
+    {
         return self.count <= length
     }
     
-    func leftAndRightTrim() -> String {
+    func leftAndRightTrim() -> String
+    {
         return self.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    func toDate() -> Date {
+    func toDate() -> Date
+    {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let date = dateFormatter.date(from: self)!
