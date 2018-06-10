@@ -11,7 +11,10 @@ class PlayerDetailsView : UIView
             episodeTitleLabel.text = episode?.title
             miniTitleLabel.text = episode?.title
             authorLabel.text = episode?.author ?? ""
+            setupNowPlayingInfo()
             playEpisode()
+            
+            setupImageInfoOnLockScreen()
         }
     }
     
@@ -169,6 +172,8 @@ class PlayerDetailsView : UIView
             self?.currentTimeLabel.text = currentTime
             self?.durationLabel.text = durationTime
             
+            self?.setupLockScreenCurrentTime()
+            
             self?.updateCurrentTimeSlider()
         }
     }
@@ -233,6 +238,49 @@ class PlayerDetailsView : UIView
             
             return MPRemoteCommandHandlerStatus.success
         }
+    }
+    
+    fileprivate
+    func setupNowPlayingInfo()
+    {
+        var nowPlayingInfo = [String : Any]()
+        
+        nowPlayingInfo[MPMediaItemPropertyTitle] = episode?.title
+        nowPlayingInfo[MPMediaItemPropertyArtist] = episode?.author
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+    
+    fileprivate
+    func setupImageInfoOnLockScreen()
+    {
+        // lock screen artwork setup code
+        var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
+        
+        // some modifications here
+        let artwork = MPMediaItemArtwork(boundsSize: (miniEpisodeImageView.image?.size)!, requestHandler: { (_) -> UIImage in
+            return UIImage(named: "appicon")!
+        })
+        nowPlayingInfo?[MPMediaItemPropertyArtwork] = artwork
+        
+        // Set the modified info again
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+    
+    fileprivate
+    func setupLockScreenCurrentTime()
+    {
+        var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
+        
+        guard let currentItem = player.currentItem else { return }
+        let durationInSeconds = CMTimeGetSeconds(currentItem.duration)
+        nowPlayingInfo?[MPMediaItemPropertyPlaybackDuration] = durationInSeconds
+        
+        let elapsedTime = CMTimeGetSeconds(player.currentTime())
+        nowPlayingInfo?[MPNowPlayingInfoPropertyElapsedPlaybackTime] = elapsedTime
+        
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        
     }
     
     // MARK:- IBOutlet

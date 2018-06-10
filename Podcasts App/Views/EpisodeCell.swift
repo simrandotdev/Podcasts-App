@@ -21,7 +21,7 @@ class EpisodeCell: UITableViewCell
             publishedDateLabel.text = episode?.pubDate?.toDate().toFormat(format: "MMM dd, YYYY")
             descriptionLabel.text = episode?.description
             
-            guard let url = URL(string: episode?.thumbnail ?? "") else { return }
+            guard let url = URL(string: episode?.imageUrl ?? "") else { return }
             thumbnailImageView.sd_setImage(with: url, completed: nil)
         }
     }
