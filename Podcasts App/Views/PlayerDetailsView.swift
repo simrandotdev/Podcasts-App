@@ -89,7 +89,6 @@ class PlayerDetailsView : UIView
     @objc
     func handlePlayPause()
     {
-        print("Handle Play Pause")
         if player.timeControlStatus == .paused
         {
             play()
@@ -213,7 +212,27 @@ class PlayerDetailsView : UIView
     fileprivate
     func setupRemoteControl()
     {
-       
+        UIApplication.shared.beginReceivingRemoteControlEvents()
+        
+        let sharedCommandCenter = MPRemoteCommandCenter.shared()
+        sharedCommandCenter.playCommand.isEnabled = true
+        sharedCommandCenter.playCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
+            self.play()
+            return MPRemoteCommandHandlerStatus.success
+        }
+        
+        sharedCommandCenter.pauseCommand.isEnabled = true
+        sharedCommandCenter.pauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
+            self.pause()
+            return MPRemoteCommandHandlerStatus.success
+        }
+        
+        sharedCommandCenter.togglePlayPauseCommand.isEnabled = true
+        sharedCommandCenter.togglePlayPauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
+            self.handlePlayPause()
+            
+            return MPRemoteCommandHandlerStatus.success
+        }
     }
     
     // MARK:- IBOutlet
