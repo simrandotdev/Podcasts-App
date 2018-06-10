@@ -32,6 +32,8 @@ class PlayerDetailsView : UIView
     {
         super.awakeFromNib()
         
+        setupAudioSession()
+        
         observePlayerCurrentTime()
         observePlayerStartPlaying()
         
@@ -253,6 +255,18 @@ class PlayerDetailsView : UIView
         player.addBoundaryTimeObserver(forTimes: times, queue: .main) { [weak self] in
             print("Episode started playing")
             self?.enlargeEpisodeView()
+        }
+    }
+    
+    fileprivate
+    func setupAudioSession()
+    {
+        // This makes the audio to work in background after enabling
+        do {
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch let sessionError {
+            print("Failed to activate sessions: ", sessionError)
         }
     }
     
