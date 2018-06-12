@@ -18,6 +18,8 @@ class PlayerDetailsView : UIView
         }
     }
     
+    var playListEpisodes: [Episode]? = [Episode]()
+    
     var thumbnail: String? {
         didSet {
             guard let url = URL(string: thumbnail ?? "") else { return }
@@ -106,7 +108,7 @@ class PlayerDetailsView : UIView
     func handleTapMaximize()
     {
         let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
-        mainTabBarController?.maximizePlayerDetails(episode: nil)
+        mainTabBarController?.maximizePlayerDetails(episode: nil, playListEpisodes: nil)
     }
     
     // MARK:- Private Methods
@@ -219,6 +221,7 @@ class PlayerDetailsView : UIView
     {
         UIApplication.shared.beginReceivingRemoteControlEvents()
         
+        // Play Command
         let sharedCommandCenter = MPRemoteCommandCenter.shared()
         sharedCommandCenter.playCommand.isEnabled = true
         sharedCommandCenter.playCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
@@ -226,17 +229,69 @@ class PlayerDetailsView : UIView
             return MPRemoteCommandHandlerStatus.success
         }
         
+        // Pause command
         sharedCommandCenter.pauseCommand.isEnabled = true
         sharedCommandCenter.pauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
             self.pause()
             return MPRemoteCommandHandlerStatus.success
         }
         
+        // Toggle Play Pause
         sharedCommandCenter.togglePlayPauseCommand.isEnabled = true
         sharedCommandCenter.togglePlayPauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
             self.handlePlayPause()
             
             return MPRemoteCommandHandlerStatus.success
+        }
+        
+        // Next Track Command
+        sharedCommandCenter.nextTrackCommand.addTarget(self, action: #selector(handleNextTrack))
+        
+        // Previous Track Command
+        sharedCommandCenter.previousTrackCommand.addTarget(self, action: #selector(handlePreviousTrack))
+    }
+    
+    @objc
+    fileprivate
+    func handleNextTrack()
+    {
+        print("Play next episode")
+        
+        if playListEpisodes?.count == 0 { return }
+        
+        guard let currentEpisodeIndex = playListEpisodes?.index(where: { (ep) -> Bool in
+            return self.episode?.title == ep.title
+        }) else { return }
+        
+        let nextEpisodeIndex = currentEpisodeIndex + 1
+        
+        if nextEpisodeIndex >= (self.playListEpisodes?.count)! { return }
+        print("Next index", nextEpisodeIndex)
+        if let nextEpisode = playListEpisodes?[nextEpisodeIndex]
+        {
+            self.episode = nextEpisode
+        }
+    }
+    
+    @objc
+    fileprivate
+    func handlePreviousTrack()
+    {
+        print("Play previous episode")
+        if playListEpisodes?.count == 0 { return }
+        
+        guard let currentEpisodeIndex = playListEpisodes?.index(where: { (ep) -> Bool in
+            return self.episode?.title == ep.title
+        }) else { return }
+        
+        let previousEpisodeIndex = currentEpisodeIndex - 1
+        
+        if previousEpisodeIndex < 0 { return }
+        print("Previous index", previousEpisodeIndex)
+        
+        if let previousEpisode = playListEpisodes?[previousEpisodeIndex]
+        {
+            self.episode = previousEpisode
         }
     }
     

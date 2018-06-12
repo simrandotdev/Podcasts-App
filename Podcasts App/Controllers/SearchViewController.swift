@@ -14,7 +14,7 @@ class SearchViewController: UITableViewController
         setupTableView()
         setupSearchBar()
         #if DEBUG
-        searchBar((searchController?.searchBar)!, textDidChange: "Fragmented Podcast")
+        searchBar((searchController?.searchBar)!, textDidChange: "Brian Voong")
         #endif
     }
     
