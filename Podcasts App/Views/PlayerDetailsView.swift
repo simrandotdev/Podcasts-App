@@ -44,6 +44,7 @@ class PlayerDetailsView : UIView
         observePlayerCurrentTime()
         observePlayerStartPlaying()
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapMaximize)))
+        setupInterruptionObserver()
     }
     
     static func initFromNib() -> PlayerDetailsView
@@ -336,6 +337,32 @@ class PlayerDetailsView : UIView
         
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
         
+    }
+    
+    fileprivate
+    func setupInterruptionObserver()
+    {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAudioInterruption), name: .AVAudioSessionInterruption, object: nil)
+    }
+    
+    @objc
+    fileprivate
+    func handleAudioInterruption(notification: Notification)
+    {
+        print("Interruption Observed")
+        guard let userInfo = notification.userInfo else { return }
+        guard let type = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt else { return }
+        
+        if type == AVAudioSessionInterruptionType.began.rawValue
+        {
+            print("Interruption begain...")
+            pause()
+        }
+        else
+        {
+            print("Interruption ended...")
+            play()
+        }
     }
     
     // MARK:- IBOutlet
