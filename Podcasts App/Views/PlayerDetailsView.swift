@@ -11,9 +11,10 @@ class PlayerDetailsView : UIView
             episodeTitleLabel.text = episode?.title
             miniTitleLabel.text = episode?.title
             authorLabel.text = episode?.author ?? ""
-            setupNowPlayingInfo()
-            playEpisode()
             
+            setupNowPlayingInfo()
+            setupAudioSession()
+            playEpisode()
             setupImageInfoOnLockScreen()
         }
     }
@@ -40,7 +41,6 @@ class PlayerDetailsView : UIView
     {
         super.awakeFromNib()
         setupRemoteControl()
-        setupAudioSession()
         observePlayerCurrentTime()
         observePlayerStartPlaying()
         addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapMaximize)))
@@ -221,35 +221,58 @@ class PlayerDetailsView : UIView
     func setupRemoteControl()
     {
         UIApplication.shared.beginReceivingRemoteControlEvents()
+        let sharedCommandCenter = MPRemoteCommandCenter.shared()
         
         // Play Command
-        let sharedCommandCenter = MPRemoteCommandCenter.shared()
-        sharedCommandCenter.playCommand.isEnabled = true
-        sharedCommandCenter.playCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
-            self.play()
-            return MPRemoteCommandHandlerStatus.success
-        }
+        setupLockScreenPlayCommand(sharedCommandCenter)
         
         // Pause command
-        sharedCommandCenter.pauseCommand.isEnabled = true
-        sharedCommandCenter.pauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
-            self.pause()
-            return MPRemoteCommandHandlerStatus.success
-        }
+        setupLockScreenPauseCommand(sharedCommandCenter)
         
         // Toggle Play Pause
-        sharedCommandCenter.togglePlayPauseCommand.isEnabled = true
-        sharedCommandCenter.togglePlayPauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
-            self.handlePlayPause()
-            
-            return MPRemoteCommandHandlerStatus.success
-        }
+        setupLockScreenTogglePlayPause(sharedCommandCenter)
         
         // Next Track Command
         sharedCommandCenter.nextTrackCommand.addTarget(self, action: #selector(handleNextTrack))
         
         // Previous Track Command
         sharedCommandCenter.previousTrackCommand.addTarget(self, action: #selector(handlePreviousTrack))
+    }
+    
+    fileprivate
+    func setupLockScreenPlayCommand(_ sharedCommandCenter: MPRemoteCommandCenter)
+    {
+        sharedCommandCenter.playCommand.isEnabled = true
+        sharedCommandCenter.playCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
+            self.play()
+            
+            // Sets the time correctly on lock screen when resumed from pause.
+            MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPNowPlayingInfoPropertyPlaybackRate] = 1
+            
+            return MPRemoteCommandHandlerStatus.success
+        }
+    }
+    
+    fileprivate
+    func setupLockScreenPauseCommand(_ sharedCommandCenter: MPRemoteCommandCenter)
+    {
+        sharedCommandCenter.pauseCommand.isEnabled = true
+        sharedCommandCenter.pauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
+            self.pause()
+            MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPNowPlayingInfoPropertyPlaybackRate] = 0
+            return MPRemoteCommandHandlerStatus.success
+        }
+    }
+    
+    fileprivate
+    func setupLockScreenTogglePlayPause(_ sharedCommandCenter: MPRemoteCommandCenter)
+    {
+        sharedCommandCenter.togglePlayPauseCommand.isEnabled = true
+        sharedCommandCenter.togglePlayPauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
+            self.handlePlayPause()
+            
+            return MPRemoteCommandHandlerStatus.success
+        }
     }
     
     @objc
@@ -361,7 +384,13 @@ class PlayerDetailsView : UIView
         else
         {
             print("Interruption ended...")
-            play()
+            
+            guard let options = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
+            
+            if options == AVAudioSessionInterruptionOptions.shouldResume.rawValue
+            {
+                play()
+            }
         }
     }
     
