@@ -48,7 +48,6 @@ class MainTabBarController : UITabBarController
         }, completion: nil)
     }
 
-    
     // MARK:- Setup methods
     fileprivate
     func setupTabBarNavigationController(title: String, image: UIImage, viewController: UIViewController) -> UINavigationController
@@ -71,7 +70,7 @@ class MainTabBarController : UITabBarController
     func setupViewController()
     {
         let favoriteNavController =
-            setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoriteViewController())
+            setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoriteViewController(collectionViewLayout: UICollectionViewFlowLayout()))
         let searchNavController =
             setupTabBarNavigationController(title: "Search", image: #imageLiteral(resourceName: "search"), viewController: SearchViewController())
         let downloadNavController =
@@ -79,8 +78,8 @@ class MainTabBarController : UITabBarController
         
         viewControllers =
             [
-                searchNavController,
                 favoriteNavController,
+                searchNavController,
                 downloadNavController
         ]
     }
@@ -88,7 +87,6 @@ class MainTabBarController : UITabBarController
     fileprivate
     func setupPlayerDetailsView()
     {
-        
         view.insertSubview(playerDetailsView, belowSubview: tabBar)
         playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
         
