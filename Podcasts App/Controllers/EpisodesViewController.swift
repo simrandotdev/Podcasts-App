@@ -48,7 +48,39 @@ class EpisodesViewController: UITableViewController
     func setupNavigationbar()
     {
         navigationController?.isNavigationBarHidden = false
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(handleSaveToFavorites))
     }
+    
+    @objc
+    fileprivate
+    func handleSaveToFavorites()
+    {
+        guard let podcast = podcast else { return }
+        // 1. Transform Podcasts array into Data
+        let favoritePodcastData = NSKeyedArchiver.archivedData(withRootObject: podcast)
+        
+        // 2. Save that data object into the User Defaults
+        UserDefaults.standard.setValue(favoritePodcastData, forKey: "favoritePodcast")
+        
+        // 3. Fetch the Podcast now.
+        guard let podcastData = UserDefaults.standard.data(forKey: "favoritePodcast") else { return }
+        let fetchFavoritePodcast = NSKeyedUnarchiver.unarchiveObject(with: podcastData) as? Podcast
+        print("Podcast Name: \(fetchFavoritePodcast?.trackName)")
+        print("Artist Name: \(fetchFavoritePodcast?.artistName)")
+        
+        
+        /////
+        /*
+        var favoritePodcasts = UserDefaults.standard.array(forKey: "favoritePodcasts") as? [Podcast] ?? [Podcast]()
+       
+        favoritePodcasts.append(podcast)
+        UserDefaults.standard.set(favoritePodcasts, forKey: "favoritePodcasts")
+        
+        let podcasts = UserDefaults.standard.array(forKey: "favoritePodcasts") as? [Podcast]
+        print(podcasts)
+         */
+    }
+    
     
     fileprivate
     func fetchEpisodes()

@@ -10,7 +10,7 @@ class SearchViewController: UITableViewController
     private let cellId = "cellId"
     override func viewDidLoad()
     {
-        super.viewDidLoad() 
+        super.viewDidLoad()
         setupTableView()
         setupSearchBar()
         #if DEBUG
