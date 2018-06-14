@@ -16,7 +16,7 @@ class FavoriteViewController: UICollectionViewController
     func setupCollectionView()
     {
         collectionView?.backgroundColor = .white
-        collectionView?.register(UICollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        collectionView?.register(FavoritePodcastCell.self, forCellWithReuseIdentifier: cellId)
     }
 }
 
@@ -32,15 +32,15 @@ extension FavoriteViewController : UICollectionViewDelegateFlowLayout
     override
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath)
-        cell.backgroundColor = UIColor.orange
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! FavoritePodcastCell
+
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
     {
         let size = (collectionView.frame.width  - (3 * 16)) / 2
-        return CGSize(width: size, height: size)
+        return CGSize(width: size, height: size + 48)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets
