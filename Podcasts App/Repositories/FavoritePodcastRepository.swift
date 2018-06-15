@@ -23,7 +23,7 @@ class FavoritePodcastRepository
     func fetchFavoritePodcasts() -> [Podcast]?
     {
         let podcastsData = UserDefaults.standard.data(forKey: "favoritePodcasts")
-        let favoritePodcasts = NSKeyedUnarchiver.unarchiveObject(with: podcastsData ?? Data()) as? [Podcast]
+        let favoritePodcasts = NSKeyedUnarchiver.unarchiveObject(with: podcastsData ?? Data()) as? [Podcast] ?? [Podcast]()
         return favoritePodcasts
     }
     

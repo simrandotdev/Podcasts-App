@@ -73,14 +73,13 @@ class MainTabBarController : UITabBarController
             setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoriteViewController(collectionViewLayout: UICollectionViewFlowLayout()))
         let searchNavController =
             setupTabBarNavigationController(title: "Search", image: #imageLiteral(resourceName: "search"), viewController: SearchViewController())
-        let downloadNavController =
+        let _ =
             setupTabBarNavigationController(title: "Downloads", image: #imageLiteral(resourceName: "downloads"), viewController: DownloadViewController())
         
         viewControllers =
             [
                 searchNavController,
-                favoriteNavController,
-                downloadNavController
+                favoriteNavController
         ]
     }
     
