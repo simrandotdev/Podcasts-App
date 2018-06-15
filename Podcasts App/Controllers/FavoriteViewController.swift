@@ -3,7 +3,8 @@ import UIKit
 class FavoriteViewController: UICollectionViewController
 {
     private let cellId = "favoritesCellId"
-    var favoritePodcasts = [Podcast]()
+    var favoritePodcasts : [Podcast]? = [Podcast]()
+    fileprivate let favoritePodcastRepository = FavoritePodcastRepository()
     
     override
     func viewDidLoad()
@@ -16,8 +17,8 @@ class FavoriteViewController: UICollectionViewController
     func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        guard let podcastsData = UserDefaults.standard.data(forKey: "favoritePodcasts") else { return }
-        favoritePodcasts = NSKeyedUnarchiver.unarchiveObject(with: podcastsData) as? [Podcast] ?? [Podcast]()
+        favoritePodcasts = favoritePodcastRepository.fetchFavoritePodcasts()
+        collectionView?.reloadData()
     }
     
     // MARK:- Setups
@@ -35,22 +36,23 @@ extension FavoriteViewController : UICollectionViewDelegateFlowLayout
     override
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return favoritePodcasts.count
+        return favoritePodcasts?.count ?? 0
     }
     
     override
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! FavoritePodcastCell
-        let podcast = favoritePodcasts[indexPath.row]
-        cell.setupCell(podcast: podcast)
+        if let podcast = favoritePodcasts?[indexPath.row] {
+            cell.setupCell(podcast: podcast)
+        }
         return cell
     }
     
     override
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
-        let favoritePodcast = favoritePodcasts[indexPath.row]
+        let favoritePodcast = favoritePodcasts?[indexPath.row]
         let episodeController = EpisodesViewController()
         episodeController.podcast = favoritePodcast
         navigationController?.pushViewController(episodeController, animated: true)

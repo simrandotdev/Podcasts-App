@@ -16,11 +16,10 @@ class FavoritePodcastRepository
         let indexToDelete = indexOfPodcastToDelete(podcast: podcast, from: favoritePodcasts)
         if let indexToDelete = indexToDelete,
             indexToDelete >= 0 {
-            favoritePodcasts?.remove(at: indexToDelete)
+            favoritePodcasts.remove(at: indexToDelete)
         }
     }
     
-    fileprivate
     func fetchFavoritePodcasts() -> [Podcast]?
     {
         let podcastsData = UserDefaults.standard.data(forKey: "favoritePodcasts")
@@ -31,7 +30,6 @@ class FavoritePodcastRepository
     fileprivate
     func indexOfPodcastToDelete(podcast: Podcast, from podcasts: [Podcast]) -> Int?
     {
-        guard let podcasts = podcasts else { return -1 }
         return podcasts.index(of: podcast)
     }
 }

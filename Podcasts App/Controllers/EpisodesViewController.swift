@@ -4,8 +4,8 @@ import SDWebImage
 class EpisodesViewController: UITableViewController
 {
     private let cellId = "cellId"
-    
     private var searchController: UISearchController?
+    fileprivate let favoritePodcastRepository = FavoritePodcastRepository()
     
     var podcast: Podcast? {
         didSet {
@@ -56,14 +56,7 @@ class EpisodesViewController: UITableViewController
     func handleSaveToFavorites()
     {
         guard let podcast = podcast else { return }
-        let podcastsData = UserDefaults.standard.data(forKey: "favoritePodcasts")
-        var favoritePodcasts = NSKeyedUnarchiver.unarchiveObject(with: podcastsData ?? Data()) as? [Podcast] ?? [Podcast]()
-        
-        favoritePodcasts.append(podcast)
-        
-        let favoritePodcastsData = NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts)
-        
-        UserDefaults.standard.setValue(favoritePodcastsData, forKey: "favoritePodcasts")
+        favoritePodcastRepository.favoritePodcast(podcast: podcast)
     }
     
     
