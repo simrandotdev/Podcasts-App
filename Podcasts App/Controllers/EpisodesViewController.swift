@@ -56,29 +56,14 @@ class EpisodesViewController: UITableViewController
     func handleSaveToFavorites()
     {
         guard let podcast = podcast else { return }
-        // 1. Transform Podcasts array into Data
-        let favoritePodcastData = NSKeyedArchiver.archivedData(withRootObject: podcast)
+        let podcastsData = UserDefaults.standard.data(forKey: "favoritePodcasts")
+        var favoritePodcasts = NSKeyedUnarchiver.unarchiveObject(with: podcastsData ?? Data()) as? [Podcast] ?? [Podcast]()
         
-        // 2. Save that data object into the User Defaults
-        UserDefaults.standard.setValue(favoritePodcastData, forKey: "favoritePodcast")
-        
-        // 3. Fetch the Podcast now.
-        guard let podcastData = UserDefaults.standard.data(forKey: "favoritePodcast") else { return }
-        let fetchFavoritePodcast = NSKeyedUnarchiver.unarchiveObject(with: podcastData) as? Podcast
-        print("Podcast Name: \(fetchFavoritePodcast?.trackName)")
-        print("Artist Name: \(fetchFavoritePodcast?.artistName)")
-        
-        
-        /////
-        /*
-        var favoritePodcasts = UserDefaults.standard.array(forKey: "favoritePodcasts") as? [Podcast] ?? [Podcast]()
-       
         favoritePodcasts.append(podcast)
-        UserDefaults.standard.set(favoritePodcasts, forKey: "favoritePodcasts")
         
-        let podcasts = UserDefaults.standard.array(forKey: "favoritePodcasts") as? [Podcast]
-        print(podcasts)
-         */
+        let favoritePodcastsData = NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts)
+        
+        UserDefaults.standard.setValue(favoritePodcastsData, forKey: "favoritePodcasts")
     }
     
     

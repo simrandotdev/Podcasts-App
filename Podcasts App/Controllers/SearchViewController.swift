@@ -25,6 +25,13 @@ class SearchViewController: UITableViewController
         reSetupSearchbar()
     }
     
+    override
+    func viewDidDisappear(_ animated: Bool)
+    {
+        super.viewDidDisappear(animated)
+        searchController?.isActive = false
+    }
+    
     fileprivate
     func loadTableView(searchText: String)
     {
@@ -48,9 +55,12 @@ class SearchViewController: UITableViewController
     fileprivate
     func setupSearchBar()
     {
+        self.definesPresentationContext = true
+        
         searchController = UISearchController(searchResultsController: nil)
         searchController?.dimsBackgroundDuringPresentation = false
         searchController?.searchBar.delegate = self
+        searchController?.definesPresentationContext = true
         
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -101,7 +111,6 @@ extension SearchViewController
 // MARK: SearchBar methods
 extension SearchViewController : UISearchBarDelegate
 {
-    
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
         timer?.invalidate()
