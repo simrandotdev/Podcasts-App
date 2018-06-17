@@ -26,4 +26,15 @@ class Podcast : NSObject, Codable, NSCoding
     var artworkUrl600: String?
     var trackCount: Int?
     var feedUrl: String?
+    
+    override func isEqual(_ object: Any?) -> Bool {
+        let pod = object as? Podcast
+        
+        return pod?.artistName == self.artistName &&
+            pod?.artworkUrl600 ?? "" == self.artworkUrl600 &&
+            pod?.trackName ?? "" == self.trackName &&
+            pod?.trackCount ?? 0 == self.trackCount &&
+            pod?.feedUrl ?? "" == self.feedUrl
+        
+    }
 }

@@ -5,6 +5,8 @@ class FavoritePodcastRepository
     func favoritePodcast(podcast: Podcast)
     {
         guard var favoritePodcasts = fetchFavoritePodcasts() else { return }
+        if favoritePodcasts.contains(where: { podcast == $0 }) { return }
+        
         favoritePodcasts.append(podcast)
         let favoritePodcastsData = NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts)
         UserDefaults.standard.setValue(favoritePodcastsData, forKey: "favoritePodcasts")
