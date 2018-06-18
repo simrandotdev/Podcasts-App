@@ -2,24 +2,28 @@ import Foundation
 
 class FavoritePodcastRepository
 {
-    func favoritePodcast(podcast: Podcast)
+    func favoritePodcast(podcast: Podcast) -> [Podcast]?
     {
-        guard var favoritePodcasts = fetchFavoritePodcasts() else { return }
-        if favoritePodcasts.contains(where: { podcast == $0 }) { return }
+        guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
+        if favoritePodcasts.contains(where: { podcast == $0 }) { return nil }
         
         favoritePodcasts.append(podcast)
         let favoritePodcastsData = NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts)
         UserDefaults.standard.setValue(favoritePodcastsData, forKey: "favoritePodcasts")
+        return favoritePodcasts
     }
     
-    func unfavoritePodcast(podcast: Podcast)
+    func unfavoritePodcast(podcast: Podcast) -> [Podcast]?
     {
-        guard var favoritePodcasts = fetchFavoritePodcasts() else { return }
+        guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
         let indexToDelete = indexOfPodcastToDelete(podcast: podcast, from: favoritePodcasts)
         if let indexToDelete = indexToDelete,
             indexToDelete >= 0 {
             favoritePodcasts.remove(at: indexToDelete)
         }
+        let favoritePodcastsData = NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts)
+        UserDefaults.standard.setValue(favoritePodcastsData, forKey: "favoritePodcasts")
+        return favoritePodcasts
     }
     
     func fetchFavoritePodcasts() -> [Podcast]?
