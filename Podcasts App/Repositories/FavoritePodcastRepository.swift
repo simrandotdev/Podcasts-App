@@ -33,6 +33,12 @@ class FavoritePodcastRepository
         return favoritePodcasts
     }
     
+    func isFavorite(podcast: Podcast) -> Bool
+    {
+        let podcasts = fetchFavoritePodcasts()
+        return podcasts?.contains(podcast) ?? false
+    }
+    
     fileprivate
     func indexOfPodcastToDelete(podcast: Podcast, from podcasts: [Podcast]) -> Int?
     {

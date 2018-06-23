@@ -50,7 +50,7 @@ class EpisodesViewController: UITableViewController
     func setupNavigationbar()
     {
         navigationController?.isNavigationBarHidden = false
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(handleSaveToFavorites))
+        setupFavoriteNavigationBarItem()
     }
     
     @objc
@@ -58,7 +58,28 @@ class EpisodesViewController: UITableViewController
     func handleSaveToFavorites()
     {
         guard let podcast = podcast else { return }
-        favoritePodcastRepository.favoritePodcast(podcast: podcast)
+        _ = favoritePodcastRepository.favoritePodcast(podcast: podcast)
+        setupFavoriteNavigationBarItem()
+    }
+    
+    @objc
+    fileprivate
+    func handleUnFavorite()
+    {
+        guard let podcast = podcast else { return }
+        _ = favoritePodcastRepository.unfavoritePodcast(podcast: podcast)
+        setupFavoriteNavigationBarItem()
+    }
+    
+    fileprivate
+    func setupFavoriteNavigationBarItem()
+    {
+        guard let podcast = podcast else { return }
+        if (favoritePodcastRepository.isFavorite(podcast: podcast)) {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Unfavorite", style: .plain, target: self, action: #selector(handleUnFavorite))
+        } else {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(handleSaveToFavorites))
+        }
     }
     
     

@@ -3,19 +3,19 @@ import Alamofire
 
 class SearchViewController: UITableViewController
 {
-    private var podcasts = [Podcast]()
-    private var searchController: UISearchController?
+    fileprivate var podcasts = [Podcast]()
+    fileprivate var filtered = [Podcast]()
+    fileprivate var isSearching = false
+    
+    fileprivate var searchController: UISearchController?
     fileprivate var timer : Timer?
     
-    private let cellId = "cellId"
+    fileprivate let cellId = "cellId"
     override func viewDidLoad()
     {
         super.viewDidLoad()
         setupTableView()
         setupSearchBar()
-        #if DEBUG
-        searchBar((searchController?.searchBar)!, textDidChange: "Brian Voong")
-        #endif
     }
     
     override
@@ -33,7 +33,7 @@ class SearchViewController: UITableViewController
     }
     
     fileprivate
-    func loadTableView(searchText: String)
+    func loadPodcasts(searchText: String)
     {
         APIService.shared.fetchPodcast(searchText: searchText) { (podcasts) in
             DispatchQueue.main.async {
@@ -49,7 +49,7 @@ class SearchViewController: UITableViewController
         let nib = UINib(nibName: "PodcastCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
         
-        loadTableView(searchText: "podcast")
+        loadPodcasts(searchText: "podcast")
     }
     
     fileprivate
@@ -113,10 +113,21 @@ extension SearchViewController : UISearchBarDelegate
 {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false, block: { (_) in
-            self.loadTableView(searchText: searchText)
-        })
-        
+        if searchText.count > 0
+        {
+            timer?.invalidate()
+            timer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false, block: { (_) in
+                self.loadPodcasts(searchText: searchText)
+            })
+        }
+        else
+        {
+            loadPodcasts(searchText: "podcast")
+        }
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar)
+    {
+        loadPodcasts(searchText: "podcast")
     }
 }
