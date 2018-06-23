@@ -14,6 +14,8 @@ class EpisodesViewController: UITableViewController
     }
     
     private var episodes = [Episode]()
+    private var filtered = [Episode]()
+    private var isSearching = false
     
     override
     func viewDidLoad()
@@ -86,14 +88,14 @@ extension EpisodesViewController
     override
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return episodes.count
+        return isSearching ? filtered.count : episodes.count
     }
     
     override
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
-        cell.episode = episodes[indexPath.row]
+        cell.episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
         guard let url = URL(string: podcast?.artworkUrl600 ?? "") else { return cell }
         cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
         return cell
@@ -102,8 +104,8 @@ extension EpisodesViewController
     override
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        let episode = episodes[indexPath.row]
-        
+        var episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
+        episode.imageUrl = podcast?.artworkUrl600
         let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
         
@@ -144,14 +146,16 @@ extension EpisodesViewController: UISearchBarDelegate
 {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {
-        episodes = self.episodes.filter { (episode) -> Bool in
-            (episode.title?.lowercased().contains(searchText.lowercased()))!
+        isSearching = searchText.count > 0
+        
+        filtered = self.episodes.filter { (episode) -> Bool in
+            (episode.title?.lowercased().contains(searchText.lowercased())) ?? false
         }
         tableView.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar)
     {
-        
+        isSearching = false
     }
 }

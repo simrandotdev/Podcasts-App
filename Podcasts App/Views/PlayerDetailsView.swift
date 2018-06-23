@@ -12,6 +12,9 @@ class PlayerDetailsView : UIView
             miniTitleLabel.text = episode?.title
             authorLabel.text = episode?.author ?? ""
             
+            guard let url = URL(string: episode?.imageUrl ?? "") else { return }
+            episodeImageView.sd_setImage(with: url, completed: nil)
+            
             setupNowPlayingInfo()
             setupAudioSession()
             playEpisode()
