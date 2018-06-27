@@ -147,6 +147,17 @@ extension EpisodesViewController
         return episodes.isEmpty ? 200 : 0
     }
     
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
+    {
+        var episode = self.episodes[indexPath.row]
+        episode.imageUrl = podcast?.artworkUrl600
+        let downloadAction = UITableViewRowAction(style: .normal, title: "Download") { (_, _) in
+            print("Downloading episodes into UserDefaults")
+            self.favoritePodcastRepository.downloadEpisode(episode: episode)
+        }
+        return [downloadAction]
+    }
+    
     fileprivate
     func showPlayerDetailsView(withEpisode episode: Episode)
     {
