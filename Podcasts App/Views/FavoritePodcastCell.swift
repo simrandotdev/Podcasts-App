@@ -7,7 +7,6 @@ class FavoritePodcastCell : UICollectionViewCell
     init(frame: CGRect)
     {
         super.init(frame: frame)
-        
         stylizeUI()
         layoutUI()
     }
@@ -26,7 +25,6 @@ class FavoritePodcastCell : UICollectionViewCell
         nameLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         artistNameLabel.text = "Artist Name"
         artistNameLabel.font = UIFont.systemFont(ofSize: 13)
-        artistNameLabel.textColor = .lightGray
         imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
     }
     

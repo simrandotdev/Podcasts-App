@@ -10,6 +10,7 @@ class FavoriteViewController: UICollectionViewController
     func viewDidLoad()
     {
         super.viewDidLoad()
+        view.backgroundColor = primaryLightColor
         setupCollectionView()
     }
     
@@ -25,7 +26,6 @@ class FavoriteViewController: UICollectionViewController
     fileprivate
     func setupCollectionView()
     {
-        collectionView?.backgroundColor = .white
         collectionView?.register(FavoritePodcastCell.self, forCellWithReuseIdentifier: cellId)
     }
     

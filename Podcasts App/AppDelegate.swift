@@ -37,6 +37,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         UITabBar.appearance().tintColor = primaryDarkColor
         
         UISearchBar.appearance().tintColor = primaryLightTextColor
+        
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue: primaryLightTextColor]
+        
+        UILabel.appearance().textColor = primaryLightTextColor
+        
+        UITableView.appearance().backgroundColor = primaryLightColor
+        UITableViewCell.appearance().backgroundColor = primaryLightColor
+        
+        UICollectionViewCell.appearance().backgroundColor = primaryLightColor
+        UICollectionView.appearance().backgroundColor = primaryLightColor
+        
+        UIStackView.appearance(whenContainedInInstancesOf: [PlayerDetailsView.self]).backgroundColor = primaryLightColor
     }
 }
+
+extension UILabel {
+    var defaultFont: UIFont? {
+        get { return self.font }
+        set { self.font = newValue }
+    }
+}
+

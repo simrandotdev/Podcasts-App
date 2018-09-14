@@ -43,6 +43,7 @@ class PlayerDetailsView : UIView
     func awakeFromNib()
     {
         super.awakeFromNib()
+        setupUI()        
         setupRemoteControl()
         observePlayerCurrentTime()
         observePlayerStartPlaying()
@@ -460,4 +461,11 @@ class PlayerDetailsView : UIView
     @IBOutlet
     weak var volumeSlider: UISlider!
     
+    
+    // MARK: UI Setup
+    func setupUI() {
+        volumeSlider.tintColor = primaryDarkColor
+        currentTimeSlider.tintColor = primaryDarkColor
+        authorLabel.textColor = primaryDarkTextColor
+    }
 }
