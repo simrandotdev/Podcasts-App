@@ -14,6 +14,7 @@ class PlayerDetailsView : UIView
             
             guard let url = URL(string: episode?.imageUrl ?? "") else { return }
             episodeImageView.sd_setImage(with: url, completed: nil)
+            miniEpisodeImageView.sd_setImage(with: url, completed: nil)
             
             setupNowPlayingInfo()
             setupAudioSession()
