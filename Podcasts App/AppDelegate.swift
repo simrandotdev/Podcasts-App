@@ -35,6 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         ]
         
         UITabBar.appearance().tintColor = primaryDarkColor
+        UITabBar.appearance().backgroundColor = primaryLightColor
         
         UISearchBar.appearance().tintColor = primaryLightTextColor
         

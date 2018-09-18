@@ -461,11 +461,16 @@ class PlayerDetailsView : UIView
     @IBOutlet
     weak var volumeSlider: UISlider!
     
+    @IBOutlet var blankViewBetweenMediaPlayerControls: [UIView]!
+    
+    
     
     // MARK: UI Setup
     func setupUI() {
+        backgroundColor = primaryLightColor
         volumeSlider.tintColor = primaryDarkColor
         currentTimeSlider.tintColor = primaryDarkColor
         authorLabel.textColor = primaryDarkTextColor
+        blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = primaryLightColor }
     }
 }

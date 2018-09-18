@@ -62,8 +62,7 @@ class MainTabBarController : UITabBarController
     fileprivate
     func setupTabBarController()
     {
-        view.backgroundColor = .white
-        tabBar.tintColor = .purple
+        view.backgroundColor = primaryLightTextColor
     }
     
     fileprivate

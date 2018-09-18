@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -238,6 +238,10 @@
                 <outlet property="minimizedStackView" destination="sPO-kE-Ii8" id="WqB-4d-b99"/>
                 <outlet property="playPauseButton" destination="ZNL-5N-PeS" id="phC-ZB-ZWW"/>
                 <outlet property="volumeSlider" destination="bj6-E5-qWd" id="uir-gK-RT1"/>
+                <outletCollection property="blankViewBetweenMediaPlayerControls" destination="Y2d-YW-oZf" collectionClass="NSMutableArray" id="I1V-Yf-aeQ"/>
+                <outletCollection property="blankViewBetweenMediaPlayerControls" destination="pyG-KH-SYU" collectionClass="NSMutableArray" id="wuP-D9-3fk"/>
+                <outletCollection property="blankViewBetweenMediaPlayerControls" destination="m9I-jh-YqK" collectionClass="NSMutableArray" id="6uE-ql-ntb"/>
+                <outletCollection property="blankViewBetweenMediaPlayerControls" destination="iWW-pk-kMM" collectionClass="NSMutableArray" id="sR3-UK-gJz"/>
             </connections>
             <point key="canvasLocation" x="-368" y="79"/>
         </view>
@@ -248,7 +252,7 @@
         <image name="max_volume" width="32" height="32"/>
         <image name="muted_volume" width="32" height="32"/>
         <image name="pause" width="57" height="57"/>
-        <image name="play" width="64" height="64"/>
+        <image name="play" width="59" height="59"/>
         <image name="rewind15" width="45" height="45"/>
     </resources>
 </document>
