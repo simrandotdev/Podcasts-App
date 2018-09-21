@@ -103,7 +103,7 @@ extension EpisodesViewController
     override
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        return UITableViewAutomaticDimension
+        return UITableView.automaticDimension
     }
     
     override
@@ -135,7 +135,7 @@ extension EpisodesViewController
     override
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView?
     {
-        let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let activityIndicatorView = UIActivityIndicatorView(style: .whiteLarge)
         activityIndicatorView.color = .darkGray
         activityIndicatorView.startAnimating()
         return activityIndicatorView

@@ -73,21 +73,21 @@ class PlayerDetailsView : UIView
         guard let duration = player.currentItem?.duration else { return }
         let durationInSeconds = CMTimeGetSeconds(duration)
         let seekTimeInSeconds = Float64(percentage) * Float64(durationInSeconds)
-        let seekTime = CMTimeMakeWithSeconds(seekTimeInSeconds, Int32(NSEC_PER_SEC))
+        let seekTime = CMTimeMakeWithSeconds(seekTimeInSeconds, preferredTimescale: Int32(NSEC_PER_SEC))
         player.seek(to: seekTime)
     }
     
     @IBAction
     func handleRewind(_ sender: Any)
     {
-        let seekTime = CMTimeAdd(player.currentTime(), CMTimeMake(-15, 1))
+        let seekTime = CMTimeAdd(player.currentTime(), CMTimeMake(value: -15, timescale: 1))
         player.seek(to: seekTime)
     }
     
     @IBAction
     func handleForward(_ sender: Any)
     {
-        let seekTime = CMTimeAdd(player.currentTime(), CMTimeMake(15, 1))
+        let seekTime = CMTimeAdd(player.currentTime(), CMTimeMake(value: 15, timescale: 1))
         player.seek(to: seekTime)
     }
     
@@ -169,7 +169,7 @@ class PlayerDetailsView : UIView
     fileprivate
     func observePlayerCurrentTime()
     {
-        let interval = CMTimeMake(1, 1)
+        let interval = CMTimeMake(value: 1, timescale: 1)
         player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] (time) in
             guard let duration = self?.player.currentItem?.duration else { return }
             if duration.flags.contains(CMTimeFlags.indefinite) { return }
@@ -190,7 +190,7 @@ class PlayerDetailsView : UIView
     func updateCurrentTimeSlider()
     {
         let currentTimeSeconds = CMTimeGetSeconds(player.currentTime())
-        let durationSeconds = CMTimeGetSeconds(player.currentItem?.duration ?? CMTimeMake(1, 1))
+        let durationSeconds = CMTimeGetSeconds(player.currentItem?.duration ?? CMTimeMake(value: 1, timescale: 1))
         
         let percentage = currentTimeSeconds / durationSeconds
         currentTimeSlider.value = Float(percentage)
@@ -215,7 +215,7 @@ class PlayerDetailsView : UIView
     {
         // This makes the audio to work in background after enabling
         do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback)
+            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category(rawValue: convertFromAVAudioSessionCategory(AVAudioSession.Category.playback)), mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch let sessionError {
             print("Failed to activate sessions: ", sessionError)
@@ -370,7 +370,7 @@ class PlayerDetailsView : UIView
     fileprivate
     func setupInterruptionObserver()
     {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleAudioInterruption), name: .AVAudioSessionInterruption, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAudioInterruption), name: AVAudioSession.interruptionNotification, object: nil)
     }
     
     @objc
@@ -381,7 +381,7 @@ class PlayerDetailsView : UIView
         guard let userInfo = notification.userInfo else { return }
         guard let type = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt else { return }
         
-        if type == AVAudioSessionInterruptionType.began.rawValue
+        if type == AVAudioSession.InterruptionType.began.rawValue
         {
             print("Interruption begain...")
             pause()
@@ -392,7 +392,7 @@ class PlayerDetailsView : UIView
             
             guard let options = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
             
-            if options == AVAudioSessionInterruptionOptions.shouldResume.rawValue
+            if options == AVAudioSession.InterruptionOptions.shouldResume.rawValue
             {
                 play()
             }
@@ -474,4 +474,9 @@ class PlayerDetailsView : UIView
         authorLabel.textColor = primaryDarkTextColor
         blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = primaryLightColor }
     }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
+	return input.rawValue
 }

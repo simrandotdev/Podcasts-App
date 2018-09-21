@@ -12,7 +12,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
 
     var window: UIWindow?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
     {
         window = UIWindow()
         window?.makeKeyAndVisible()
@@ -28,10 +28,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         UINavigationBar.appearance().barTintColor = primaryColor
         UINavigationBar.appearance().tintColor = primaryLightColor
         UINavigationBar.appearance().prefersLargeTitles = true
-        UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: primaryLightTextColor]
+        UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: primaryLightTextColor]
         UINavigationBar.appearance().titleTextAttributes = [
-            NSAttributedStringKey.foregroundColor: primaryLightTextColor,
-            NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 24)
+            NSAttributedString.Key.foregroundColor: primaryLightTextColor,
+            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 24)
         ]
         
         UITabBar.appearance().tintColor = primaryDarkColor
@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         
         UISearchBar.appearance().tintColor = primaryLightTextColor
         
-        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = [NSAttributedStringKey.foregroundColor.rawValue: primaryLightTextColor]
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = convertToNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: primaryLightTextColor])
         
         UILabel.appearance().textColor = primaryLightTextColor
         
@@ -60,3 +60,8 @@ extension UILabel {
     }
 }
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSAttributedStringKeyDictionary(_ input: [String: Any]) -> [NSAttributedString.Key: Any] {
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (NSAttributedString.Key(rawValue: key), value)})
+}
