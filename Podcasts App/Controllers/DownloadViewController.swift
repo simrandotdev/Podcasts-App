@@ -16,8 +16,7 @@ class DownloadViewController: UITableViewController
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        episodes = favoritePodcastRepository.downloadedEpisodes()
-        tableView.reloadData()
+        loadDataIntoTableView()
     }
     
     
@@ -27,6 +26,13 @@ class DownloadViewController: UITableViewController
     {
         let nib = UINib(nibName: "EpisodeCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
+    }
+    
+    fileprivate
+    func loadDataIntoTableView()
+    {
+        episodes = favoritePodcastRepository.downloadedEpisodes()
+        tableView.reloadData()
     }
 }
 
@@ -52,4 +58,15 @@ extension DownloadViewController
     {
         return 120
     }
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
+    {
+        let downloadAction = UITableViewRowAction(style: .destructive, title: "Delete") { (_, _) in
+            print("Deleting episodes from UserDefaults")
+            self.favoritePodcastRepository.deleteEpisode(at: indexPath.row)
+            self.loadDataIntoTableView()
+        }
+        return [downloadAction]
+    }
+    
 }
