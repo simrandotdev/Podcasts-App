@@ -54,6 +54,14 @@ extension DownloadViewController
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        print("Launch episode player")
+        let episode = self.episodes[indexPath.row]
+        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
+    }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 120

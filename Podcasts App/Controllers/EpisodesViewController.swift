@@ -152,8 +152,12 @@ extension EpisodesViewController
         var episode = self.episodes[indexPath.row]
         episode.imageUrl = podcast?.artworkUrl600
         let downloadAction = UITableViewRowAction(style: .normal, title: "Download") { (_, _) in
-            print("Downloading episodes into UserDefaults")
-            self.favoritePodcastRepository.downloadEpisode(episode: episode)
+            
+            // download the podcast episode using Alamofires
+            APIService.shared.downloadEpisode(episode: episode, completion: { (fileLocation) in
+                episode.enclosure?.link = fileLocation
+                self.favoritePodcastRepository.downloadEpisode(episode: episode)
+            })
         }
         return [downloadAction]
     }

@@ -59,6 +59,24 @@ class APIService
                 }
         }
     }
+    
+    func downloadEpisode(episode: Episode, completion: @escaping (_ fileLocation: String) -> Void)
+    {
+//        print("Downloading Episode in API Service with url: \(episode.enclosure?.link)")
+        guard let url = episode.enclosure?.link else {
+            return
+        }
+        
+        let downloadRequest = DownloadRequest.suggestedDownloadDestination()
+        
+        Alamofire.download(url, to: downloadRequest)
+            .downloadProgress { (progress) in
+            print(progress.fractionCompleted)
+            }.response { (response) in
+                guard let fileLocation = response.destinationURL?.absoluteString else { return }
+                completion(fileLocation)
+        }
+    }
 }
 
 struct FeedResponse : Codable

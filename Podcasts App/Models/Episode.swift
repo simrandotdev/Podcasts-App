@@ -8,7 +8,7 @@ struct Episode : Codable
     let description: String?
     let content: String?
     let author: String?
-    let enclosure: Enclosure?
+    var enclosure: Enclosure?
     
     static let mockEpisodes = [Episode]()
 }
@@ -16,6 +16,6 @@ struct Episode : Codable
 struct Enclosure : Codable
 {
     let duration: Int?
-    let link: String?
+    var link: String?
     let type: String?
 }
