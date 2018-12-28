@@ -15,6 +15,10 @@ class PodcastCell: UITableViewCell
     @IBOutlet
     weak var numberOfEpisodesLabel: UILabel!
     
+    @IBOutlet
+    weak var containerView: UIView!
+    
+    
     var podcast: Podcast! {
         didSet {
             guard let url = URL(string: podcast.artworkUrl600 ?? "") else { return }
@@ -31,6 +35,10 @@ class PodcastCell: UITableViewCell
     {
         super.awakeFromNib()
         // Initialization code
+        backgroundColor = .white
+        containerView.backgroundColor = primaryLightColor
+        containerView.layer.cornerRadius = 5.0
+        containerView.layer.masksToBounds = true
     }
 
     override

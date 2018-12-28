@@ -14,7 +14,7 @@ class SearchViewController: UITableViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        self.view.backgroundColor = primaryLightColor
+        self.view.backgroundColor = .white
         setupTableView()
         setupSearchBar()
     }
@@ -24,6 +24,7 @@ class SearchViewController: UITableViewController
     {
         super.viewDidAppear(animated)
         reSetupSearchbar()
+        
     }
     
     override
@@ -49,6 +50,8 @@ class SearchViewController: UITableViewController
     {
         let nib = UINib(nibName: "PodcastCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
+        tableView.separatorStyle = .none
+        tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
         
         loadPodcasts(searchText: "podcast")
     }
@@ -82,7 +85,7 @@ extension SearchViewController
     override
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        return UITableView.automaticDimension
+        return 100.0
     }
     
     override

@@ -9,6 +9,10 @@ class FavoritePodcastCell : UICollectionViewCell
         super.init(frame: frame)
         stylizeUI()
         layoutUI()
+        
+        backgroundColor = primaryLightColor
+        layer.cornerRadius = 5.0
+        layer.masksToBounds = true
     }
     
     required
@@ -38,10 +42,10 @@ class FavoritePodcastCell : UICollectionViewCell
         
         addSubview(stackView)
         
-        stackView.topAnchor.constraint(equalTo: topAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
     }
     
     

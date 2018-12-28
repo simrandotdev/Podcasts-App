@@ -15,6 +15,10 @@ class EpisodeCell: UITableViewCell
     @IBOutlet
     weak var descriptionLabel: UILabel!
     
+    @IBOutlet
+    weak var containerView: UIView!
+    
+    
     var episode : Episode! {
         didSet {
             titleLabel.text = episode?.title
@@ -30,6 +34,10 @@ class EpisodeCell: UITableViewCell
     func awakeFromNib()
     {
         super.awakeFromNib()
+        backgroundColor = .white
+        containerView.backgroundColor = primaryLightColor
+        containerView.layer.cornerRadius = 5.0
+        containerView.layer.masksToBounds = true
     }
 
     override

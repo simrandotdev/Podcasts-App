@@ -73,8 +73,14 @@ class APIService
             .downloadProgress { (progress) in
             print(progress.fractionCompleted)
             }.response { (response) in
-                guard let fileLocation = response.destinationURL?.absoluteString else { return }
-                completion(fileLocation)
+                guard let fileLocation = response.destinationURL else { return }
+                guard let baseLocation = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+                
+                let fileName = fileLocation.lastPathComponent
+                let completeFilePath = "\(baseLocation.absoluteString)\(fileName)"
+                print(completeFilePath)
+                
+                completion(completeFilePath)
         }
     }
 }

@@ -31,6 +31,9 @@ class EpisodesViewController: UITableViewController
     fileprivate
     func setupTableView()
     {
+        tableView.backgroundColor = .white
+        tableView.separatorStyle = .none
+        tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
         let nib = UINib(nibName: "EpisodeCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
     }
@@ -103,7 +106,7 @@ extension EpisodesViewController
     override
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        return UITableView.automaticDimension
+        return 110.0
     }
     
     override

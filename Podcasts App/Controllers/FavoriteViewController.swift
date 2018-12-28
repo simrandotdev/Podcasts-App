@@ -10,7 +10,7 @@ class FavoriteViewController: UICollectionViewController
     func viewDidLoad()
     {
         super.viewDidLoad()
-        view.backgroundColor = primaryLightColor
+        collectionView.backgroundColor = .white
         setupCollectionView()
     }
     
@@ -64,18 +64,18 @@ extension FavoriteViewController : UICollectionViewDelegateFlowLayout
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
     {
-        let size = (collectionView.frame.width  - (3 * 16)) / 2
+        let size = (collectionView.frame.width  - (3 * 8)) / 2
         return CGSize(width: size, height: size + 48)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets
     {
-        return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        return UIEdgeInsets(top: 16, left: 2, bottom: 16, right: 2)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat
     {
-        return 16
+        return 4
     }
     
     @objc func handleLongPress(_ sender: UILongPressGestureRecognizer)
