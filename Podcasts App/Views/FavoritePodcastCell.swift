@@ -27,8 +27,10 @@ class FavoritePodcastCell : UICollectionViewCell
     {
         nameLabel.text = "Podcast name"
         nameLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        nameLabel.textColor = primaryLightTextColor
         artistNameLabel.text = "Artist Name"
         artistNameLabel.font = UIFont.systemFont(ofSize: 13)
+        artistNameLabel.textColor = primaryLightTextColor
         imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
     }
     
