@@ -25,29 +25,48 @@ class FavoritePodcastCell : UICollectionViewCell
     fileprivate
     func stylizeUI()
     {
-        nameLabel.text = "Podcast name"
+        nameLabel.text = ""
         nameLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-        nameLabel.textColor = primaryLightTextColor
-        artistNameLabel.text = "Artist Name"
+        nameLabel.textColor = .white
+        nameLabel.numberOfLines = 2
+        artistNameLabel.text = ""
         artistNameLabel.font = UIFont.systemFont(ofSize: 13)
-        artistNameLabel.textColor = primaryLightTextColor
-        imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor).isActive = true
+        artistNameLabel.textColor = .white
+        imageView.contentMode = UIView.ContentMode.center
+        
     }
     
     fileprivate
     func layoutUI()
     {
-        let stackView = UIStackView(arrangedSubviews: [imageView, nameLabel, artistNameLabel])
+        addSubview(imageView)
+        imageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        imageView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        imageView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        
+        let backgroundView: UIView = {
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.7)
+            return view
+        }()
+        addSubview(backgroundView)
+        backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
+        backgroundView.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+        backgroundView.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+        backgroundView.heightAnchor.constraint(equalToConstant: 70).isActive = true
+
+        let stackView = UIStackView(arrangedSubviews: [nameLabel, artistNameLabel])
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .fill
         
-        addSubview(stackView)
-        
-        stackView.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
+        backgroundView.addSubview(stackView)
+        stackView.topAnchor.constraint(equalTo: backgroundView.topAnchor).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 8).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -8).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -8).isActive = true
     }
     
     
