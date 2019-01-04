@@ -72,6 +72,9 @@ class MainTabBarController : UITabBarController
             setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoriteViewController(collectionViewLayout: UICollectionViewFlowLayout()))
         let searchNavController =
             setupTabBarNavigationController(title: "Search", image: #imageLiteral(resourceName: "search"), viewController: SearchViewController())
+        
+        let recentEpisodesNavController = setupTabBarNavigationController(title: "History", image: UIImage(named: "downloads")!, viewController: RecentEpisodesViewController())
+        
 //        let downloadsNavController =
 //            setupTabBarNavigationController(title: "Downloads", image: #imageLiteral(resourceName: "downloads"), viewController: DownloadViewController())
         
@@ -79,6 +82,7 @@ class MainTabBarController : UITabBarController
             [
                 searchNavController,
                 favoriteNavController,
+                recentEpisodesNavController
 //                downloadsNavController
         ]
     }

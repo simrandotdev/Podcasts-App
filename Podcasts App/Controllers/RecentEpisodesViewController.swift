@@ -1,17 +1,12 @@
 import UIKit
 import SDWebImage
 
-class EpisodesViewController: UITableViewController
+class RecentEpisodesViewController: UITableViewController
 {
     private let cellId = "cellId"
     private var searchController: UISearchController?
     fileprivate let repo = PodcastsRepository()
     
-    var podcast: Podcast? {
-        didSet {
-            navigationItem.title = podcast?.trackName
-        }
-    }
     
     private var episodes = [Episode]()
     private var filtered = [Episode]()
@@ -25,6 +20,12 @@ class EpisodesViewController: UITableViewController
         setupNavigationbar()
         setupTableView()
         setupSearchBar()
+        fetchEpisodes()
+    }
+    
+    override func viewDidAppear(_ animated: Bool)
+    {
+        super.viewDidAppear(animated)
         fetchEpisodes()
     }
     
@@ -53,55 +54,19 @@ class EpisodesViewController: UITableViewController
     func setupNavigationbar()
     {
         navigationController?.isNavigationBarHidden = false
-        setupFavoriteNavigationBarItem()
-    }
-    
-    @objc
-    fileprivate
-    func handleSaveToFavorites()
-    {
-        guard let podcast = podcast else { return }
-        _ = repo.favoritePodcast(podcast: podcast)
-        setupFavoriteNavigationBarItem()
-    }
-    
-    @objc
-    fileprivate
-    func handleUnFavorite()
-    {
-        guard let podcast = podcast else { return }
-        _ = repo.unfavoritePodcast(podcast: podcast)
-        setupFavoriteNavigationBarItem()
-    }
-    
-    fileprivate
-    func setupFavoriteNavigationBarItem()
-    {
-        guard let podcast = podcast else { return }
-        if (repo.isFavorite(podcast: podcast)) {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Unfavorite", style: .plain, target: self, action: #selector(handleUnFavorite))
-        } else {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(handleSaveToFavorites))
-        }
     }
     
     
     fileprivate
     func fetchEpisodes()
     {
-        guard let feedUrl = podcast?.feedUrl else { return }
-        APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
-            self.episodes = episodes.items.reversed()
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
+        episodes = repo.fetchAllRecentlyPlayedPodcasts() ?? episodes
+        tableView.reloadData()
     }
 }
 
 // MARK: TableView methods
-extension EpisodesViewController
+extension RecentEpisodesViewController
 {
     override
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
@@ -120,7 +85,7 @@ extension EpisodesViewController
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
         cell.episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
-        guard let url = URL(string: podcast?.artworkUrl600 ?? "") else { return cell }
+        guard let url = URL(string: cell.episode.imageUrl ?? "") else { return cell }
         cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
         return cell
     }
@@ -129,7 +94,6 @@ extension EpisodesViewController
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         var episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
-        episode.imageUrl = podcast?.artworkUrl600
         let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
         
@@ -153,7 +117,6 @@ extension EpisodesViewController
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
     {
         var episode = self.episodes[indexPath.row]
-        episode.imageUrl = podcast?.artworkUrl600
         let downloadAction = UITableViewRowAction(style: .normal, title: "Download") { (_, _) in
             
             // download the podcast episode using Alamofires
@@ -172,7 +135,7 @@ extension EpisodesViewController
         let playerDetailsView = PlayerDetailsView.initFromNib()
         playerDetailsView.frame = self.view.frame
         playerDetailsView.episode = episode
-        playerDetailsView.thumbnail = podcast?.artworkUrl600
+//        playerDetailsView.thumbnail = podcast?.artworkUrl600
         
         UIView.animate(withDuration: 0.72) {
             window?.addSubview(playerDetailsView)
@@ -181,7 +144,7 @@ extension EpisodesViewController
 }
 
 // MARK: Searchbar methods
-extension EpisodesViewController: UISearchBarDelegate
+extension RecentEpisodesViewController: UISearchBarDelegate
 {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
     {

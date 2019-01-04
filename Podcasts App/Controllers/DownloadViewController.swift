@@ -3,7 +3,7 @@ import UIKit
 class DownloadViewController: UITableViewController
 {
     fileprivate let cellId = "cellId"
-    fileprivate let favoritePodcastRepository = FavoritePodcastRepository()
+    fileprivate let favoritePodcastRepository = PodcastsRepository()
     fileprivate var episodes = [Episode]()
     
     override

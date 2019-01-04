@@ -1,10 +1,15 @@
 import Foundation
 
-class FavoritePodcastRepository
+class PodcastsRepository
 {
     fileprivate let favoriteEpisodeKey = "favoritePodcasts"
     fileprivate let downloadedEpisodeKey = "downloadedEpisodeKey"
-    
+    fileprivate let recentlyPlayedPodcastsKey = "recentlyPlayedPodcasts"
+}
+
+// MARK:- Favorite Podcasts
+extension PodcastsRepository
+{
     func favoritePodcast(podcast: Podcast) -> [Podcast]?
     {
         guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
@@ -42,8 +47,17 @@ class FavoritePodcastRepository
         return podcasts?.contains(podcast) ?? false
     }
     
-    
-    
+    // MARK: Helper methods
+    fileprivate
+    func indexOfPodcastToDelete(podcast: Podcast, from podcasts: [Podcast]) -> Int?
+    {
+        return podcasts.index(of: podcast)
+    }
+}
+
+// MARK:- Download Podcasts
+extension PodcastsRepository
+{
     func downloadEpisode(episode: Episode)
     {
         var episodes = downloadedEpisodes()
@@ -77,12 +91,7 @@ class FavoritePodcastRepository
         
     }
     
-    fileprivate
-    func indexOfPodcastToDelete(podcast: Podcast, from podcasts: [Podcast]) -> Int?
-    {
-        return podcasts.index(of: podcast)
-    }
-    
+    // MARK: Helper methods
     fileprivate
     func saveEpisodes(_ episodes: [Episode])
     {
@@ -114,5 +123,53 @@ class FavoritePodcastRepository
         }
         
         return false
+    }
+}
+
+// MARK:- Recently Played Podcast Episodes
+extension PodcastsRepository
+{
+    func addRecentlyPlayedPodcast(episode: Episode)
+    {
+        guard var recentlyPlayedPosts = fetchAllRecentlyPlayedPodcasts() else { return }
+        
+        if let indexToRemove = recentlyPlayedPosts.firstIndex(where: { (ep) -> Bool in
+            episode.title == ep.title
+            && episode.author == ep.author
+            && episode.pubDate == ep.pubDate}) {
+            
+            recentlyPlayedPosts.remove(at: indexToRemove)
+        }
+        
+        recentlyPlayedPosts.insert(episode, at: 0)
+        
+        do {
+            let recentlyPlayedPodcastsJSONString = try recentlyPlayedPosts.toJSONString()
+            UserDefaults.standard.set(recentlyPlayedPodcastsJSONString, forKey: recentlyPlayedPodcastsKey)
+        } catch {
+            print("Failed to save recently played Podcast")
+        }
+    }
+    
+    func fetchRecent100PlayedPodcasts() -> [Episode]?
+    {
+        let episodes = fetchAllRecentlyPlayedPodcasts()
+        if episodes?.count ?? 0 <= 100 { return episodes }
+        
+        guard let newEpisodes = episodes?.prefix(upTo: 101) else { return [Episode]() }
+        return Array(newEpisodes)
+    }
+    
+    func fetchAllRecentlyPlayedPodcasts() -> [Episode]?
+    {
+        guard let recentlyPlayedPodcastJSONString
+            = UserDefaults.standard.string(forKey: recentlyPlayedPodcastsKey) else { return [Episode]() }
+        do {
+            let recentPodcasts = try recentlyPlayedPodcastJSONString.fromJsonString(to: [Episode].self)
+            return recentPodcasts
+        } catch  {
+            print("Failed to Convert Recently played JSON String to Array of Episodes")
+        }
+        return [Episode]()
     }
 }

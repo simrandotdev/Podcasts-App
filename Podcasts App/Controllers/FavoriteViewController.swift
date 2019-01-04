@@ -4,7 +4,7 @@ class FavoriteViewController: UICollectionViewController
 {
     private let cellId = "favoritesCellId"
     var favoritePodcasts : [Podcast]? = [Podcast]()
-    fileprivate let favoritePodcastRepository = FavoritePodcastRepository()
+    fileprivate let favoritePodcastRepository = PodcastsRepository()
     
     override
     func viewDidLoad()
