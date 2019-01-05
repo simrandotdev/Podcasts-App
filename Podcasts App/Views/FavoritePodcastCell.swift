@@ -11,7 +11,7 @@ class FavoritePodcastCell : UICollectionViewCell
         layoutUI()
         
         backgroundColor = primaryLightColor
-        layer.cornerRadius = 5.0
+        layer.cornerRadius = 2.0
         layer.masksToBounds = true
     }
     
