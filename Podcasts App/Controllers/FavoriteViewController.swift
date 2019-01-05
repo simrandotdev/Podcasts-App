@@ -4,7 +4,7 @@ class FavoriteViewController: UICollectionViewController
 {
     private let cellId = "favoritesCellId"
     var favoritePodcasts : [Podcast]? = [Podcast]()
-    fileprivate let favoritePodcastRepository = FavoritePodcastRepository()
+    fileprivate let favoritePodcastRepository = PodcastsRepository()
     
     override
     func viewDidLoad()
@@ -65,7 +65,7 @@ extension FavoriteViewController : UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize
     {
         let size = (collectionView.frame.width  - (3 * 8)) / 2
-        return CGSize(width: size, height: size + 48)
+        return CGSize(width: size, height: size)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets

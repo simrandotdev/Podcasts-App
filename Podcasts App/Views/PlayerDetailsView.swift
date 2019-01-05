@@ -5,6 +5,9 @@ import MediaPlayer
 
 class PlayerDetailsView : UIView
 {
+    // TODO: Inject from somewhere
+    let repo = PodcastsRepository()
+    
     // MARK:- Properties
     var episode: Episode? {
         didSet {
@@ -20,6 +23,9 @@ class PlayerDetailsView : UIView
             setupAudioSession()
             playEpisode()
             setupImageInfoOnLockScreen()
+            
+            guard let episode = self.episode else { return }
+            self.repo.addRecentlyPlayedPodcast(episode: episode)
         }
     }
     
@@ -127,9 +133,10 @@ class PlayerDetailsView : UIView
         print(url)
         let playerItem = AVPlayerItem(url: url)
         player.replaceCurrentItem(with: playerItem)
-        player.play()
-        playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+//        player.play()
+//        playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+//        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+        play()
     }
     
     fileprivate

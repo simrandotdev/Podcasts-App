@@ -53,11 +53,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     func setupAppUI() {
         UINavigationBar.appearance().isTranslucent = false
         UINavigationBar.appearance().barTintColor = primaryColor
-        UINavigationBar.appearance().tintColor = primaryLightColor
+        UINavigationBar.appearance().tintColor = primaryDarkTextColor
         UINavigationBar.appearance().prefersLargeTitles = true
         UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: primaryLightTextColor]
         UINavigationBar.appearance().titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor: primaryLightTextColor,
+            NSAttributedString.Key.foregroundColor: primaryDarkTextColor,
             NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 24)
         ]
         
@@ -77,7 +77,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
         UICollectionView.appearance().backgroundColor = primaryLightColor
         
         UIStackView.appearance(whenContainedInInstancesOf: [PlayerDetailsView.self]).backgroundColor = primaryLightColor
-        UITabBar.appearance().tintColor = .black
+        UITabBar.appearance().tintColor = primaryDarkTextColor
     }
 }
 

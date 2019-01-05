@@ -37,9 +37,10 @@
 		D429ED7620AB87CF008C66DD /* DownloadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7520AB87CF008C66DD /* DownloadViewController.swift */; };
 		D429ED7A20AB8C66008C66DD /* Podcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7920AB8C66008C66DD /* Podcast.swift */; };
 		D429ED7C20AC61F8008C66DD /* SearchResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED7B20AC61F8008C66DD /* SearchResults.swift */; };
-		D439488520D44BB4008BB6E2 /* FavoritePodcastRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D439488420D44BB4008BB6E2 /* FavoritePodcastRepository.swift */; };
+		D439488520D44BB4008BB6E2 /* PodcastsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = D439488420D44BB4008BB6E2 /* PodcastsRepository.swift */; };
 		D4397CE620ADBC3F00FF7839 /* EpisodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4397CE520ADBC3F00FF7839 /* EpisodesViewController.swift */; };
 		D4397CE820ADBEE300FF7839 /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4397CE720ADBEE300FF7839 /* Episode.swift */; };
+		F8C514EE21DEFDDF004149F4 /* RecentEpisodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C514ED21DEFDDF004149F4 /* RecentEpisodesViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,10 +101,11 @@
 		D429ED7520AB87CF008C66DD /* DownloadViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadViewController.swift; sourceTree = "<group>"; };
 		D429ED7920AB8C66008C66DD /* Podcast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Podcast.swift; sourceTree = "<group>"; };
 		D429ED7B20AC61F8008C66DD /* SearchResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResults.swift; sourceTree = "<group>"; };
-		D439488420D44BB4008BB6E2 /* FavoritePodcastRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritePodcastRepository.swift; sourceTree = "<group>"; };
+		D439488420D44BB4008BB6E2 /* PodcastsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastsRepository.swift; sourceTree = "<group>"; };
 		D4397CE520ADBC3F00FF7839 /* EpisodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesViewController.swift; sourceTree = "<group>"; };
 		D4397CE720ADBEE300FF7839 /* Episode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Episode.swift; sourceTree = "<group>"; };
 		D6B9436A832FDD757DAA2E43 /* Pods_Podcasts_AppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Podcasts_AppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8C514ED21DEFDDF004149F4 /* RecentEpisodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentEpisodesViewController.swift; sourceTree = "<group>"; };
 		FD0CF3F4D9BCD4487E4F79F6 /* Pods-Podcasts AppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Podcasts AppTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Podcasts AppTests/Pods-Podcasts AppTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -257,6 +259,7 @@
 				D4397CE520ADBC3F00FF7839 /* EpisodesViewController.swift */,
 				D429ED7520AB87CF008C66DD /* DownloadViewController.swift */,
 				D429ED7120AB8606008C66DD /* FavoriteViewController.swift */,
+				F8C514ED21DEFDDF004149F4 /* RecentEpisodesViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -264,7 +267,7 @@
 		D439488320D44B9A008BB6E2 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
-				D439488420D44BB4008BB6E2 /* FavoritePodcastRepository.swift */,
+				D439488420D44BB4008BB6E2 /* PodcastsRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -518,13 +521,14 @@
 				84A4329E20AF5CC6004F32AD /* UIImageViewExtensions.swift in Sources */,
 				D4397CE820ADBEE300FF7839 /* Episode.swift in Sources */,
 				84A4329F20AF5CC6004F32AD /* StringExtension.swift in Sources */,
-				D439488520D44BB4008BB6E2 /* FavoritePodcastRepository.swift in Sources */,
+				D439488520D44BB4008BB6E2 /* PodcastsRepository.swift in Sources */,
 				84A432A020AF5CC6004F32AD /* CodableDecodableExtensions.swift in Sources */,
 				84A432A220AF5CC6004F32AD /* DataExtension.swift in Sources */,
 				D429ED7C20AC61F8008C66DD /* SearchResults.swift in Sources */,
 				D429ED3F20AB81FA008C66DD /* AppDelegate.swift in Sources */,
 				D414F0D120ACD1E400D92DA8 /* APIService.swift in Sources */,
 				D414F0D620ACDC4200D92DA8 /* PodcastCell.swift in Sources */,
+				F8C514EE21DEFDDF004149F4 /* RecentEpisodesViewController.swift in Sources */,
 				D429ED7620AB87CF008C66DD /* DownloadViewController.swift in Sources */,
 				84A432A120AF5CC6004F32AD /* ColorExtensions.swift in Sources */,
 			);

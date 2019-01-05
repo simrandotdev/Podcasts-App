@@ -36,8 +36,6 @@ class EpisodeCell: UITableViewCell
         super.awakeFromNib()
         backgroundColor = .white
         containerView.backgroundColor = primaryLightColor
-        containerView.layer.cornerRadius = 5.0
-        containerView.layer.masksToBounds = true
     }
 
     override
