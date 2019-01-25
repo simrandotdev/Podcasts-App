@@ -15,9 +15,6 @@ class PodcastCell: UITableViewCell
     @IBOutlet
     weak var numberOfEpisodesLabel: UILabel!
     
-    @IBOutlet
-    weak var containerView: UIView!
-    
     
     var podcast: Podcast! {
         didSet {
@@ -35,8 +32,7 @@ class PodcastCell: UITableViewCell
     {
         super.awakeFromNib()
         // Initialization code
-        backgroundColor = .white
-        containerView.backgroundColor = primaryLightColor
+        backgroundColor = primaryLightColor
     }
 
     override

@@ -93,25 +93,10 @@ extension RecentEpisodesViewController
     override
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        var episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
+        let episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
         let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
         
-    }
-    
-    override
-    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView?
-    {
-        let activityIndicatorView = UIActivityIndicatorView(style: .whiteLarge)
-        activityIndicatorView.color = .darkGray
-        activityIndicatorView.startAnimating()
-        return activityIndicatorView
-    }
-    
-    override
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat
-    {
-        return episodes.isEmpty ? 200 : 0
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?

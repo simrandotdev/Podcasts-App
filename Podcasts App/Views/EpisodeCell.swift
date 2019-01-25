@@ -15,9 +15,6 @@ class EpisodeCell: UITableViewCell
     @IBOutlet
     weak var descriptionLabel: UILabel!
     
-    @IBOutlet
-    weak var containerView: UIView!
-    
     
     var episode : Episode! {
         didSet {
@@ -34,8 +31,7 @@ class EpisodeCell: UITableViewCell
     func awakeFromNib()
     {
         super.awakeFromNib()
-        backgroundColor = .white
-        containerView.backgroundColor = primaryLightColor
+        backgroundColor = primaryLightColor
     }
 
     override
