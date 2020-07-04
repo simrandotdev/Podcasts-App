@@ -127,15 +127,11 @@ class PlayerDetailsView : UIView
     fileprivate
     func playEpisode()
     {
-        print("Trying to play episode at url: \(episode?.enclosure?.link ?? "")")
-        
-        guard let url = URL(string: self.episode?.enclosure?.link ?? "") else { return }
+       
+        guard let url = URL(string: self.episode?.streamUrl ?? "") else { return }
         print(url)
         let playerItem = AVPlayerItem(url: url)
         player.replaceCurrentItem(with: playerItem)
-        //        player.play()
-        //        playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-        //        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
         play()
     }
     

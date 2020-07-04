@@ -18,9 +18,11 @@ class EpisodeCell: UITableViewCell
     
     var episode : Episode! {
         didSet {
-            titleLabel.text = episode?.title
-            publishedDateLabel.text = episode?.pubDate?.toDate().toFormat(format: "MMM dd, YYYY")
-            descriptionLabel.text = episode?.description
+            titleLabel.text = episode.title
+            descriptionLabel.text = episode.description
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MMM dd, yyyy"
+            publishedDateLabel.text = dateFormatter.string(from: episode.pubDate)
             
             guard let url = URL(string: episode?.imageUrl ?? "") else { return }
             thumbnailImageView.sd_setImage(with: url, completed: nil)

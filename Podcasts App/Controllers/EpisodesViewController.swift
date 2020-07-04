@@ -91,7 +91,7 @@ class EpisodesViewController: UITableViewController
     {
         guard let feedUrl = podcast?.feedUrl else { return }
         APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
-            self.episodes = episodes.items.reversed()
+            self.episodes = episodes.reversed()
             
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -150,21 +150,6 @@ extension EpisodesViewController
         return episodes.isEmpty ? 200 : 0
     }
     
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
-    {
-        var episode = self.episodes[indexPath.row]
-        episode.imageUrl = podcast?.artworkUrl600
-        let downloadAction = UITableViewRowAction(style: .normal, title: "Download") { (_, _) in
-            
-            // download the podcast episode using Alamofires
-            APIService.shared.downloadEpisode(episode: episode, completion: { (fileLocation) in
-                episode.enclosure?.link = fileLocation
-                self.repo.downloadEpisode(episode: episode)
-            })
-        }
-        return [downloadAction]
-    }
-    
     fileprivate
     func showPlayerDetailsView(withEpisode episode: Episode)
     {
@@ -188,7 +173,7 @@ extension EpisodesViewController: UISearchBarDelegate
         isSearching = searchText.count > 0
         
         filtered = self.episodes.filter { (episode) -> Bool in
-            (episode.title?.lowercased().contains(searchText.lowercased())) ?? false
+            (episode.title.lowercased().contains(searchText.lowercased())) ?? false
         }
         tableView.reloadData()
     }

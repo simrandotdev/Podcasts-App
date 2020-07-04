@@ -99,19 +99,6 @@ extension RecentEpisodesViewController
         
     }
     
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
-    {
-        var episode = self.episodes[indexPath.row]
-        let downloadAction = UITableViewRowAction(style: .normal, title: "Download") { (_, _) in
-            
-            // download the podcast episode using Alamofires
-            APIService.shared.downloadEpisode(episode: episode, completion: { (fileLocation) in
-                episode.enclosure?.link = fileLocation
-                self.repo.downloadEpisode(episode: episode)
-            })
-        }
-        return [downloadAction]
-    }
     
     fileprivate
     func showPlayerDetailsView(withEpisode episode: Episode)
@@ -120,7 +107,6 @@ extension RecentEpisodesViewController
         let playerDetailsView = PlayerDetailsView.initFromNib()
         playerDetailsView.frame = self.view.frame
         playerDetailsView.episode = episode
-//        playerDetailsView.thumbnail = podcast?.artworkUrl600
         
         UIView.animate(withDuration: 0.72) {
             window?.addSubview(playerDetailsView)
@@ -136,7 +122,7 @@ extension RecentEpisodesViewController: UISearchBarDelegate
         isSearching = searchText.count > 0
         
         filtered = self.episodes.filter { (episode) -> Bool in
-            (episode.title?.lowercased().contains(searchText.lowercased())) ?? false
+            (episode.title.lowercased().contains(searchText.lowercased())) ?? false
         }
         tableView.reloadData()
     }

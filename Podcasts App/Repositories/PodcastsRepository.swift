@@ -1,17 +1,14 @@
 import Foundation
 
-class PodcastsRepository
-{
+class PodcastsRepository {
     fileprivate let favoriteEpisodeKey = "favoritePodcasts"
     fileprivate let downloadedEpisodeKey = "downloadedEpisodeKey"
     fileprivate let recentlyPlayedPodcastsKey = "recentlyPlayedPodcasts"
 }
 
 // MARK:- Favorite Podcasts
-extension PodcastsRepository
-{
-    func favoritePodcast(podcast: Podcast) -> [Podcast]?
-    {
+extension PodcastsRepository {
+    func favoritePodcast(podcast: Podcast) -> [Podcast]? {
         guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
         if favoritePodcasts.contains(where: { podcast == $0 }) { return nil }
         
@@ -21,8 +18,7 @@ extension PodcastsRepository
         return favoritePodcasts
     }
     
-    func unfavoritePodcast(podcast: Podcast) -> [Podcast]?
-    {
+    func unfavoritePodcast(podcast: Podcast) -> [Podcast]? {
         guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
         let indexToDelete = indexOfPodcastToDelete(podcast: podcast, from: favoritePodcasts)
         if let indexToDelete = indexToDelete,
@@ -34,32 +30,26 @@ extension PodcastsRepository
         return favoritePodcasts
     }
     
-    func fetchFavoritePodcasts() -> [Podcast]?
-    {
+    func fetchFavoritePodcasts() -> [Podcast]? {
         let podcastsData = UserDefaults.standard.data(forKey: favoriteEpisodeKey)
         let favoritePodcasts = NSKeyedUnarchiver.unarchiveObject(with: podcastsData ?? Data()) as? [Podcast] ?? [Podcast]()
         return favoritePodcasts
     }
     
-    func isFavorite(podcast: Podcast) -> Bool
-    {
+    func isFavorite(podcast: Podcast) -> Bool {
         let podcasts = fetchFavoritePodcasts()
         return podcasts?.contains(podcast) ?? false
     }
     
     // MARK: Helper methods
-    fileprivate
-    func indexOfPodcastToDelete(podcast: Podcast, from podcasts: [Podcast]) -> Int?
-    {
+    fileprivate func indexOfPodcastToDelete(podcast: Podcast, from podcasts: [Podcast]) -> Int? {
         return podcasts.index(of: podcast)
     }
 }
 
 // MARK:- Download Podcasts
-extension PodcastsRepository
-{
-    func downloadEpisode(episode: Episode)
-    {
+extension PodcastsRepository {
+    func downloadEpisode(episode: Episode) {
         var episodes = downloadedEpisodes()
         if doesEpisodeExist(episode: episode) {
             return
@@ -68,8 +58,7 @@ extension PodcastsRepository
         saveEpisodes(episodes)
     }
     
-    func downloadedEpisodes() -> [Episode]
-    {
+    func downloadedEpisodes() -> [Episode] {
         guard let data = UserDefaults.standard.data(forKey: downloadedEpisodeKey) else { return [Episode]()}
         do
         {
@@ -112,7 +101,6 @@ extension PodcastsRepository
         let episodes = downloadedEpisodes()
         for ep in episodes {
             if( ep.author == episode.author &&
-                ep.content == episode.content &&
                 ep.description == episode.description &&
                 ep.imageUrl == episode.imageUrl &&
                 ep.title == episode.title &&
