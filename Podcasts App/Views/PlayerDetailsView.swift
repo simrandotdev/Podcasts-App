@@ -133,9 +133,9 @@ class PlayerDetailsView : UIView
         print(url)
         let playerItem = AVPlayerItem(url: url)
         player.replaceCurrentItem(with: playerItem)
-//        player.play()
-//        playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-//        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+        //        player.play()
+        //        playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+        //        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
         play()
     }
     
@@ -256,80 +256,86 @@ class PlayerDetailsView : UIView
     func setupLockScreenPlayCommand(_ sharedCommandCenter: MPRemoteCommandCenter)
     {
         sharedCommandCenter.playCommand.isEnabled = true
-        sharedCommandCenter.playCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
-            self.play()
-            
-            // Sets the time correctly on lock screen when resumed from pause.
-            MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPNowPlayingInfoPropertyPlaybackRate] = 1
-            
-            return MPRemoteCommandHandlerStatus.success
-        }
+        sharedCommandCenter.playCommand.addTarget(self, action: #selector(doPlayPause(_:)))
+
     }
     
     fileprivate
     func setupLockScreenPauseCommand(_ sharedCommandCenter: MPRemoteCommandCenter)
     {
         sharedCommandCenter.pauseCommand.isEnabled = true
-        sharedCommandCenter.pauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
-            self.pause()
-            MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPNowPlayingInfoPropertyPlaybackRate] = 0
-            return MPRemoteCommandHandlerStatus.success
-        }
+        sharedCommandCenter.pauseCommand.addTarget(self, action: #selector(doPause(_:)))
     }
     
     fileprivate
     func setupLockScreenTogglePlayPause(_ sharedCommandCenter: MPRemoteCommandCenter)
     {
         sharedCommandCenter.togglePlayPauseCommand.isEnabled = true
-        sharedCommandCenter.togglePlayPauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
-            self.handlePlayPause()
-            
-            return MPRemoteCommandHandlerStatus.success
-        }
+        sharedCommandCenter.togglePlayPauseCommand.addTarget(self, action: #selector(doPlayPause(_:)))
+    }
+    
+    @objc func doPlayPause(_ event:MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
+        self.handlePlayPause()
+        return .success
+    }
+    
+    @objc func doPlay(_ event:MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
+        self.play()
+        // Sets the time correctly on lock screen when resumed from pause.
+        MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPNowPlayingInfoPropertyPlaybackRate] = 1
+        return .success
+    }
+    
+    @objc func doPause(_ event:MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
+        self.pause()
+        MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPNowPlayingInfoPropertyPlaybackRate] = 0
+        return .success
     }
     
     @objc
     fileprivate
-    func handleNextTrack()
+    func handleNextTrack(_ event:MPRemoteCommandEvent)  -> MPRemoteCommandHandlerStatus
     {
         print("Play next episode")
         
-        if playListEpisodes?.count == 0 { return }
+        if playListEpisodes?.count == 0 { return .noActionableNowPlayingItem}
         
         guard let currentEpisodeIndex = playListEpisodes?.index(where: { (ep) -> Bool in
             return self.episode?.title == ep.title
-        }) else { return }
+        }) else { return .commandFailed}
         
         let nextEpisodeIndex = currentEpisodeIndex + 1
         
-        if nextEpisodeIndex >= (self.playListEpisodes?.count)! { return }
+        if nextEpisodeIndex >= (self.playListEpisodes?.count)! { return .noActionableNowPlayingItem }
         print("Next index", nextEpisodeIndex)
         if let nextEpisode = playListEpisodes?[nextEpisodeIndex]
         {
             self.episode = nextEpisode
         }
+        return .success
     }
     
     @objc
     fileprivate
-    func handlePreviousTrack()
+    func handlePreviousTrack(_ event:MPRemoteCommandEvent)  -> MPRemoteCommandHandlerStatus
     {
         print("Play previous episode")
-        if playListEpisodes?.count == 0 { return }
+        if playListEpisodes?.count == 0 { return .noActionableNowPlayingItem}
         
         guard let currentEpisodeIndex = playListEpisodes?.index(where: { (ep) -> Bool in
             return self.episode?.title == ep.title
-        }) else { return }
+        }) else { return .noActionableNowPlayingItem }
         
         let previousEpisodeIndex = currentEpisodeIndex - 1
         
-        if previousEpisodeIndex < 0 { return }
+        if previousEpisodeIndex < 0 { return .noActionableNowPlayingItem }
         print("Previous index", previousEpisodeIndex)
         
         if let previousEpisode = playListEpisodes?[previousEpisodeIndex]
         {
             self.episode = previousEpisode
         }
+        return .success
     }
     
     fileprivate
@@ -486,5 +492,5 @@ class PlayerDetailsView : UIView
 
 // Helper function inserted by Swift 4.2 migrator.
 fileprivate func convertFromAVAudioSessionCategory(_ input: AVAudioSession.Category) -> String {
-	return input.rawValue
+    return input.rawValue
 }
