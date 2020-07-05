@@ -296,7 +296,7 @@ class PlayerDetailsView : UIView
         
         if playListEpisodes?.count == 0 { return .noActionableNowPlayingItem}
         
-        guard let currentEpisodeIndex = playListEpisodes?.index(where: { (ep) -> Bool in
+        guard let currentEpisodeIndex = playListEpisodes?.firstIndex(where: { (ep) -> Bool in
             return self.episode?.title == ep.title
         }) else { return .commandFailed}
         
@@ -318,7 +318,7 @@ class PlayerDetailsView : UIView
         print("Play previous episode")
         if playListEpisodes?.count == 0 { return .noActionableNowPlayingItem}
         
-        guard let currentEpisodeIndex = playListEpisodes?.index(where: { (ep) -> Bool in
+        guard let currentEpisodeIndex = playListEpisodes?.firstIndex(where: { (ep) -> Bool in
             return self.episode?.title == ep.title
         }) else { return .noActionableNowPlayingItem }
         

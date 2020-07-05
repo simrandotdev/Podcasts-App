@@ -34,8 +34,6 @@ class APIService
     
     func fetchEpisodes(forPodcast rssUrl: String, completion: @escaping ([Episode]) -> Void)
     {
-        let secureFeedUrl = rssUrl.contains("https") ? rssUrl : rssUrl.replacingOccurrences(of: "http", with: "https")
-        
         guard let url = URL(string: rssUrl) else { return }
         
         DispatchQueue.global(qos: .background).async {
@@ -43,19 +41,19 @@ class APIService
             let parser = FeedParser(URL: url)
             print("After parser")
             
-            parser?.parseAsync(result: { (result) in
-                print("Successfully parse feed:", result.isSuccess)
-                
-                if let err = result.error {
-                    print("Failed to parse XML feed:", err)
+            
+            parser.parseAsync { (result) in
+                switch result {
+                case .success(let feed):
+                    guard let feed = feed.rssFeed else { return }
+                    
+                    let episodes = feed.toEpisodes()
+                    completion(episodes)
+                case .failure(let error):
+                    print("Failed to parse XML feed:", error)
                     return
                 }
-                
-                guard let feed = result.rssFeed else { return }
-                
-                let episodes = feed.toEpisodes()
-                completion(episodes)
-            })
+            }
         }
     }
 }

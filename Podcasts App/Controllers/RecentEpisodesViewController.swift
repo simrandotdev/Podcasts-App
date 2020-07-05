@@ -122,7 +122,7 @@ extension RecentEpisodesViewController: UISearchBarDelegate
         isSearching = searchText.count > 0
         
         filtered = self.episodes.filter { (episode) -> Bool in
-            (episode.title.lowercased().contains(searchText.lowercased())) ?? false
+            (episode.title.lowercased().contains(searchText.lowercased())) 
         }
         tableView.reloadData()
     }

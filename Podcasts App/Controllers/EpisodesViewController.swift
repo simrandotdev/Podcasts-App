@@ -138,7 +138,7 @@ extension EpisodesViewController
     override
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView?
     {
-        let activityIndicatorView = UIActivityIndicatorView(style: .whiteLarge)
+        let activityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
         activityIndicatorView.color = .darkGray
         activityIndicatorView.startAnimating()
         return activityIndicatorView
@@ -173,7 +173,7 @@ extension EpisodesViewController: UISearchBarDelegate
         isSearching = searchText.count > 0
         
         filtered = self.episodes.filter { (episode) -> Bool in
-            (episode.title.lowercased().contains(searchText.lowercased())) ?? false
+            (episode.title.lowercased().contains(searchText.lowercased())) 
         }
         tableView.reloadData()
     }

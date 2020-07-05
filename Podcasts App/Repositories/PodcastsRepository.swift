@@ -10,23 +10,31 @@ class PodcastsRepository {
 extension PodcastsRepository {
     func favoritePodcast(podcast: Podcast) -> [Podcast]? {
         guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
-        if favoritePodcasts.contains(where: { podcast == $0 }) { return nil }
-        
-        favoritePodcasts.append(podcast)
-        let favoritePodcastsData = NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts)
-        UserDefaults.standard.setValue(favoritePodcastsData, forKey: favoriteEpisodeKey)
+        do {
+            if favoritePodcasts.contains(where: { podcast == $0 }) { return nil }
+            favoritePodcasts.append(podcast)
+            let favoritePostcastsData = try NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts, requiringSecureCoding: false)
+            UserDefaults.standard.setValue(favoritePostcastsData, forKey: favoriteEpisodeKey)
+            
+        } catch {
+            print("Failed to save Podcasts.")
+        }
         return favoritePodcasts
     }
     
     func unfavoritePodcast(podcast: Podcast) -> [Podcast]? {
         guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
-        let indexToDelete = indexOfPodcastToDelete(podcast: podcast, from: favoritePodcasts)
-        if let indexToDelete = indexToDelete,
-            indexToDelete >= 0 {
-            favoritePodcasts.remove(at: indexToDelete)
+        do {
+            let indexToDelete = indexOfPodcastToDelete(podcast: podcast, from: favoritePodcasts)
+            if let indexToDelete = indexToDelete,
+                indexToDelete >= 0 {
+                favoritePodcasts.remove(at: indexToDelete)
+            }
+            let favoritePostcastsData = try NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts, requiringSecureCoding: false)
+            UserDefaults.standard.setValue(favoritePostcastsData, forKey: favoriteEpisodeKey)
+        } catch {
+            print("Failed to save Podcasts.")
         }
-        let favoritePodcastsData = NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts)
-        UserDefaults.standard.setValue(favoritePodcastsData, forKey: favoriteEpisodeKey)
         return favoritePodcasts
     }
     
@@ -43,7 +51,7 @@ extension PodcastsRepository {
     
     // MARK: Helper methods
     fileprivate func indexOfPodcastToDelete(podcast: Podcast, from podcasts: [Podcast]) -> Int? {
-        return podcasts.index(of: podcast)
+        return podcasts.firstIndex(of: podcast)
     }
 }
 
