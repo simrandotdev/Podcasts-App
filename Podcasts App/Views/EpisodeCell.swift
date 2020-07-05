@@ -33,7 +33,7 @@ class EpisodeCell: UITableViewCell
     func awakeFromNib()
     {
         super.awakeFromNib()
-        backgroundColor = primaryLightColor
+        backgroundColor = .systemBackground
     }
 
     override

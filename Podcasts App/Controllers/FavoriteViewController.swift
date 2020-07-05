@@ -10,7 +10,7 @@ class FavoriteViewController: UICollectionViewController
     func viewDidLoad()
     {
         super.viewDidLoad()
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .systemBackground
         setupCollectionView()
     }
     

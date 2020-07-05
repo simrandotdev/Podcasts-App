@@ -142,8 +142,8 @@ class PlayerDetailsView : UIView
         guard let key = episode?.streamUrl else { return }
         let oldTime = UserDefaults.standard.integer(forKey: key)
         player.seek(to: CMTimeMakeWithSeconds(Float64(oldTime), preferredTimescale: 60000))
-        playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+        playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        miniPlayPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         enlargeEpisodeView()
     }
     
@@ -151,8 +151,8 @@ class PlayerDetailsView : UIView
     func pause()
     {
         player.pause()
-        playPauseButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
-        miniPlayPauseButton.setImage(#imageLiteral(resourceName: "play"), for: .normal)
+        playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        miniPlayPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
         shrinkEpisodeView()
     }
     
@@ -486,11 +486,10 @@ class PlayerDetailsView : UIView
     
     // MARK: UI Setup
     func setupUI() {
-        backgroundColor = primaryLightColor
+        backgroundColor = .systemBackground
         volumeSlider.tintColor = primaryDarkColor
         currentTimeSlider.tintColor = primaryDarkColor
-        authorLabel.textColor = primaryDarkTextColor
-        blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = primaryLightColor }
+        blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = .systemBackground }
     }
 }
 

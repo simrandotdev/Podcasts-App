@@ -31,7 +31,7 @@ class EpisodesViewController: UITableViewController
     fileprivate
     func setupTableView()
     {
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .systemBackground
         tableView.separatorStyle = .none
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
         let nib = UINib(nibName: "EpisodeCell", bundle: nil)
@@ -42,7 +42,6 @@ class EpisodesViewController: UITableViewController
     func setupSearchBar()
     {
         searchController = UISearchController(searchResultsController: nil)
-        searchController?.dimsBackgroundDuringPresentation = false
         searchController?.searchBar.delegate = self
         
         navigationItem.searchController = searchController
@@ -79,9 +78,9 @@ class EpisodesViewController: UITableViewController
     {
         guard let podcast = podcast else { return }
         if (repo.isFavorite(podcast: podcast)) {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Unfavorite", style: .plain, target: self, action: #selector(handleUnFavorite))
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
         } else {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(handleSaveToFavorites))
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
         }
     }
     
@@ -130,7 +129,7 @@ extension EpisodesViewController
     {
         var episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
         episode.imageUrl = podcast?.artworkUrl600
-        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
         
     }

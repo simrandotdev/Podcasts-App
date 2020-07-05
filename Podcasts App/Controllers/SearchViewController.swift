@@ -14,7 +14,7 @@ class SearchViewController: UITableViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .systemBackground
         setupTableView()
         setupSearchBar()
     }

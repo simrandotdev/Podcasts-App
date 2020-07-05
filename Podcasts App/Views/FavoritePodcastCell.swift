@@ -1,44 +1,31 @@
 import UIKit
 
-class FavoritePodcastCell : UICollectionViewCell
-{
+class FavoritePodcastCell : UICollectionViewCell {
    
-    override
-    init(frame: CGRect)
-    {
+    override init(frame: CGRect) {
         super.init(frame: frame)
-        stylizeUI()
         layoutUI()
-        
-        backgroundColor = primaryLightColor
+        stylizeUI()
+        backgroundColor = .systemBackground
         layer.cornerRadius = 2.0
         layer.masksToBounds = true
     }
     
-    required
-    init?(coder aDecoder: NSCoder)
-    {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK:- Setups
-    fileprivate
-    func stylizeUI()
-    {
+    fileprivate func stylizeUI() {
         nameLabel.text = ""
         nameLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-        nameLabel.textColor = .white
         nameLabel.numberOfLines = 2
         artistNameLabel.text = ""
         artistNameLabel.font = UIFont.systemFont(ofSize: 13)
-        artistNameLabel.textColor = .white
-        imageView.contentMode = UIView.ContentMode.center
-        
+        imageView.contentMode = .scaleAspectFit
     }
     
-    fileprivate
-    func layoutUI()
-    {
+    fileprivate func layoutUI() {
         addSubview(imageView)
         imageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         imageView.bottomAnchor.constraint(equalTo: bottomAnchor).isActive = true
@@ -48,7 +35,7 @@ class FavoritePodcastCell : UICollectionViewCell
         let backgroundView: UIView = {
             let view = UIView()
             view.translatesAutoresizingMaskIntoConstraints = false
-            view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.7)
+            view.backgroundColor = .systemBackground
             return view
         }()
         addSubview(backgroundView)
@@ -70,8 +57,7 @@ class FavoritePodcastCell : UICollectionViewCell
     }
     
     
-    func setupCell(podcast: Podcast)
-    {
+    func setupCell(podcast: Podcast) {
         guard let imageUrl = URL(string: podcast.artworkUrl600 ?? "") else { return }
         imageView.sd_setImage(with: imageUrl)
         nameLabel.text = podcast.trackName

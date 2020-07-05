@@ -32,7 +32,7 @@ class PodcastCell: UITableViewCell
     {
         super.awakeFromNib()
         // Initialization code
-        backgroundColor = primaryLightColor
+        backgroundColor = .systemBackground
     }
 
     override

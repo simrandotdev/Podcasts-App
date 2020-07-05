@@ -80,32 +80,24 @@ extension PodcastsRepository {
         return [Episode]()
     }
     
-    func deleteEpisode(at index: Int)
-    {
+    func deleteEpisode(at index: Int) {
         var episodes = downloadedEpisodes()
         episodes.remove(at: index)
         saveEpisodes(episodes)
-        
     }
     
     // MARK: Helper methods
-    fileprivate
-    func saveEpisodes(_ episodes: [Episode])
+    fileprivate func saveEpisodes(_ episodes: [Episode])
     {
-        do
-        {
+        do {
             let data = try JSONEncoder().encode(episodes)
             UserDefaults.standard.set(data, forKey: downloadedEpisodeKey)
-        }
-        catch let encodeErr
-        {
+        } catch let encodeErr {
             print("Failed to encode episode: ", encodeErr)
         }
     }
     
-    fileprivate
-    func doesEpisodeExist(episode: Episode) -> Bool
-    {
+    fileprivate func doesEpisodeExist(episode: Episode) -> Bool {
         let episodes = downloadedEpisodes()
         for ep in episodes {
             if( ep.author == episode.author &&
@@ -123,10 +115,8 @@ extension PodcastsRepository {
 }
 
 // MARK:- Recently Played Podcast Episodes
-extension PodcastsRepository
-{
-    func addRecentlyPlayedPodcast(episode: Episode)
-    {
+extension PodcastsRepository {
+    func addRecentlyPlayedPodcast(episode: Episode) {
         guard var recentlyPlayedPosts = fetchAllRecentlyPlayedPodcasts() else { return }
         
         if let indexToRemove = recentlyPlayedPosts.firstIndex(where: { (ep) -> Bool in
@@ -147,8 +137,7 @@ extension PodcastsRepository
         }
     }
     
-    func fetchRecent100PlayedPodcasts() -> [Episode]?
-    {
+    func fetchRecent100PlayedPodcasts() -> [Episode]? {
         let episodes = fetchAllRecentlyPlayedPodcasts()
         if episodes?.count ?? 0 <= 100 { return episodes }
         
@@ -156,8 +145,7 @@ extension PodcastsRepository
         return Array(newEpisodes)
     }
     
-    func fetchAllRecentlyPlayedPodcasts() -> [Episode]?
-    {
+    func fetchAllRecentlyPlayedPodcasts() -> [Episode]? {
         guard let recentlyPlayedPodcastJSONString
             = UserDefaults.standard.string(forKey: recentlyPlayedPodcastsKey) else { return [Episode]() }
         do {

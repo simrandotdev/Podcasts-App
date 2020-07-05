@@ -32,7 +32,7 @@ class RecentEpisodesViewController: UITableViewController
     fileprivate
     func setupTableView()
     {
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .systemBackground
         tableView.separatorStyle = .none
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
         let nib = UINib(nibName: "EpisodeCell", bundle: nil)

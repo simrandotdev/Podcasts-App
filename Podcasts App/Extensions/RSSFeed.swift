@@ -1,11 +1,3 @@
-//
-//  RSSFeed.swift
-//  PodcastsCourseLBTA
-//
-//  Created by Brian Voong on 2/27/18.
-//  Copyright © 2018 Brian Voong. All rights reserved.
-//
-
 import FeedKit
 
 extension RSSFeed {
@@ -25,5 +17,4 @@ extension RSSFeed {
         })
         return episodes
     }
-    
 }

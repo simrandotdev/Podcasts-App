@@ -1,8 +1,8 @@
 import UIKit
 
 
-let primaryDarkColor = UIColor.black
-let primaryLightColor = UIColor.white
+let primaryDarkColor = UIColor.systemGray6
+let primaryLightColor = UIColor.systemBackground
 
 
 let primaryDarkTextColor = UIColor.black
@@ -26,33 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate
     }
     
     func setupAppUI() {
-        UINavigationBar.appearance().isTranslucent = false
-        UINavigationBar.appearance().barTintColor = primaryLightColor
-        UINavigationBar.appearance().tintColor = primaryDarkTextColor
         UINavigationBar.appearance().prefersLargeTitles = true
-        UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: primaryDarkTextColor]
-        UINavigationBar.appearance().titleTextAttributes = [
-            NSAttributedString.Key.foregroundColor: primaryDarkTextColor,
-            NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 24)
-        ]
-        
-        UITabBar.appearance().tintColor = primaryDarkColor
-        UITabBar.appearance().backgroundColor = primaryLightColor
-        
-        UISearchBar.appearance().tintColor = primaryDarkTextColor
-        
-        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).defaultTextAttributes = convertToNSAttributedStringKeyDictionary([NSAttributedString.Key.foregroundColor.rawValue: primaryDarkTextColor])
-        
-        UILabel.appearance().textColor = primaryDarkTextColor
-        
-        UITableView.appearance().backgroundColor = primaryLightColor
-        UITableViewCell.appearance().backgroundColor = primaryLightColor
-        
-        UICollectionViewCell.appearance().backgroundColor = primaryLightColor
-        UICollectionView.appearance().backgroundColor = primaryLightColor
-        
-        UIStackView.appearance(whenContainedInInstancesOf: [PlayerDetailsView.self]).backgroundColor = primaryLightColor
-        UITabBar.appearance().tintColor = primaryDarkTextColor
     }
 }
 
