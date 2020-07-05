@@ -58,7 +58,7 @@ extension DownloadViewController
     {
         print("Launch episode player")
         let episode = self.episodes[indexPath.row]
-        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
          mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
     }
     
@@ -66,15 +66,4 @@ extension DownloadViewController
     {
         return 120
     }
-    
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
-    {
-        let downloadAction = UITableViewRowAction(style: .destructive, title: "Delete") { (_, _) in
-            print("Deleting episodes from UserDefaults")
-            self.favoritePodcastRepository.deleteEpisode(at: indexPath.row)
-            self.loadDataIntoTableView()
-        }
-        return [downloadAction]
-    }
-    
 }

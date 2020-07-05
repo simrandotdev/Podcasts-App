@@ -148,20 +148,6 @@ extension EpisodesViewController
     {
         return episodes.isEmpty ? 200 : 0
     }
-    
-    fileprivate
-    func showPlayerDetailsView(withEpisode episode: Episode)
-    {
-        let window = UIApplication.shared.keyWindow
-        let playerDetailsView = PlayerDetailsView.initFromNib()
-        playerDetailsView.frame = self.view.frame
-        playerDetailsView.episode = episode
-        playerDetailsView.thumbnail = podcast?.artworkUrl600
-        
-        UIView.animate(withDuration: 0.72) {
-            window?.addSubview(playerDetailsView)
-        }
-    }
 }
 
 // MARK: Searchbar methods

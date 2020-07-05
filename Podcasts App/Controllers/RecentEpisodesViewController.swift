@@ -43,7 +43,6 @@ class RecentEpisodesViewController: UITableViewController
     func setupSearchBar()
     {
         searchController = UISearchController(searchResultsController: nil)
-        searchController?.dimsBackgroundDuringPresentation = false
         searchController?.searchBar.delegate = self
         
         navigationItem.searchController = searchController
@@ -94,23 +93,9 @@ extension RecentEpisodesViewController
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         let episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
-        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
         
-    }
-    
-    
-    fileprivate
-    func showPlayerDetailsView(withEpisode episode: Episode)
-    {
-        let window = UIApplication.shared.keyWindow
-        let playerDetailsView = PlayerDetailsView.initFromNib()
-        playerDetailsView.frame = self.view.frame
-        playerDetailsView.episode = episode
-        
-        UIView.animate(withDuration: 0.72) {
-            window?.addSubview(playerDetailsView)
-        }
     }
 }
 

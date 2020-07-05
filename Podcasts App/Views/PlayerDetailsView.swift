@@ -67,7 +67,7 @@ class PlayerDetailsView : UIView
     @IBAction
     func handleDismiss(_ sender: UIButton)
     {
-        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
         mainTabBarController?.minimizePlayerDetails()
     }
     
@@ -119,7 +119,7 @@ class PlayerDetailsView : UIView
     @objc
     func handleTapMaximize()
     {
-        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: nil, playListEpisodes: nil)
     }
     
