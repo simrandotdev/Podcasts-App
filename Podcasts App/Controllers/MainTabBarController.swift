@@ -50,7 +50,7 @@ class MainTabBarController : UITabBarController
             self.playerDetailsView.minimizedStackView.alpha = 0.0
         }, completion: nil)
     }
-
+    
     // MARK:- Setup methods
     fileprivate
     func setupTabBarNavigationController(title: String, image: UIImage, viewController: UIViewController) -> UINavigationController
@@ -78,15 +78,11 @@ class MainTabBarController : UITabBarController
         
         let recentEpisodesNavController = setupTabBarNavigationController(title: "History", image: UIImage(named: "downloads")!, viewController: RecentEpisodesViewController())
         
-//        let downloadsNavController =
-//            setupTabBarNavigationController(title: "Downloads", image: #imageLiteral(resourceName: "downloads"), viewController: DownloadViewController())
-        
         viewControllers =
             [
                 searchNavController,
                 favoriteNavController,
                 recentEpisodesNavController
-//                downloadsNavController
         ]
     }
     

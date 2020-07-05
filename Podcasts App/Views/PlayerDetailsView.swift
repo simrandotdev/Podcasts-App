@@ -139,6 +139,9 @@ class PlayerDetailsView : UIView
     func play()
     {
         player.play()
+        guard let key = episode?.streamUrl else { return }
+        let oldTime = UserDefaults.standard.integer(forKey: key)
+        player.seek(to: CMTimeMakeWithSeconds(Float64(oldTime), preferredTimescale: 60000))
         playPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
         miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
         enlargeEpisodeView()
@@ -198,7 +201,12 @@ class PlayerDetailsView : UIView
         
         let percentage = currentTimeSeconds / durationSeconds
         currentTimeSlider.value = Float(percentage)
-        
+        if(Int(currentTimeSeconds) % 5 == 0) {
+            guard let key = episode?.streamUrl else {
+                return
+            }
+            UserDefaults.standard.set(Int(currentTimeSeconds), forKey: key)
+        }
     }
     
     
