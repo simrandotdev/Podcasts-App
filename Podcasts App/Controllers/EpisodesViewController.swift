@@ -90,7 +90,7 @@ class EpisodesViewController: UITableViewController
     {
         guard let feedUrl = podcast?.feedUrl else { return }
         APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
-            self.episodes = episodes.reversed()
+            self.episodes = episodes
             
             DispatchQueue.main.async {
                 self.tableView.reloadData()
