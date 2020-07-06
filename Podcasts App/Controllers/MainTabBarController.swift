@@ -7,8 +7,7 @@ class MainTabBarController : UITabBarController
     var minimizeTopAnchorConstraint: NSLayoutConstraint!
     
     override
-    func viewDidLoad()
-    {
+    func viewDidLoad() {
         super.viewDidLoad()
         setupTabBarController()
         setupViewController()
@@ -17,9 +16,7 @@ class MainTabBarController : UITabBarController
     }
     
     // MARK: Handlers
-    @objc
-    func minimizePlayerDetails()
-    {
+    @objc func minimizePlayerDetails() {
         maximizeTopAnchorConstraint.isActive = false
         minimizeTopAnchorConstraint.isActive = true
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
@@ -31,8 +28,7 @@ class MainTabBarController : UITabBarController
         }, completion: nil)
     }
     
-    func maximizePlayerDetails(episode: Episode?, playListEpisodes: [Episode]?)
-    {
+    func maximizePlayerDetails(episode: Episode?, playListEpisodes: [Episode]?) {
         minimizeTopAnchorConstraint.isActive = false
         maximizeTopAnchorConstraint.constant = 0
         maximizeTopAnchorConstraint.isActive = true
@@ -52,9 +48,7 @@ class MainTabBarController : UITabBarController
     }
     
     // MARK:- Setup methods
-    fileprivate
-    func setupTabBarNavigationController(title: String, image: UIImage, viewController: UIViewController) -> UINavigationController
-    {
+    fileprivate func setupTabBarNavigationController(title: String, image: UIImage, viewController: UIViewController) -> UINavigationController {
         viewController.navigationItem.title = title
         viewController.tabBarItem.title = title
         viewController.tabBarItem.image = image
@@ -62,33 +56,25 @@ class MainTabBarController : UITabBarController
         return navController
     }
     
-    fileprivate
-    func setupTabBarController()
-    {
+    fileprivate func setupTabBarController() {
         view.backgroundColor = .systemBackground
     }
     
-    fileprivate
-    func setupViewController()
-    {
+    fileprivate func setupViewController() {
         let favoriteNavController =
             setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoriteViewController(collectionViewLayout: UICollectionViewFlowLayout()))
         let searchNavController =
             setupTabBarNavigationController(title: "Search", image: #imageLiteral(resourceName: "search"), viewController: SearchViewController())
-        
         let recentEpisodesNavController = setupTabBarNavigationController(title: "History", image: UIImage(named: "downloads")!, viewController: RecentEpisodesViewController())
         
-        viewControllers =
-            [
-                searchNavController,
-                favoriteNavController,
-                recentEpisodesNavController
+        viewControllers = [
+            searchNavController,
+            favoriteNavController,
+            recentEpisodesNavController
         ]
     }
     
-    fileprivate
-    func setupPlayerDetailsView()
-    {
+    fileprivate func setupPlayerDetailsView() {
         view.insertSubview(playerDetailsView, belowSubview: tabBar)
         playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -100,6 +86,5 @@ class MainTabBarController : UITabBarController
         playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         playerDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        
     }
 }
