@@ -487,8 +487,8 @@ class PlayerDetailsView : UIView
     // MARK: UI Setup
     func setupUI() {
         backgroundColor = .systemBackground
-        volumeSlider.tintColor = primaryDarkColor
-        currentTimeSlider.tintColor = primaryDarkColor
+        volumeSlider.tintColor = .systemGray6
+        currentTimeSlider.tintColor = .systemGray6
         blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = .systemBackground }
     }
 }
