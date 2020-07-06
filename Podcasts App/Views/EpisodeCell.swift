@@ -1,20 +1,11 @@
 import UIKit
 import SDWebImage
 
-class EpisodeCell: UITableViewCell
-{
-    @IBOutlet
-    weak var thumbnailImageView: UIImageView!
-    
-    @IBOutlet
-    weak var titleLabel: UILabel!
-    
-    @IBOutlet
-    weak var publishedDateLabel: UILabel!
-    
-    @IBOutlet
-    weak var descriptionLabel: UILabel!
-    
+class EpisodeCell: UITableViewCell {
+    @IBOutlet weak var thumbnailImageView: UIImageView!
+    @IBOutlet weak var titleLabel: UILabel!
+    @IBOutlet weak var publishedDateLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
     var episode : Episode! {
         didSet {
@@ -29,17 +20,9 @@ class EpisodeCell: UITableViewCell
         }
     }
     
-    override
-    func awakeFromNib()
-    {
+    override func awakeFromNib() {
         super.awakeFromNib()
         backgroundColor = .systemBackground
-    }
-
-    override
-    func setSelected(_ selected: Bool, animated: Bool)
-    {
-        super.setSelected(selected, animated: animated)
     }
 }
 

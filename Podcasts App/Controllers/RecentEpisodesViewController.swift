@@ -1,8 +1,7 @@
 import UIKit
 import SDWebImage
 
-class RecentEpisodesViewController: UITableViewController
-{
+class RecentEpisodesViewController: UITableViewController {
     private let cellId = "cellId"
     private var searchController: UISearchController?
     fileprivate let repo = PodcastsRepository()
@@ -12,26 +11,20 @@ class RecentEpisodesViewController: UITableViewController
     private var filtered = [Episode]()
     private var isSearching = false
     
-    override
-    func viewDidLoad()
-    {
+    override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupNavigationbar()
         setupTableView()
         setupSearchBar()
         fetchEpisodes()
     }
     
-    override func viewDidAppear(_ animated: Bool)
-    {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         fetchEpisodes()
     }
     
-    fileprivate
-    func setupTableView()
-    {
+    fileprivate func setupTableView() {
         tableView.backgroundColor = .systemBackground
         tableView.separatorStyle = .none
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
@@ -39,50 +32,36 @@ class RecentEpisodesViewController: UITableViewController
         tableView.register(nib, forCellReuseIdentifier: cellId)
     }
     
-    fileprivate
-    func setupSearchBar()
-    {
+    fileprivate func setupSearchBar() {
         searchController = UISearchController(searchResultsController: nil)
-        searchController?.dimsBackgroundDuringPresentation = false
         searchController?.searchBar.delegate = self
         
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
     }
     
-    fileprivate
-    func setupNavigationbar()
-    {
+    fileprivate func setupNavigationbar() {
         navigationController?.isNavigationBarHidden = false
     }
     
     
-    fileprivate
-    func fetchEpisodes()
-    {
+    fileprivate func fetchEpisodes() {
         episodes = repo.fetchAllRecentlyPlayedPodcasts() ?? episodes
         tableView.reloadData()
     }
 }
 
 // MARK: TableView methods
-extension RecentEpisodesViewController
-{
-    override
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
+extension RecentEpisodesViewController {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 110.0
     }
     
-    override
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return isSearching ? filtered.count : episodes.count
     }
     
-    override
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
-    {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
         cell.episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
         guard let url = URL(string: cell.episode.imageUrl ?? "") else { return cell }
@@ -90,35 +69,17 @@ extension RecentEpisodesViewController
         return cell
     }
     
-    override
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
-    {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
-        let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
         
-    }
-    
-    
-    fileprivate
-    func showPlayerDetailsView(withEpisode episode: Episode)
-    {
-        let window = UIApplication.shared.keyWindow
-        let playerDetailsView = PlayerDetailsView.initFromNib()
-        playerDetailsView.frame = self.view.frame
-        playerDetailsView.episode = episode
-        
-        UIView.animate(withDuration: 0.72) {
-            window?.addSubview(playerDetailsView)
-        }
     }
 }
 
 // MARK: Searchbar methods
-extension RecentEpisodesViewController: UISearchBarDelegate
-{
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
-    {
+extension RecentEpisodesViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         isSearching = searchText.count > 0
         
         filtered = self.episodes.filter { (episode) -> Bool in
@@ -127,8 +88,7 @@ extension RecentEpisodesViewController: UISearchBarDelegate
         tableView.reloadData()
     }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar)
-    {
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         isSearching = false
     }
 }

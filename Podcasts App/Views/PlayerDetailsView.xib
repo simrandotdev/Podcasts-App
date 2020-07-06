@@ -158,7 +158,7 @@
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jq7-4S-tug">
                                                     <rect key="frame" x="39" y="0.0" width="38.5" height="50"/>
                                                     <color key="tintColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <state key="normal" image="gobackward.30" catalog="system">
+                                                    <state key="normal" image="gobackward.15" catalog="system">
                                                         <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
                                                     <connections>
@@ -271,11 +271,11 @@
     </objects>
     <resources>
         <image name="appicon" width="512" height="512"/>
-        <image name="gobackward.30" catalog="system" width="121" height="128"/>
+        <image name="gobackward.15" catalog="system" width="121" height="128"/>
         <image name="goforward.15" catalog="system" width="121" height="128"/>
         <image name="max_volume" width="32.5" height="32.5"/>
         <image name="muted_volume" width="32.5" height="32.5"/>
-        <image name="pause" catalog="system" width="88" height="128"/>
+        <image name="pause" catalog="system" width="32" height="32"/>
         <image name="play.fill" catalog="system" width="116" height="128"/>
     </resources>
 </document>

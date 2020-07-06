@@ -1,7 +1,6 @@
 import Foundation
 
-struct SearchResults : Codable
-{
+struct SearchResults : Codable {
     let resultCount: Int
     let results: [Podcast]
 }

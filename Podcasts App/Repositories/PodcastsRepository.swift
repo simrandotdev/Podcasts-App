@@ -39,8 +39,13 @@ extension PodcastsRepository {
     }
     
     func fetchFavoritePodcasts() -> [Podcast]? {
-        let podcastsData = UserDefaults.standard.data(forKey: favoriteEpisodeKey)
-        let favoritePodcasts = NSKeyedUnarchiver.unarchiveObject(with: podcastsData ?? Data()) as? [Podcast] ?? [Podcast]()
+        var favoritePodcasts = [Podcast]()
+        do {
+            let podcastsData = UserDefaults.standard.data(forKey: favoriteEpisodeKey)
+            favoritePodcasts = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(podcastsData ?? Data()) as? [Podcast] ?? [Podcast]()
+        } catch  {
+            print("Failed to fetch Podcasts")
+        }
         return favoritePodcasts
     }
     
