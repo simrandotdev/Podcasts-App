@@ -2,28 +2,22 @@ import Foundation
 import Alamofire
 import FeedKit
 
-class APIService
-{
+class APIService {
     static let shared = APIService()
     private init() { }
     
-    func fetchPodcast(searchText: String, completion: @escaping ([Podcast]) -> Void)
-    {
+    func fetchPodcast(searchText: String, completion: @escaping ([Podcast]) -> Void) {
         let url = "https://itunes.apple.com/search"
         let parameters = ["term": searchText, "media": "podcast"]
         
         Alamofire.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: nil)
             .responseData { (dataResponse) in
-                if let err = dataResponse.error
-                {
-                    print("Failed to contact ", err)
-                    return
-                }
-                
-                guard let data = dataResponse.data else { return }
-                
-                do
-                {
+                do {
+                    if let err = dataResponse.error {
+                        print("Failed to contact ", err)
+                        return
+                    }
+                    guard let data = dataResponse.data else { return }
                     let searchResults = try JSONDecoder().decode(SearchResults.self, from: data)
                     completion(searchResults.results)
                 } catch let decodeErr {
@@ -32,16 +26,10 @@ class APIService
         }
     }
     
-    func fetchEpisodes(forPodcast rssUrl: String, completion: @escaping ([Episode]) -> Void)
-    {
+    func fetchEpisodes(forPodcast rssUrl: String, completion: @escaping ([Episode]) -> Void) {
         guard let url = URL(string: rssUrl) else { return }
-        
         DispatchQueue.global(qos: .background).async {
-            print("Before parser")
             let parser = FeedParser(URL: url)
-            print("After parser")
-            
-            
             parser.parseAsync { (result) in
                 switch result {
                 case .success(let feed):
@@ -58,7 +46,3 @@ class APIService
     }
 }
 
-struct FeedResponse : Codable
-{
-    let items: [Episode]
-}
