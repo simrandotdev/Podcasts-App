@@ -37,7 +37,7 @@ class EpisodesViewController: UITableViewController
     fileprivate func setupSearchBar() {
         searchController = UISearchController(searchResultsController: nil)
         searchController?.searchBar.delegate = self
-        
+        searchController?.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
     }
@@ -98,9 +98,9 @@ extension EpisodesViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
         episode.imageUrl = podcast?.artworkUrl600
+        self.view.window?.endEditing(true)
         let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
-        
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {

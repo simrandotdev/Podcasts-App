@@ -51,6 +51,7 @@ class SearchViewController: UITableViewController
         self.definesPresentationContext = true
         
         searchController = UISearchController(searchResultsController: nil)
+        searchController?.obscuresBackgroundDuringPresentation = false
         searchController?.searchBar.delegate = self
         searchController?.definesPresentationContext = true
         

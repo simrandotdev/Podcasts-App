@@ -35,7 +35,7 @@ class RecentEpisodesViewController: UITableViewController {
     fileprivate func setupSearchBar() {
         searchController = UISearchController(searchResultsController: nil)
         searchController?.searchBar.delegate = self
-        
+        searchController?.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
     }
