@@ -1,20 +1,11 @@
 import UIKit
 import SDWebImage
 
-class PodcastCell: UITableViewCell
-{
-    @IBOutlet
-    weak var thumbnailImage: UIImageView!
-    
-    @IBOutlet
-    weak var trackNameLabel: UILabel!
-    
-    @IBOutlet
-    weak var artistNameLabel: UILabel!
-    
-    @IBOutlet
-    weak var numberOfEpisodesLabel: UILabel!
-    
+class PodcastCell: UITableViewCell {
+    @IBOutlet weak var thumbnailImage: UIImageView!
+    @IBOutlet weak var trackNameLabel: UILabel!
+    @IBOutlet weak var artistNameLabel: UILabel!
+    @IBOutlet weak var numberOfEpisodesLabel: UILabel!
     
     var podcast: Podcast! {
         didSet {
@@ -26,21 +17,8 @@ class PodcastCell: UITableViewCell
         }
     }
     
-    
-    override
-    func awakeFromNib()
-    {
+    override func awakeFromNib(){
         super.awakeFromNib()
-        // Initialization code
         backgroundColor = .systemBackground
     }
-
-    override
-    func setSelected(_ selected: Bool, animated: Bool)
-    {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
 }

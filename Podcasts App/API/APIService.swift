@@ -34,7 +34,6 @@ class APIService {
                 switch result {
                 case .success(let feed):
                     guard let feed = feed.rssFeed else { return }
-                    
                     let episodes = feed.toEpisodes()
                     completion(episodes)
                 case .failure(let error):
