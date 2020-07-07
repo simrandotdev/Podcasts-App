@@ -58,10 +58,10 @@ class FavoritePodcastCell : UICollectionViewCell {
     
     
     func setupCell(podcast: Podcast) {
-        guard let imageUrl = URL(string: podcast.artworkUrl600 ?? "") else { return }
+        guard let imageUrl = URL(string: podcast.image ?? "") else { return }
         imageView.sd_setImage(with: imageUrl)
-        nameLabel.text = podcast.trackName
-        artistNameLabel.text = podcast.artistName
+        nameLabel.text = podcast.title
+        artistNameLabel.text = podcast.author
     }
     
     // MARK:- UI properties

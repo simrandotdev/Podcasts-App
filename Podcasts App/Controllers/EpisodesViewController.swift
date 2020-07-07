@@ -9,7 +9,7 @@ class EpisodesViewController: UITableViewController
     
     var podcast: Podcast? {
         didSet {
-            navigationItem.title = podcast?.trackName
+            navigationItem.title = podcast?.title
         }
     }
     
@@ -70,7 +70,7 @@ class EpisodesViewController: UITableViewController
     
     
     fileprivate func fetchEpisodes() {
-        guard let feedUrl = podcast?.feedUrl else { return }
+        guard let feedUrl = podcast?.rssFeedUrl else { return }
         APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
             self.episodes = episodes
             
@@ -90,14 +90,14 @@ extension EpisodesViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
         cell.episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
-        guard let url = URL(string: podcast?.artworkUrl600 ?? "") else { return cell }
+        guard let url = URL(string: podcast?.image ?? "") else { return cell }
         cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
-        episode.imageUrl = podcast?.artworkUrl600
+        episode.imageUrl = podcast?.image
         self.view.window?.endEditing(true)
         let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)

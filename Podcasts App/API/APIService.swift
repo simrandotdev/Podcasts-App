@@ -7,8 +7,8 @@ class APIService {
     private init() { }
     
     func fetchPodcast(searchText: String, completion: @escaping ([Podcast]) -> Void) {
-        let url = "https://itunes.apple.com/search"
-        let parameters = ["term": searchText, "media": "podcast"]
+        let url = "https://podcasts-server.herokuapp.com"
+        let parameters = ["query": searchText,]
         
         Alamofire.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: nil)
             .responseData { (dataResponse) in
@@ -18,8 +18,8 @@ class APIService {
                         return
                     }
                     guard let data = dataResponse.data else { return }
-                    let searchResults = try JSONDecoder().decode(SearchResults.self, from: data)
-                    completion(searchResults.results)
+                    let searchResults = try JSONDecoder().decode([Podcast].self, from: data)
+                    completion(searchResults)
                 } catch let decodeErr {
                     print("Failed to decode: ", decodeErr)
                 }

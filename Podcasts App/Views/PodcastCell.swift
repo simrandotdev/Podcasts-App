@@ -9,11 +9,11 @@ class PodcastCell: UITableViewCell {
     
     var podcast: Podcast! {
         didSet {
-            guard let url = URL(string: podcast.artworkUrl600 ?? "") else { return }
-            trackNameLabel.text = podcast.trackName
-            artistNameLabel.text = podcast.artistName
+            guard let url = URL(string: podcast.image ?? "") else { return }
+            trackNameLabel.text = podcast.title
+            artistNameLabel.text = podcast.author
             thumbnailImage.sd_setImage(with: url, completed: nil)
-            numberOfEpisodesLabel.text = "\(podcast.trackCount ?? 0) episodes"
+            numberOfEpisodesLabel.text = "\(podcast.totalEpisodes ?? 0) episodes"
         }
     }
     
