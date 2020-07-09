@@ -17,6 +17,14 @@ class Podcast : NSObject, Codable, NSCoding {
         self.rssFeedUrl = aDecoder.decodeObject(forKey: "rssFeedUrl") as? String
     }
     
+    init(podcastViewModel: PodcastViewModel) {
+        self.title = podcastViewModel.title
+        self.author = podcastViewModel.author
+        self.image = podcastViewModel.image
+        self.totalEpisodes = podcastViewModel.numberOfEpisodes
+        self.rssFeedUrl = podcastViewModel.rssFeedUrl
+    }
+    
     var title: String?
     var author: String?
     var image: String?

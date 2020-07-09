@@ -1,15 +1,9 @@
 import UIKit
-import Alamofire
 
-class SearchViewController: UITableViewController
-{
-    fileprivate var podcasts = [Podcast]()
-    fileprivate var filtered = [Podcast]()
-    fileprivate var isSearching = false
-    
+class SearchViewController: UITableViewController {
+    fileprivate let searchPodcastViewModel = SearchPodcastViewModel()
     fileprivate var searchController: UISearchController?
     fileprivate var timer : Timer?
-    
     fileprivate let cellId = "cellId"
     
     override func viewDidLoad() {
@@ -17,11 +11,12 @@ class SearchViewController: UITableViewController
         self.view.backgroundColor = .systemBackground
         setupTableView()
         setupSearchBar()
+        setupSearchPodcastViewModel()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        reSetupSearchbar()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        searchController?.searchBar.text = searchPodcastViewModel.searchTerm
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -29,13 +24,9 @@ class SearchViewController: UITableViewController
         searchController?.isActive = false
     }
     
-    fileprivate func loadPodcasts(searchText: String) {
-        APIService.shared.fetchPodcast(searchText: searchText) { (podcasts) in
-            DispatchQueue.main.async {
-                self.podcasts = podcasts
-                self.tableView.reloadData()
-            }
-        }
+    fileprivate func setupSearchPodcastViewModel() {
+        searchPodcastViewModel.delegate = self
+        searchPodcastViewModel.fetchPodcasts()
     }
     
     fileprivate func setupTableView() {
@@ -43,26 +34,17 @@ class SearchViewController: UITableViewController
         tableView.register(nib, forCellReuseIdentifier: cellId)
         tableView.separatorStyle = .none
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
-        
-        loadPodcasts(searchText: "podcast")
     }
     
     fileprivate func setupSearchBar() {
         self.definesPresentationContext = true
-        
         searchController = UISearchController(searchResultsController: nil)
         searchController?.obscuresBackgroundDuringPresentation = false
         searchController?.searchBar.delegate = self
+        searchController?.searchBar.text = searchPodcastViewModel.searchTerm
         searchController?.definesPresentationContext = true
-        
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
-    }
-    
-    fileprivate func reSetupSearchbar() {
-        let previousText = searchController?.searchBar.text
-        setupSearchBar()
-        searchController?.searchBar.text = previousText
     }
 }
 
@@ -73,19 +55,19 @@ extension SearchViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return podcasts.count
+        return searchPodcastViewModel.numberOfPodcasts
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! PodcastCell
-        cell.podcast = podcasts[indexPath.row]
+        cell.podcast = searchPodcastViewModel.podcast(atIndex: indexPath.row)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedPodcast = podcasts[indexPath.row]
+        let selectedPodcast = searchPodcastViewModel.podcast(atIndex: indexPath.row)
         let controller = EpisodesViewController()
-        controller.podcast = selectedPodcast
+        controller.podcastViewModel = selectedPodcast
         self.navigationController?.pushViewController(controller, animated: true)
     }
 }
@@ -93,14 +75,17 @@ extension SearchViewController {
 // MARK: SearchBar methods
 extension SearchViewController : UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.count > 0 {
-            timer?.invalidate()
-            timer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false, block: { (_) in
-                self.loadPodcasts(searchText: searchText)
-            })
-        }
-        else { loadPodcasts(searchText: "podcast") }
+        searchPodcastViewModel.searchPodcasts(podcast: searchText)
     }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) { loadPodcasts(searchText: "podcast") }
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.searchPodcastViewModel.fetchPodcasts(query: "podcast")
+    }
+}
+
+// MARK: SearchPodcastViewModelDelegate
+extension SearchViewController : SearchPodcastViewModelDelegate {
+    func didFetchedPodcasts() {
+        tableView.reloadData()
+    }
 }

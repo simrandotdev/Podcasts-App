@@ -7,9 +7,9 @@ class EpisodesViewController: UITableViewController
     private var searchController: UISearchController?
     fileprivate let repo = PodcastsRepository()
     
-    var podcast: Podcast? {
+    var podcastViewModel: PodcastViewModel? {
         didSet {
-            navigationItem.title = podcast?.title
+            navigationItem.title = podcastViewModel?.title
         }
     }
     
@@ -48,20 +48,20 @@ class EpisodesViewController: UITableViewController
     }
     
     @objc fileprivate func handleSaveToFavorites() {
-        guard let podcast = podcast else { return }
-        _ = repo.favoritePodcast(podcast: podcast)
+        guard let podcast = podcastViewModel else { return }
+        _ = repo.favoritePodcast(podcast: Podcast(podcastViewModel: podcast))
         setupFavoriteNavigationBarItem()
     }
     
     @objc fileprivate func handleUnFavorite() {
-        guard let podcast = podcast else { return }
-        _ = repo.unfavoritePodcast(podcast: podcast)
+        guard let podcast = podcastViewModel else { return }
+        _ = repo.unfavoritePodcast(podcast: Podcast(podcastViewModel: podcast))
         setupFavoriteNavigationBarItem()
     }
     
     fileprivate func setupFavoriteNavigationBarItem() {
-        guard let podcast = podcast else { return }
-        if (repo.isFavorite(podcast: podcast)) {
+        guard let podcast = podcastViewModel else { return }
+        if (repo.isFavorite(podcast: Podcast(podcastViewModel: podcast))) {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
         } else {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
@@ -70,7 +70,7 @@ class EpisodesViewController: UITableViewController
     
     
     fileprivate func fetchEpisodes() {
-        guard let feedUrl = podcast?.rssFeedUrl else { return }
+        guard let feedUrl = podcastViewModel?.rssFeedUrl else { return }
         APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
             self.episodes = episodes
             
@@ -90,14 +90,14 @@ extension EpisodesViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
         cell.episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
-        guard let url = URL(string: podcast?.image ?? "") else { return cell }
+        guard let url = URL(string: podcastViewModel?.image ?? "") else { return cell }
         cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         var episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
-        episode.imageUrl = podcast?.image
+        episode.imageUrl = podcastViewModel?.image
         self.view.window?.endEditing(true)
         let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)

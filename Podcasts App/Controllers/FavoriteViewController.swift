@@ -42,9 +42,9 @@ extension FavoriteViewController : UICollectionViewDelegateFlowLayout {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let favoritePodcast = favoritePodcasts?[indexPath.row]
+        guard let favoritePodcast = favoritePodcasts?[indexPath.row] else { return }
         let episodeController = EpisodesViewController()
-        episodeController.podcast = favoritePodcast
+        episodeController.podcastViewModel = PodcastViewModel(podcast: favoritePodcast)
         navigationController?.pushViewController(episodeController, animated: true)
     }
     
