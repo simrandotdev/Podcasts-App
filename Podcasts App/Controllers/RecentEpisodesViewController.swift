@@ -4,7 +4,7 @@ import SDWebImage
 class RecentEpisodesViewController: UITableViewController {
     private let cellId = "cellId"
     private var searchController: UISearchController?
-    fileprivate let repo = PodcastsRepository()
+    fileprivate let repo = PodcastsPersistantManager()
     
     
     private var episodes = [Episode]()

@@ -18,4 +18,13 @@ struct Episode : Codable {
         self.author = feedItem.iTunes?.iTunesAuthor ?? ""
         self.imageUrl = feedItem.iTunes?.iTunesImage?.attributes?.href
     }
+    
+    init(episodeViewModel: EpisodeViewModel) {
+        self.streamUrl = episodeViewModel.streamUrl
+        self.title = episodeViewModel.title
+        self.pubDate = episodeViewModel.pubDate
+        self.description = episodeViewModel.description
+        self.author = episodeViewModel.author
+        self.imageUrl = episodeViewModel.imageUrl
+    }
 }

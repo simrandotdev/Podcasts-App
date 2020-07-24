@@ -5,7 +5,8 @@ class EpisodesViewController: UITableViewController
 {
     private let cellId = "cellId"
     private var searchController: UISearchController?
-    fileprivate let repo = PodcastsRepository()
+
+    fileprivate var episodesListViewModel: EpisodesListViewModel!
     
     var podcastViewModel: PodcastViewModel? {
         didSet {
@@ -13,9 +14,14 @@ class EpisodesViewController: UITableViewController
         }
     }
     
-    private var episodes = [Episode]()
-    private var filtered = [Episode]()
-    private var isSearching = false
+    init(episodesListViewModel: EpisodesListViewModel = EpisodesListViewModel()) {
+        super.init(nibName: nil, bundle: nil)
+        self.episodesListViewModel = episodesListViewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +29,8 @@ class EpisodesViewController: UITableViewController
         setupNavigationbar()
         setupTableView()
         setupSearchBar()
-        fetchEpisodes()
+        guard let podcastViewModel = podcastViewModel else { return }
+        episodesListViewModel.getEpisodes(forPodcast: podcastViewModel)
     }
     
     fileprivate func setupTableView() {
@@ -48,35 +55,20 @@ class EpisodesViewController: UITableViewController
     }
     
     @objc fileprivate func handleSaveToFavorites() {
-        guard let podcast = podcastViewModel else { return }
-        _ = repo.favoritePodcast(podcast: Podcast(podcastViewModel: podcast))
+        podcastViewModel?.favorite()
         setupFavoriteNavigationBarItem()
     }
     
     @objc fileprivate func handleUnFavorite() {
-        guard let podcast = podcastViewModel else { return }
-        _ = repo.unfavoritePodcast(podcast: Podcast(podcastViewModel: podcast))
+        podcastViewModel?.unfavorite()
         setupFavoriteNavigationBarItem()
     }
     
     fileprivate func setupFavoriteNavigationBarItem() {
-        guard let podcast = podcastViewModel else { return }
-        if (repo.isFavorite(podcast: Podcast(podcastViewModel: podcast))) {
+        if podcastViewModel?.isFavorite() ?? false {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
         } else {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
-        }
-    }
-    
-    
-    fileprivate func fetchEpisodes() {
-        guard let feedUrl = podcastViewModel?.rssFeedUrl else { return }
-        APIService.shared.fetchEpisodes(forPodcast: feedUrl) { (episodes) in
-            self.episodes = episodes
-            
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
         }
     }
 }
@@ -89,14 +81,14 @@ extension EpisodesViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
-        cell.episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
+        cell.episode = self.episodesListViewModel.episode(atIndex: indexPath.row)
         guard let url = URL(string: podcastViewModel?.image ?? "") else { return cell }
         cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
+        var episode = self.episodesListViewModel.episode(atIndex: indexPath.row)
         episode.imageUrl = podcastViewModel?.image
         self.view.window?.endEditing(true)
         let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
@@ -111,22 +103,25 @@ extension EpisodesViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return episodes.isEmpty ? 200 : 0
+        return episodesListViewModel.episodesList.isEmpty ? 200 : 0
     }
 }
 
 // MARK: Searchbar methods
 extension EpisodesViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        isSearching = searchText.count > 0
-        
-        filtered = self.episodes.filter { (episode) -> Bool in
-            (episode.title.lowercased().contains(searchText.lowercased())) 
-        }
+        episodesListViewModel.search(forValue: searchText)
         tableView.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         isSearching = false
+    }
+}
+
+// MARK: EpisodesListViewModel Protocol
+extension EpisodesViewController : EpisodesListViewModelProtocol {
+    func didFetchedEpisodes() {
+        tableView.reloadData()
     }
 }

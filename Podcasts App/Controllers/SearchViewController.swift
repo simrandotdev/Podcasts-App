@@ -1,10 +1,19 @@
 import UIKit
 
 class SearchViewController: UITableViewController {
-    fileprivate let searchPodcastViewModel = SearchPodcastViewModel()
+    fileprivate var searchPodcastViewModel: SearchPodcastViewModel!
     fileprivate var searchController: UISearchController?
     fileprivate var timer : Timer?
     fileprivate let cellId = "cellId"
+    
+    init(searchPodcastViewModel: SearchPodcastViewModel = SearchPodcastViewModel()) {
+        super.init(nibName: nil, bundle: nil)
+        self.searchPodcastViewModel = searchPodcastViewModel
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

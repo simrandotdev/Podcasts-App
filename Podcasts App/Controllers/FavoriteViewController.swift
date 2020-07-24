@@ -3,7 +3,7 @@ import UIKit
 class FavoriteViewController: UICollectionViewController {
     private let cellId = "favoritesCellId"
     var favoritePodcasts : [Podcast]? = [Podcast]()
-    fileprivate let favoritePodcastRepository = PodcastsRepository()
+    fileprivate let favoritePodcastRepository = PodcastsPersistantManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()

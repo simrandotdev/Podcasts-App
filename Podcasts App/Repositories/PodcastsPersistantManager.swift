@@ -1,13 +1,13 @@
 import Foundation
 
-class PodcastsRepository {
+class PodcastsPersistantManager {
     fileprivate let favoriteEpisodeKey = "favoritePodcasts"
     fileprivate let downloadedEpisodeKey = "downloadedEpisodeKey"
     fileprivate let recentlyPlayedPodcastsKey = "recentlyPlayedPodcasts"
 }
 
 // MARK:- Favorite Podcasts
-extension PodcastsRepository {
+extension PodcastsPersistantManager {
     func favoritePodcast(podcast: Podcast) -> [Podcast]? {
         guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
         do {
@@ -61,7 +61,7 @@ extension PodcastsRepository {
 }
 
 // MARK:- Download Podcasts
-extension PodcastsRepository {
+extension PodcastsPersistantManager {
     func downloadEpisode(episode: Episode) {
         var episodes = downloadedEpisodes()
         if doesEpisodeExist(episode: episode) {
@@ -120,7 +120,7 @@ extension PodcastsRepository {
 }
 
 // MARK:- Recently Played Podcast Episodes
-extension PodcastsRepository {
+extension PodcastsPersistantManager {
     func addRecentlyPlayedPodcast(episode: Episode) {
         guard var recentlyPlayedPosts = fetchAllRecentlyPlayedPodcasts() else { return }
         

@@ -21,16 +21,16 @@ class SearchPodcastViewModel {
     
     init(podcasts: [Podcast]) {
         podcastsViewModel = podcasts.map{ PodcastViewModel(podcast: $0) }
-        DispatchQueue.main.async {[weak self] in
-            self?.delegate?.didFetchedPodcasts()
-        }
+        delegate?.didFetchedPodcasts()
     }
     
     
     func fetchPodcasts(query: String = "podcast") {
         api.fetchPodcast(searchText: query) { [weak self] (podcasts) in
-            self?.podcastsViewModel = podcasts.map{ PodcastViewModel(podcast: $0) }
-            self?.delegate?.didFetchedPodcasts()
+            DispatchQueue.main.async {[weak self] in
+                self?.podcastsViewModel = podcasts.map{ PodcastViewModel(podcast: $0) }
+                self?.delegate?.didFetchedPodcasts()
+            }
         }
     }
     
