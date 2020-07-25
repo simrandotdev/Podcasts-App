@@ -7,7 +7,7 @@ class EpisodeCell: UITableViewCell {
     @IBOutlet weak var publishedDateLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     
-    var episode : Episode! {
+    var episode : EpisodeViewModel! {
         didSet {
             titleLabel.text = episode.title
             descriptionLabel.text = episode.description

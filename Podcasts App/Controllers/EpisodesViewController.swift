@@ -30,7 +30,8 @@ class EpisodesViewController: UITableViewController
         setupTableView()
         setupSearchBar()
         guard let podcastViewModel = podcastViewModel else { return }
-        episodesListViewModel.getEpisodes(forPodcast: podcastViewModel)
+        episodesListViewModel.delegate = self
+        episodesListViewModel.fetchEpisodes(forPodcast: podcastViewModel)
     }
     
     fileprivate func setupTableView() {
@@ -77,7 +78,9 @@ class EpisodesViewController: UITableViewController
 extension EpisodesViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 110.0 }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return isSearching ? filtered.count : episodes.count }
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return episodesListViewModel.episodesList.count
+    }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
@@ -88,11 +91,11 @@ extension EpisodesViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        var episode = self.episodesListViewModel.episode(atIndex: indexPath.row)
+        let episode = self.episodesListViewModel.episode(atIndex: indexPath.row)
         episode.imageUrl = podcastViewModel?.image
         self.view.window?.endEditing(true)
         let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
-        mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
+        mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: episodesListViewModel.episodesList)
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -115,7 +118,7 @@ extension EpisodesViewController: UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        isSearching = false
+        episodesListViewModel.finishSearch()
     }
 }
 

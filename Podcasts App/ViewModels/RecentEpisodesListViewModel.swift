@@ -1,10 +1,14 @@
+//
+//  RecentEpisodesViewModel.swift
+//  Podcasts App
+//
+//  Created by jc on 2020-07-24.
+//  Copyright © 2020 Simran App. All rights reserved.
+//
+
 import Foundation
 
-protocol EpisodesListViewModelProtocol {
-    func didFetchedEpisodes()
-}
-
-class EpisodesListViewModel {
+class RecentEpisodesListViewModel {
     var podcast: PodcastViewModel?
     var delegate: EpisodesListViewModelProtocol?
     
@@ -14,24 +18,18 @@ class EpisodesListViewModel {
     
     var isSearching: Bool  = false {
         didSet {
-            guard let podcast = self.podcast else { return }
-            fetchEpisodes(forPodcast: self.podcast ?? podcast)
+            fetchEpisodes()
         }
     }
     
     private var episodeListViewModel = [EpisodeViewModel]()
     private var filteredEpisodesList = [EpisodeViewModel]()
-    private let api = APIService.shared
+    private let persistanceManager = PodcastsPersistantManager()
 
     
-    func fetchEpisodes(forPodcast podcast: PodcastViewModel) {
-        self.podcast = podcast
-        api.fetchEpisodes(forPodcast: podcast.rssFeedUrl) { [weak self] (episodes) in
-            DispatchQueue.main.async {
-                self?.episodeListViewModel = episodes.map{ EpisodeViewModel(episode: $0) }
-                self?.delegate?.didFetchedEpisodes()
-            }
-        }
+    func fetchEpisodes() {
+        let x = persistanceManager.fetchAllRecentlyPlayedPodcasts()
+        episodeListViewModel = x?.map{ EpisodeViewModel(episode: $0)} ?? [EpisodeViewModel]()
     }
     
     func episode(atIndex index: Int) -> EpisodeViewModel {
