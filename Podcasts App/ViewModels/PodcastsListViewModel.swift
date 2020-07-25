@@ -1,46 +1,32 @@
 import Foundation
 
-protocol SearchPodcastViewModelDelegate {
-    func didFetchedPodcasts()
-}
+class PodcastsListViewModel {
 
-
-class SearchPodcastViewModel {
-    
-    var podcastsViewModel = [PodcastViewModel]()
-    private let api = APIService.shared
-    private var timer : Timer?
-    
+    var podcastsViewModel = [PodcastViewModel]() { didSet { self.delegate?.didFetchedPodcasts() } }
     var searchTerm: String = ""
-    
-    var delegate: SearchPodcastViewModelDelegate?
+    var delegate: PodcastsListViewModelDelegate?
     var numberOfPodcasts: Int { get { podcastsViewModel.count } }
     
+    private let api: APIService
+    private var timer : Timer?
     
-    init() { }
-    
-    init(podcasts: [Podcast]) {
+    init(podcasts: [Podcast] = [], api: APIService = APIService.shared) {
         podcastsViewModel = podcasts.map{ PodcastViewModel(podcast: $0) }
-        delegate?.didFetchedPodcasts()
+        self.api = api
     }
-    
     
     func fetchPodcasts(query: String = "podcast") {
         api.fetchPodcast(searchText: query) { [weak self] (podcasts) in
             DispatchQueue.main.async {[weak self] in
                 self?.podcastsViewModel = podcasts.map{ PodcastViewModel(podcast: $0) }
-                self?.delegate?.didFetchedPodcasts()
             }
         }
     }
     
     func searchPodcasts(podcast: String) {
         self.searchTerm = podcast
-        if podcast.count > 0 {
-            timer?.invalidate()
-            timer = Timer.scheduledTimer(withTimeInterval: 0.4, repeats: false, block: { (_) in
-                self.fetchPodcasts(query: podcast)
-            })
+        if podcast.count > 2 {
+            self.fetchPodcasts(query: podcast)
         }
         else { self.self.fetchPodcasts(query: "podcast") }
     }

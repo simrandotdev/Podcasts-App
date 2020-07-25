@@ -69,8 +69,6 @@ extension RecentEpisodesViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
         cell.episode = episodesListViewModel.episodesList[indexPath.row]
-        guard let url = URL(string: cell.episode.imageUrl ?? "") else { return cell }
-        cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
         return cell
     }
     

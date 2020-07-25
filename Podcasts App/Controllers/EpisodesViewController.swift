@@ -5,14 +5,9 @@ class EpisodesViewController: UITableViewController
 {
     private let cellId = "cellId"
     private var searchController: UISearchController?
-
-    fileprivate var episodesListViewModel: EpisodesListViewModel!
+    private var episodesListViewModel: EpisodesListViewModel!
     
-    var podcastViewModel: PodcastViewModel? {
-        didSet {
-            navigationItem.title = podcastViewModel?.title
-        }
-    }
+    var podcastViewModel: PodcastViewModel! { didSet { navigationItem.title = podcastViewModel?.title } }
     
     init(episodesListViewModel: EpisodesListViewModel = EpisodesListViewModel()) {
         super.init(nibName: nil, bundle: nil)
@@ -25,34 +20,43 @@ class EpisodesViewController: UITableViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupNavigationbar()
         setupTableView()
         setupSearchBar()
+        setupViewModel()
+    }
+    
+    fileprivate func setupViewModel() {
         guard let podcastViewModel = podcastViewModel else { return }
         episodesListViewModel.delegate = self
         episodesListViewModel.fetchEpisodes(forPodcast: podcastViewModel)
     }
     
     fileprivate func setupTableView() {
-        tableView.backgroundColor = .systemBackground
-        tableView.separatorStyle = .none
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
+        tableView.separatorStyle = .none
         let nib = UINib(nibName: "EpisodeCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
     }
     
     fileprivate func setupSearchBar() {
         searchController = UISearchController(searchResultsController: nil)
-        searchController?.searchBar.delegate = self
         searchController?.obscuresBackgroundDuringPresentation = false
+        searchController?.searchBar.delegate = self
         navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
     }
     
     fileprivate func setupNavigationbar() {
         navigationController?.isNavigationBarHidden = false
         setupFavoriteNavigationBarItem()
+    }
+    
+    fileprivate func setupFavoriteNavigationBarItem() {
+        if podcastViewModel.isFavorite() {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
+        } else {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
+        }
     }
     
     @objc fileprivate func handleSaveToFavorites() {
@@ -63,14 +67,6 @@ class EpisodesViewController: UITableViewController
     @objc fileprivate func handleUnFavorite() {
         podcastViewModel?.unfavorite()
         setupFavoriteNavigationBarItem()
-    }
-    
-    fileprivate func setupFavoriteNavigationBarItem() {
-        if podcastViewModel?.isFavorite() ?? false {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
-        } else {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
-        }
     }
 }
 
@@ -123,7 +119,7 @@ extension EpisodesViewController: UISearchBarDelegate {
 }
 
 // MARK: EpisodesListViewModel Protocol
-extension EpisodesViewController : EpisodesListViewModelProtocol {
+extension EpisodesViewController : EpisodesListViewModelDelegate {
     func didFetchedEpisodes() {
         tableView.reloadData()
     }

@@ -24,5 +24,6 @@ class EpisodeCell: UITableViewCell {
         super.awakeFromNib()
         backgroundColor = .systemBackground
     }
+    
 }
 

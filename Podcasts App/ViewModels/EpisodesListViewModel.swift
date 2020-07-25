@@ -1,12 +1,8 @@
 import Foundation
 
-protocol EpisodesListViewModelProtocol {
-    func didFetchedEpisodes()
-}
-
 class EpisodesListViewModel {
     var podcast: PodcastViewModel?
-    var delegate: EpisodesListViewModelProtocol?
+    var delegate: EpisodesListViewModelDelegate?
     
     var episodesList: [EpisodeViewModel] {
         return self.isSearching ? self.filteredEpisodesList : self.episodeListViewModel

@@ -1,16 +1,8 @@
-//
-//  RecentEpisodesViewModel.swift
-//  Podcasts App
-//
-//  Created by jc on 2020-07-24.
-//  Copyright © 2020 Simran App. All rights reserved.
-//
-
 import Foundation
 
 class RecentEpisodesListViewModel {
     var podcast: PodcastViewModel?
-    var delegate: EpisodesListViewModelProtocol?
+    var delegate: EpisodesListViewModelDelegate?
     
     var episodesList: [EpisodeViewModel] {
         return self.isSearching ? self.filteredEpisodesList : self.episodeListViewModel

@@ -1,11 +1,11 @@
 import UIKit
 
 class PodcastsListViewController: UITableViewController {
-    fileprivate var searchPodcastViewModel: SearchPodcastViewModel!
+    fileprivate var searchPodcastViewModel: PodcastsListViewModel!
     fileprivate var searchController: UISearchController?
     fileprivate let cellId = "cellId"
     
-    init(searchPodcastViewModel: SearchPodcastViewModel = SearchPodcastViewModel()) {
+    init(searchPodcastViewModel: PodcastsListViewModel = PodcastsListViewModel()) {
         super.init(nibName: nil, bundle: nil)
         self.searchPodcastViewModel = searchPodcastViewModel
     }
@@ -76,7 +76,7 @@ extension PodcastsListViewController : UISearchBarDelegate {
 }
 
 // MARK:- SearchPodcastViewModelDelegate
-extension PodcastsListViewController : SearchPodcastViewModelDelegate {
+extension PodcastsListViewController : PodcastsListViewModelDelegate {
     func didFetchedPodcasts() {
         tableView.reloadData()
     }
