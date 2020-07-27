@@ -205,7 +205,6 @@ class PlayerDetailsView : UIView {
     fileprivate func setupLockScreenPlayCommand(_ sharedCommandCenter: MPRemoteCommandCenter) {
         sharedCommandCenter.playCommand.isEnabled = true
         sharedCommandCenter.playCommand.addTarget(self, action: #selector(doPlayPause(_:)))
-
     }
     
     fileprivate func setupLockScreenPauseCommand(_ sharedCommandCenter: MPRemoteCommandCenter) {
