@@ -62,6 +62,13 @@ extension PodcastsListViewController {
         controller.podcastViewModel = selectedPodcast
         self.navigationController?.pushViewController(controller, animated: true)
     }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let activityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        activityIndicatorView.color = .darkGray
+        activityIndicatorView.startAnimating()
+        return searchPodcastViewModel.numberOfPodcasts == 0 ? activityIndicatorView : UIView()
+    }
 }
 
 // MARK:- SearchBar methods

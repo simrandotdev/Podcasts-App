@@ -1,6 +1,6 @@
 import UIKit
 
-class FavoriteViewController: UICollectionViewController {
+class FavoritePodcastsViewController: UICollectionViewController {
     private let cellId = "favoritesCellId"
     var favoritePodcasts : [Podcast]? = [Podcast]()
     fileprivate let favoritePodcastRepository = PodcastsPersistantManager()
@@ -25,7 +25,7 @@ class FavoriteViewController: UICollectionViewController {
 }
 
 // MARK: CollectionView
-extension FavoriteViewController : UICollectionViewDelegateFlowLayout {
+extension FavoritePodcastsViewController : UICollectionViewDelegateFlowLayout {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return favoritePodcasts?.count ?? 0
     }
