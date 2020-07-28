@@ -1,20 +1,20 @@
 import Foundation
 
-class PodcastsRepository {
-    fileprivate let favoriteEpisodeKey = "favoritePodcasts"
+class PodcastsPersistantManager {
+    fileprivate let favoritePodcastsKey = "favoritePodcasts"
     fileprivate let downloadedEpisodeKey = "downloadedEpisodeKey"
     fileprivate let recentlyPlayedPodcastsKey = "recentlyPlayedPodcasts"
 }
 
 // MARK:- Favorite Podcasts
-extension PodcastsRepository {
+extension PodcastsPersistantManager {
     func favoritePodcast(podcast: Podcast) -> [Podcast]? {
         guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
         do {
             if favoritePodcasts.contains(where: { podcast == $0 }) { return nil }
             favoritePodcasts.append(podcast)
             let favoritePostcastsData = try NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts, requiringSecureCoding: false)
-            UserDefaults.standard.setValue(favoritePostcastsData, forKey: favoriteEpisodeKey)
+            UserDefaults.standard.setValue(favoritePostcastsData, forKey: favoritePodcastsKey)
             
         } catch {
             print("Failed to save Podcasts.")
@@ -31,7 +31,7 @@ extension PodcastsRepository {
                 favoritePodcasts.remove(at: indexToDelete)
             }
             let favoritePostcastsData = try NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts, requiringSecureCoding: false)
-            UserDefaults.standard.setValue(favoritePostcastsData, forKey: favoriteEpisodeKey)
+            UserDefaults.standard.setValue(favoritePostcastsData, forKey: favoritePodcastsKey)
         } catch {
             print("Failed to save Podcasts.")
         }
@@ -41,7 +41,7 @@ extension PodcastsRepository {
     func fetchFavoritePodcasts() -> [Podcast]? {
         var favoritePodcasts = [Podcast]()
         do {
-            let podcastsData = UserDefaults.standard.data(forKey: favoriteEpisodeKey)
+            let podcastsData = UserDefaults.standard.data(forKey: favoritePodcastsKey)
             favoritePodcasts = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(podcastsData ?? Data()) as? [Podcast] ?? [Podcast]()
         } catch  {
             print("Failed to fetch Podcasts")
@@ -61,7 +61,7 @@ extension PodcastsRepository {
 }
 
 // MARK:- Download Podcasts
-extension PodcastsRepository {
+extension PodcastsPersistantManager {
     func downloadEpisode(episode: Episode) {
         var episodes = downloadedEpisodes()
         if doesEpisodeExist(episode: episode) {
@@ -120,7 +120,7 @@ extension PodcastsRepository {
 }
 
 // MARK:- Recently Played Podcast Episodes
-extension PodcastsRepository {
+extension PodcastsPersistantManager {
     func addRecentlyPlayedPodcast(episode: Episode) {
         guard var recentlyPlayedPosts = fetchAllRecentlyPlayedPodcasts() else { return }
         

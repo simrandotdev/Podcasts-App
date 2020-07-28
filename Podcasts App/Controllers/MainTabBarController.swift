@@ -28,13 +28,13 @@ class MainTabBarController : UITabBarController
         }, completion: nil)
     }
     
-    func maximizePlayerDetails(episode: Episode?, playListEpisodes: [Episode]?) {
+    func maximizePlayerDetails(episode: EpisodeViewModel?, playListEpisodes: [EpisodeViewModel]?) {
         minimizeTopAnchorConstraint.isActive = false
         maximizeTopAnchorConstraint.constant = 0
         maximizeTopAnchorConstraint.isActive = true
         
         if let episode = episode {
-            playerDetailsView.episode = episode
+            playerDetailsView.episodeViewModel = episode
             playerDetailsView.playListEpisodes = playListEpisodes
         }
         
@@ -62,9 +62,9 @@ class MainTabBarController : UITabBarController
     
     fileprivate func setupViewController() {
         let favoriteNavController =
-            setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoriteViewController(collectionViewLayout: UICollectionViewFlowLayout()))
+            setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoritePodcastsViewController(collectionViewLayout: UICollectionViewFlowLayout()))
         let searchNavController =
-            setupTabBarNavigationController(title: "Search", image: #imageLiteral(resourceName: "search"), viewController: SearchViewController())
+            setupTabBarNavigationController(title: "Search", image: #imageLiteral(resourceName: "search"), viewController: PodcastsListViewController())
         let recentEpisodesNavController = setupTabBarNavigationController(title: "History", image: UIImage(named: "downloads")!, viewController: RecentEpisodesViewController())
         
         viewControllers = [
@@ -77,14 +77,12 @@ class MainTabBarController : UITabBarController
     fileprivate func setupPlayerDetailsView() {
         view.insertSubview(playerDetailsView, belowSubview: tabBar)
         playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
-        
-        maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height)
-        maximizeTopAnchorConstraint.isActive = true
-        
-        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
-        
         playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         playerDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        
+        maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height)
+        maximizeTopAnchorConstraint.isActive = true
+        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
     }
 }

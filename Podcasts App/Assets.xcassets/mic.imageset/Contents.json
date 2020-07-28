@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "playstore.png",
+      "filename" : "mic.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "playstore-1.png",
+      "filename" : "mic-1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "playstore-2.png",
+      "filename" : "mic-2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

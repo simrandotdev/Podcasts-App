@@ -56,7 +56,6 @@ class FavoritePodcastCell : UICollectionViewCell {
         stackView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -8).isActive = true
     }
     
-    
     func setupCell(podcast: Podcast) {
         guard let imageUrl = URL(string: podcast.image ?? "") else { return }
         imageView.sd_setImage(with: imageUrl)
@@ -65,7 +64,7 @@ class FavoritePodcastCell : UICollectionViewCell {
     }
     
     // MARK:- UI properties
-    let imageView = UIImageView(image: UIImage(named: "appicon"))
-    let nameLabel = UILabel()
-    let artistNameLabel = UILabel()
+    private let imageView = UIImageView(image: UIImage(named: "appicon"))
+    private let nameLabel = UILabel()
+    private let artistNameLabel = UILabel()
 }

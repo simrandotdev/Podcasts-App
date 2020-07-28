@@ -7,13 +7,13 @@ class PodcastCell: UITableViewCell {
     @IBOutlet weak var artistNameLabel: UILabel!
     @IBOutlet weak var numberOfEpisodesLabel: UILabel!
     
-    var podcast: Podcast! {
+    var podcast: PodcastViewModel! {
         didSet {
-            guard let url = URL(string: podcast.image ?? "") else { return }
+            guard let url = URL(string: podcast.image) else { return }
             trackNameLabel.text = podcast.title
             artistNameLabel.text = podcast.author
             thumbnailImage.sd_setImage(with: url, completed: nil)
-            numberOfEpisodesLabel.text = "\(podcast.totalEpisodes ?? 0) episodes"
+            numberOfEpisodesLabel.text = "\(podcast.numberOfEpisodes) episodes"
         }
     }
     

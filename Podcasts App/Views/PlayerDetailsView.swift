@@ -4,16 +4,16 @@ import AVKit
 import MediaPlayer
 
 class PlayerDetailsView : UIView {
-    let repo = PodcastsRepository()
+    let podcastsPersistantManager = PodcastsPersistantManager()
     
     // MARK:- Properties
-    var episode: Episode? {
+    var episodeViewModel: EpisodeViewModel? {
         didSet {
-            episodeTitleLabel.text = episode?.title
-            miniTitleLabel.text = episode?.title
-            authorLabel.text = episode?.author ?? ""
+            episodeTitleLabel.text = episodeViewModel?.title
+            miniTitleLabel.text = episodeViewModel?.title
+            authorLabel.text = episodeViewModel?.author ?? ""
             
-            guard let url = URL(string: episode?.imageUrl ?? "") else { return }
+            guard let url = URL(string: episodeViewModel?.imageUrl ?? "") else { return }
             episodeImageView.sd_setImage(with: url, completed: nil)
             miniEpisodeImageView.sd_setImage(with: url, completed: nil)
             
@@ -22,12 +22,12 @@ class PlayerDetailsView : UIView {
             playEpisode()
             setupImageInfoOnLockScreen()
             
-            guard let episode = self.episode else { return }
-            self.repo.addRecentlyPlayedPodcast(episode: episode)
+            guard let episode = self.episodeViewModel else { return }
+            self.podcastsPersistantManager.addRecentlyPlayedPodcast(episode: Episode(episodeViewModel: episode))
         }
     }
     
-    var playListEpisodes: [Episode]? = [Episode]()
+    var playListEpisodes: [EpisodeViewModel]? = [EpisodeViewModel]()
     
     var thumbnail: String? {
         didSet {
@@ -99,7 +99,7 @@ class PlayerDetailsView : UIView {
     
     // MARK:- Private Methods
     fileprivate func playEpisode() {
-        guard let url = URL(string: self.episode?.streamUrl ?? "") else { return }
+        guard let url = URL(string: self.episodeViewModel?.streamUrl ?? "") else { return }
         let playerItem = AVPlayerItem(url: url)
         player.replaceCurrentItem(with: playerItem)
         play()
@@ -107,7 +107,7 @@ class PlayerDetailsView : UIView {
     
     fileprivate func play() {
         player.play()
-        guard let key = episode?.streamUrl else { return }
+        guard let key = episodeViewModel?.streamUrl else { return }
         let oldTime = UserDefaults.standard.integer(forKey: key)
         player.seek(to: CMTimeMakeWithSeconds(Float64(oldTime), preferredTimescale: 60000))
         playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
@@ -159,7 +159,7 @@ class PlayerDetailsView : UIView {
         let percentage = currentTimeSeconds / durationSeconds
         currentTimeSlider.value = Float(percentage)
         if(Int(currentTimeSeconds) % 5 == 0) {
-            guard let key = episode?.streamUrl else {
+            guard let key = episodeViewModel?.streamUrl else {
                 return
             }
             UserDefaults.standard.set(Int(currentTimeSeconds), forKey: key)
@@ -205,7 +205,6 @@ class PlayerDetailsView : UIView {
     fileprivate func setupLockScreenPlayCommand(_ sharedCommandCenter: MPRemoteCommandCenter) {
         sharedCommandCenter.playCommand.isEnabled = true
         sharedCommandCenter.playCommand.addTarget(self, action: #selector(doPlayPause(_:)))
-
     }
     
     fileprivate func setupLockScreenPauseCommand(_ sharedCommandCenter: MPRemoteCommandCenter) {
@@ -240,13 +239,13 @@ class PlayerDetailsView : UIView {
         if playListEpisodes?.count == 0 { return .noActionableNowPlayingItem}
         
         guard let currentEpisodeIndex = playListEpisodes?.firstIndex(where: { (ep) -> Bool in
-            return self.episode?.title == ep.title
+            return self.episodeViewModel?.title == ep.title
         }) else { return .commandFailed}
         
         let nextEpisodeIndex = currentEpisodeIndex + 1
         if nextEpisodeIndex >= (self.playListEpisodes?.count)! { return .noActionableNowPlayingItem }
         if let nextEpisode = playListEpisodes?[nextEpisodeIndex] {
-            self.episode = nextEpisode
+            self.episodeViewModel = nextEpisode
         }
         return .success
     }
@@ -255,13 +254,13 @@ class PlayerDetailsView : UIView {
         if playListEpisodes?.count == 0 { return .noActionableNowPlayingItem}
         
         guard let currentEpisodeIndex = playListEpisodes?.firstIndex(where: { (ep) -> Bool in
-            return self.episode?.title == ep.title
+            return self.episodeViewModel?.title == ep.title
         }) else { return .noActionableNowPlayingItem }
         
         let previousEpisodeIndex = currentEpisodeIndex - 1
         if previousEpisodeIndex < 0 { return .noActionableNowPlayingItem }
         if let previousEpisode = playListEpisodes?[previousEpisodeIndex] {
-            self.episode = previousEpisode
+            self.episodeViewModel = previousEpisode
         }
         return .success
     }
@@ -269,8 +268,8 @@ class PlayerDetailsView : UIView {
     fileprivate func setupNowPlayingInfo()
     {
         var nowPlayingInfo = [String : Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = episode?.title
-        nowPlayingInfo[MPMediaItemPropertyArtist] = episode?.author
+        nowPlayingInfo[MPMediaItemPropertyTitle] = episodeViewModel?.title
+        nowPlayingInfo[MPMediaItemPropertyArtist] = episodeViewModel?.author
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
     

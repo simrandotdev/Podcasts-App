@@ -1,9 +1,9 @@
 import UIKit
 
-class FavoriteViewController: UICollectionViewController {
+class FavoritePodcastsViewController: UICollectionViewController {
     private let cellId = "favoritesCellId"
     var favoritePodcasts : [Podcast]? = [Podcast]()
-    fileprivate let favoritePodcastRepository = PodcastsRepository()
+    fileprivate let favoritePodcastRepository = PodcastsPersistantManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +25,7 @@ class FavoriteViewController: UICollectionViewController {
 }
 
 // MARK: CollectionView
-extension FavoriteViewController : UICollectionViewDelegateFlowLayout {
+extension FavoritePodcastsViewController : UICollectionViewDelegateFlowLayout {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return favoritePodcasts?.count ?? 0
     }
@@ -34,17 +34,14 @@ extension FavoriteViewController : UICollectionViewDelegateFlowLayout {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! FavoritePodcastCell
         if let podcast = favoritePodcasts?[indexPath.row] {
             cell.setupCell(podcast: podcast)
-            let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
-            longPressGesture.minimumPressDuration = 1
-            cell.addGestureRecognizer(longPressGesture)
         }
         return cell
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let favoritePodcast = favoritePodcasts?[indexPath.row]
+        guard let favoritePodcast = favoritePodcasts?[indexPath.row] else { return }
         let episodeController = EpisodesViewController()
-        episodeController.podcast = favoritePodcast
+        episodeController.podcastViewModel = PodcastViewModel(podcast: favoritePodcast)
         navigationController?.pushViewController(episodeController, animated: true)
     }
     
@@ -65,17 +62,5 @@ extension FavoriteViewController : UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 4
-    }
-    
-    @objc func handleLongPress(_ sender: UILongPressGestureRecognizer) {
-        let location = sender.location(in: collectionView)
-        showOkAlert(forViewController: self, title: "", message: "Are you sure you want to remove it from favorites") { (actions) in
-            guard let row = self.collectionView?.indexPathForItem(at: location)?.row else { return }
-            guard let podcast = self.favoritePodcasts?[row] else { return }
-            self.favoritePodcasts = self.favoritePodcastRepository.unfavoritePodcast(podcast: podcast)
-            DispatchQueue.main.async {
-                self.collectionView?.reloadData()
-            }
-        }
     }
 }

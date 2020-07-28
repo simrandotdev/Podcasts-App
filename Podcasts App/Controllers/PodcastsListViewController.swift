@@ -1,11 +1,11 @@
 import UIKit
 
 class PodcastsListViewController: UITableViewController {
-    fileprivate var searchPodcastViewModel: SearchPodcastViewModel!
+    fileprivate var searchPodcastViewModel: PodcastsListViewModel!
     fileprivate var searchController: UISearchController?
     fileprivate let cellId = "cellId"
     
-    init(searchPodcastViewModel: SearchPodcastViewModel = SearchPodcastViewModel()) {
+    init(searchPodcastViewModel: PodcastsListViewModel = PodcastsListViewModel()) {
         super.init(nibName: nil, bundle: nil)
         self.searchPodcastViewModel = searchPodcastViewModel
     }
@@ -62,6 +62,13 @@ extension PodcastsListViewController {
         controller.podcastViewModel = selectedPodcast
         self.navigationController?.pushViewController(controller, animated: true)
     }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let activityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        activityIndicatorView.color = .darkGray
+        activityIndicatorView.startAnimating()
+        return searchPodcastViewModel.numberOfPodcasts == 0 ? activityIndicatorView : UIView()
+    }
 }
 
 // MARK:- SearchBar methods
@@ -71,12 +78,12 @@ extension PodcastsListViewController : UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.searchPodcastViewModel.fetchPodcasts(query: "")
+        self.searchPodcastViewModel.fetchPodcasts()
     }
 }
 
 // MARK:- SearchPodcastViewModelDelegate
-extension PodcastsListViewController : SearchPodcastViewModelDelegate {
+extension PodcastsListViewController : PodcastsListViewModelDelegate {
     func didFetchedPodcasts() {
         tableView.reloadData()
     }

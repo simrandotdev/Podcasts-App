@@ -4,12 +4,17 @@ import SDWebImage
 class RecentEpisodesViewController: UITableViewController {
     private let cellId = "cellId"
     private var searchController: UISearchController?
-    fileprivate let repo = PodcastsRepository()
+    fileprivate let repo = PodcastsPersistantManager()
+    fileprivate var episodesListViewModel: RecentEpisodesListViewModel!
     
+    init(episodesListViewModel: RecentEpisodesListViewModel = RecentEpisodesListViewModel()) {
+        super.init(nibName: nil, bundle: nil)
+        self.episodesListViewModel = episodesListViewModel
+    }
     
-    private var episodes = [Episode]()
-    private var filtered = [Episode]()
-    private var isSearching = false
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,7 +51,7 @@ class RecentEpisodesViewController: UITableViewController {
     
     
     fileprivate func fetchEpisodes() {
-        episodes = repo.fetchAllRecentlyPlayedPodcasts() ?? episodes
+        episodesListViewModel.fetchEpisodes()
         tableView.reloadData()
     }
 }
@@ -58,21 +63,19 @@ extension RecentEpisodesViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return isSearching ? filtered.count : episodes.count
+        return episodesListViewModel.episodesList.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
-        cell.episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
-        guard let url = URL(string: cell.episode.imageUrl ?? "") else { return cell }
-        cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
+        cell.episode = episodesListViewModel.episodesList[indexPath.row]
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let episode = isSearching ? filtered[indexPath.row] : episodes[indexPath.row]
+        let episode = episodesListViewModel.episodesList[indexPath.row]
         let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
-        mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodes)
+        mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodesListViewModel.episodesList)
         
     }
 }
@@ -80,15 +83,11 @@ extension RecentEpisodesViewController {
 // MARK: Searchbar methods
 extension RecentEpisodesViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        isSearching = searchText.count > 0
-        
-        filtered = self.episodes.filter { (episode) -> Bool in
-            (episode.title.lowercased().contains(searchText.lowercased())) 
-        }
+        episodesListViewModel.search(forValue: searchText)
         tableView.reloadData()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        isSearching = false
+        episodesListViewModel.finishSearch()
     }
 }
