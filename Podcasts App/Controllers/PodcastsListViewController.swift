@@ -78,7 +78,7 @@ extension PodcastsListViewController : UISearchBarDelegate {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.searchPodcastViewModel.fetchPodcasts(query: "")
+        self.searchPodcastViewModel.fetchPodcasts()
     }
 }
 
