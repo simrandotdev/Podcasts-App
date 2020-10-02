@@ -1,5 +1,4 @@
 import Foundation
-import Alamofire
 import FeedKit
 
 class APIService {
@@ -7,23 +6,25 @@ class APIService {
     private init() { }
     
     func fetchPodcast(searchText: String, completion: @escaping ([Podcast]) -> Void) {
-        let url = "https://podcasts-server.herokuapp.com"
-        let parameters = ["query": searchText,]
-        
-        Alamofire.request(url, method: .get, parameters: parameters, encoding: URLEncoding.default, headers: nil)
-            .responseData { (dataResponse) in
-                do {
-                    if let err = dataResponse.error {
-                        print("Failed to contact ", err)
-                        return
-                    }
-                    guard let data = dataResponse.data else { return }
-                    let searchResults = try JSONDecoder().decode([Podcast].self, from: data)
-                    completion(searchResults)
-                } catch let decodeErr {
-                    print("Failed to decode: ", decodeErr)
-                }
+        guard let url = URL(string:"https://podcasts-server.herokuapp.com?query=\(searchText)") else {
+            return
         }
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let error = error {
+                print(error.localizedDescription)
+                completion([])
+            }
+            
+            do {
+                guard let data = data else { return }
+                let searchResults = try JSONDecoder().decode([Podcast].self, from: data)
+                completion(searchResults)
+            } catch let decodeErr {
+                completion([])
+                print("Failed to decode: ", decodeErr)
+            }
+        }.resume()
     }
     
     func fetchEpisodes(forPodcast rssUrl: String, completion: @escaping ([Episode]) -> Void) {
