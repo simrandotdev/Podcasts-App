@@ -3,7 +3,7 @@ import SDWebImage
 
 class EpisodesViewController: UITableViewController
 {
-    private let cellId = "cellId"
+    private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
     private var episodesListViewModel: EpisodesListViewModel!
     
@@ -35,7 +35,7 @@ class EpisodesViewController: UITableViewController
     fileprivate func setupTableView() {
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
         tableView.separatorStyle = .none
-        let nib = UINib(nibName: "EpisodeCell", bundle: nil)
+        let nib = UINib(nibName: "\(EpisodeCell.self)", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
     }
     
@@ -80,9 +80,8 @@ extension EpisodesViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
-        cell.episode = self.episodesListViewModel.episode(atIndex: indexPath.row)
-        guard let url = URL(string: podcastViewModel?.image ?? "") else { return cell }
-        cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
+        let episodeViewModel = self.episodesListViewModel.episode(atIndex: indexPath.row)
+        cell.configure(withViewModel: episodeViewModel, podcastImageURL: podcastViewModel.image)
         return cell
     }
     

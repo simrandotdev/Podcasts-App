@@ -25,4 +25,13 @@ class EpisodeCell: UITableViewCell {
         backgroundColor = .systemBackground
     }
     
+    func configure(withViewModel episodeViewModel: EpisodeViewModel, podcastImageURL: String) {
+        titleLabel.text = episodeViewModel.title
+        descriptionLabel.text = episodeViewModel.description
+        publishedDateLabel.text = episodeViewModel.pubDate.toString(withFormat: "MMM dd, yyyy")
+        
+        guard let url = URL(string: episodeViewModel.imageUrl ?? "") else { return }
+        thumbnailImageView.sd_setImage(with: url, completed: nil)
+    }
+    
 }

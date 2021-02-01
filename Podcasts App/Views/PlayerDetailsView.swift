@@ -83,10 +83,6 @@ class PlayerDetailsView : UIView {
         player.seek(to: seekTime)
     }
     
-    @IBAction func handleVolumeChanged(_ sender: Any) {
-        player.volume = volumeSlider.value
-    }
-    
     @objc func handlePlayPause() {
         if player.timeControlStatus == .paused { play() }
         else { pause() }
@@ -331,7 +327,6 @@ class PlayerDetailsView : UIView {
     @IBOutlet weak var currentTimeLabel: UILabel!
     @IBOutlet weak var episodeTitleLabel: UILabel!
     @IBOutlet weak var authorLabel: UILabel!
-    @IBOutlet weak var volumeSlider: UISlider!
     @IBOutlet var blankViewBetweenMediaPlayerControls: [UIView]!
     
     @IBOutlet weak var miniPlayPauseButton: UIButton!  {
@@ -365,7 +360,6 @@ class PlayerDetailsView : UIView {
     // MARK: UI Setup
     func setupUI() {
         backgroundColor = .systemBackground
-        volumeSlider.tintColor = .systemGray6
         currentTimeSlider.tintColor = .systemGray6
         blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = .systemBackground }
     }

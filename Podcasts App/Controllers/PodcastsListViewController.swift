@@ -3,7 +3,7 @@ import UIKit
 class PodcastsListViewController: UITableViewController {
     fileprivate var searchPodcastViewModel: PodcastsListViewModel!
     fileprivate var searchController: UISearchController?
-    fileprivate let cellId = "cellId"
+    fileprivate let cellId = "\(PodcastCell.self)"
     
     init(searchPodcastViewModel: PodcastsListViewModel = PodcastsListViewModel()) {
         super.init(nibName: nil, bundle: nil)
@@ -26,7 +26,7 @@ class PodcastsListViewController: UITableViewController {
     }
     
     fileprivate func setupTableView() {
-        let nib = UINib(nibName: "PodcastCell", bundle: nil)
+        let nib = UINib(nibName: "\(PodcastCell.self)", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
         tableView.separatorStyle = .none
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
@@ -43,7 +43,7 @@ class PodcastsListViewController: UITableViewController {
 // MARK:- TableView methods
 extension PodcastsListViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100.0
+        return 116.0
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
