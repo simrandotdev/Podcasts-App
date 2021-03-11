@@ -25,7 +25,7 @@ class EpisodesListViewModel {
         api.fetchEpisodes(forPodcast: podcast.rssFeedUrl) { [weak self] (episodes) in
             DispatchQueue.main.async {
                 self?.episodeListViewModel = episodes.map{ EpisodeViewModel(episode: $0) }
-                self?.delegate?.didFetchedEpisodes()
+                self?.delegate?.onFetchEpisodesComplete()
             }
         }
     }

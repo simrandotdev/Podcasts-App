@@ -1,5 +1,5 @@
 import Foundation
 
 protocol EpisodesListViewModelDelegate {
-    func didFetchedEpisodes()
+    func onFetchEpisodesComplete()
 }

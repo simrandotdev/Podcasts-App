@@ -28,7 +28,6 @@ class PodcastsListViewController: UITableViewController {
     fileprivate func setupTableView() {
         let nib = UINib(nibName: "\(PodcastCell.self)", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)
-        tableView.separatorStyle = .none
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
     }
     
@@ -84,7 +83,7 @@ extension PodcastsListViewController : UISearchBarDelegate {
 
 // MARK:- SearchPodcastViewModelDelegate
 extension PodcastsListViewController : PodcastsListViewModelDelegate {
-    func didFetchedPodcasts() {
+    func onPodcastsFetchComplete() {
         tableView.reloadData()
     }
 }
