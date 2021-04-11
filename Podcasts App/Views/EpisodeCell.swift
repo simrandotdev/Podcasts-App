@@ -23,6 +23,8 @@ class EpisodeCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         backgroundColor = .systemBackground
+        thumbnailImageView.layer.cornerRadius = 10
+        thumbnailImageView.layer.masksToBounds = true
     }
     
     func configure(withViewModel episodeViewModel: EpisodeViewModel, podcastImageURL: String) {

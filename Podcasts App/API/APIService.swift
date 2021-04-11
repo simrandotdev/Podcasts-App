@@ -8,9 +8,10 @@ class APIService {
     private init() { }
     
     func fetchPodcasts(searchText: String) -> Observable<[Podcast]> {
-        guard let url = URL(
-            string:"https://podcasts-server.herokuapp.com?query=\(searchText)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        ) else {
+        let BASEURL = "https://podcasts-server.herokuapp.com"
+        let searchURLString = "\(BASEURL)?query=\(searchText)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        
+        guard let url = URL(string: searchURLString) else {
             fatalError("Failed to create a URL")
         }
         let request = URLRequest(url: url)
@@ -19,7 +20,7 @@ class APIService {
             .data(request: request)
             .map { data in
                 try JSONDecoder().decode([Podcast].self, from: data)
-            }
+            }.timeout(RxTimeInterval.seconds(5), scheduler: MainScheduler.instance)
     }
     
     func fetchEpisodes(forPodcast rssUrl:String) -> Observable<[Episode]> {
@@ -44,28 +45,6 @@ class APIService {
         }
     }
     
-    
-    func fetchPodcast(searchText: String, completion: @escaping ([Podcast]) -> Void) {
-        guard let url = URL(string:"https://podcasts-server.herokuapp.com?query=\(searchText)") else {
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            if let error = error {
-                print(error.localizedDescription)
-                completion([])
-            }
-            
-            do {
-                guard let data = data else { return }
-                let searchResults = try JSONDecoder().decode([Podcast].self, from: data)
-                completion(searchResults)
-            } catch let decodeErr {
-                completion([])
-                print("Failed to decode: ", decodeErr)
-            }
-        }.resume()
-    }
     
     func fetchEpisodes(forPodcast rssUrl: String, completion: @escaping ([Episode]) -> Void) {
         guard let url = URL(string: rssUrl) else { return }

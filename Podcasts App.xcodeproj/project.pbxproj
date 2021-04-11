@@ -42,6 +42,8 @@
 		D4397CE620ADBC3F00FF7839 /* EpisodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4397CE520ADBC3F00FF7839 /* EpisodesViewController.swift */; };
 		D4397CE820ADBEE300FF7839 /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4397CE720ADBEE300FF7839 /* Episode.swift */; };
 		F807946B2623962900ED3B4E /* FavoritePodcastCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = F807946A2623962900ED3B4E /* FavoritePodcastCell.xib */; };
+		F88CC4C526239E5B000C303E /* EmptyView.xib in Resources */ = {isa = PBXBuildFile; fileRef = F88CC4C426239E5B000C303E /* EmptyView.xib */; };
+		F88CC4C826239EBE000C303E /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F88CC4C726239EBE000C303E /* EmptyView.swift */; };
 		F8C514EE21DEFDDF004149F4 /* RecentEpisodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C514ED21DEFDDF004149F4 /* RecentEpisodesViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -86,6 +88,8 @@
 		DFBB7C65331732E54696AD35 /* Pods-Podcasts App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Podcasts App.release.xcconfig"; path = "Target Support Files/Pods-Podcasts App/Pods-Podcasts App.release.xcconfig"; sourceTree = "<group>"; };
 		F807946A2623962900ED3B4E /* FavoritePodcastCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FavoritePodcastCell.xib; sourceTree = "<group>"; };
 		F859B12925275F5A0051B984 /* Podcasts Bin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Podcasts Bin.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F88CC4C426239E5B000C303E /* EmptyView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EmptyView.xib; sourceTree = "<group>"; };
+		F88CC4C726239EBE000C303E /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		F8C514ED21DEFDDF004149F4 /* RecentEpisodesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentEpisodesViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -173,6 +177,8 @@
 				846F224420AFDE8400CA2FC9 /* PlayerDetailsView.xib */,
 				849FE7EC20D2016400166425 /* FavoritePodcastCell.swift */,
 				F807946A2623962900ED3B4E /* FavoritePodcastCell.xib */,
+				F88CC4C726239EBE000C303E /* EmptyView.swift */,
+				F88CC4C426239E5B000C303E /* EmptyView.xib */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -305,6 +311,7 @@
 				F807946B2623962900ED3B4E /* FavoritePodcastCell.xib in Resources */,
 				D429ED4920AB81FC008C66DD /* LaunchScreen.storyboard in Resources */,
 				846F224520AFDE8400CA2FC9 /* PlayerDetailsView.xib in Resources */,
+				F88CC4C526239E5B000C303E /* EmptyView.xib in Resources */,
 				84A4329520AF3101004F32AD /* EpisodeCell.xib in Resources */,
 				D429ED4620AB81FC008C66DD /* Assets.xcassets in Resources */,
 				D414F0D420ACDA7500D92DA8 /* PodcastCell.xib in Resources */,
@@ -376,6 +383,7 @@
 				84A432A320AF5CC6004F32AD /* DateExtensions.swift in Sources */,
 				84A4329420AF3101004F32AD /* EpisodeCell.swift in Sources */,
 				84A432A420AF5CC6004F32AD /* AlertExtensions.swift in Sources */,
+				F88CC4C826239EBE000C303E /* EmptyView.swift in Sources */,
 				D4397CE820ADBEE300FF7839 /* Episode.swift in Sources */,
 				84A4329F20AF5CC6004F32AD /* StringExtension.swift in Sources */,
 				495E9E5624CAB54400F080D6 /* EpisodeViewModel.swift in Sources */,

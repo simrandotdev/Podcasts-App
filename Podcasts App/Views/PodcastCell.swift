@@ -20,5 +20,7 @@ class PodcastCell: UITableViewCell {
     override func awakeFromNib(){
         super.awakeFromNib()
         backgroundColor = .systemBackground
+        thumbnailImage?.layer.cornerRadius = 10
+        thumbnailImage?.layer.masksToBounds = true
     }
 }

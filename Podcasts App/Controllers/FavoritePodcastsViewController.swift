@@ -21,7 +21,6 @@ class FavoritePodcastsViewController: UICollectionViewController {
     fileprivate func setupCollectionView() {
         let favoritePodcastCellNib = UINib(nibName: "\(FavoritePodcastCell.self)", bundle: nil)
         collectionView.register(favoritePodcastCellNib, forCellWithReuseIdentifier: cellId)
-//        collectionView?.register(FavoritePodcastCell.self, forCellWithReuseIdentifier: cellId)
     }
     
 }
@@ -54,11 +53,11 @@ extension FavoritePodcastsViewController : UICollectionViewDelegateFlowLayout {
         return CGSize(width: size, height: size)
     }
     
-//    func collectionView(_ collectionView: UICollectionView,
-//                        layout collectionViewLayout: UICollectionViewLayout,
-//                        insetForSectionAt section: Int) -> UIEdgeInsets {
-//        return UIEdgeInsets(top: 16, left: 2, bottom: 16, right: 2)
-//    }
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 4, left: 8, bottom: 8 , right: 4)
+    }
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,

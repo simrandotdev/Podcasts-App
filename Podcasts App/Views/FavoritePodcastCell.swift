@@ -16,6 +16,8 @@ class FavoritePodcastCell : UICollectionViewCell {
         artistNameLabel.font = UIFont.systemFont(ofSize: 13)
         
         imageView.contentMode = .scaleAspectFit
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = true
         
         backgroundTitleView.alpha = 0.8
     }

@@ -25,8 +25,6 @@ class PodcastsListViewController: UITableViewController {
     
     // MARK:- Helper methods
     fileprivate func setupSearchPodcastViewModel() {
-        
-        self.searchPodcastViewModel.fetchPodcastsObservable()
         searchPodcastViewModel
             .podcastsObserver
             .subscribe(onNext: { podcasts in
@@ -93,9 +91,10 @@ extension PodcastsListViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        let activityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
+        let activityIndicatorView = UIActivityIndicatorView(
+                                        style: UIActivityIndicatorView.Style.large)
         activityIndicatorView.color = .darkGray
         activityIndicatorView.startAnimating()
-        return searchPodcastViewModel.podcasts.count == 0 ? activityIndicatorView : UIView()
+        return searchPodcastViewModel.podcasts.count == 0 ? activityIndicatorView : EmptyView()
     }
 }
