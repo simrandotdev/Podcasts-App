@@ -1,33 +1,39 @@
 import Foundation
+import RxSwift
+import RxCocoa
 
 class PodcastsListViewModel {
 
-    var podcastsViewModel = [PodcastViewModel]() { didSet { self.delegate?.onPodcastsFetchComplete() } }
     var searchTerm: String = ""
-    var delegate: PodcastsListViewModelDelegate?
-    var numberOfPodcasts: Int { get { podcastsViewModel.count } }
     
+    private var disposeBag = DisposeBag()
     private let api: APIService
     
+    private var podcastsPublishSubject = PublishSubject<[Podcast]>()
+    var podcastsObserver: Observable<[Podcast]> { return podcastsPublishSubject.asObserver() }
+    var podcasts = [PodcastViewModel]()
+    
     init(podcasts: [Podcast] = [], api: APIService = APIService.shared) {
-        podcastsViewModel = podcasts.map{ PodcastViewModel(podcast: $0) }
+        self.podcasts = podcasts.map{ PodcastViewModel(podcast: $0) }
         self.api = api
     }
     
-    func fetchPodcasts(query: String = "podcast") {
-        api.fetchPodcast(searchText: query) { [weak self] (podcasts) in
-            DispatchQueue.main.async { [weak self] in
-                self?.podcastsViewModel = podcasts.map{ PodcastViewModel(podcast: $0) }
-            }
+    func fetchPodcastsObservable(query: String = "podcast") {
+        var searchQuery = query
+        if searchQuery.isEmpty {
+            searchQuery = "podcast"
         }
+        
+        api.fetchPodcasts(searchText: searchQuery)
+            .subscribe(onNext: { podcasts in
+                self.podcastsPublishSubject.onNext(podcasts)
+                self.podcasts = podcasts.map{ PodcastViewModel(podcast: $0) }
+            }).disposed(by: disposeBag)
     }
     
-    func searchPodcasts(podcast: String) {
-        self.searchTerm = podcast
-        if podcast.count > 2 { self.fetchPodcasts(query: podcast) }
-        else { self.self.fetchPodcasts(query: "podcast") }
+    
+    func podcast(atIndex index: Int) -> PodcastViewModel {
+        if index >= podcasts.count { return podcasts.last! }
+        return podcasts[index]
     }
-    
-    
-    func podcast(atIndex index: Int) -> PodcastViewModel { podcastsViewModel[index] }
 }

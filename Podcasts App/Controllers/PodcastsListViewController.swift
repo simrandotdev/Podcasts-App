@@ -1,9 +1,13 @@
 import UIKit
+import RxSwift
+import RxCocoa
 
 class PodcastsListViewController: UITableViewController {
     fileprivate var searchPodcastViewModel: PodcastsListViewModel!
     fileprivate var searchController: UISearchController?
     fileprivate let cellId = "\(PodcastCell.self)"
+    
+    fileprivate let disposeBag = DisposeBag()
     
     init(searchPodcastViewModel: PodcastsListViewModel = PodcastsListViewModel()) {
         super.init(nibName: nil, bundle: nil)
@@ -21,8 +25,16 @@ class PodcastsListViewController: UITableViewController {
     
     // MARK:- Helper methods
     fileprivate func setupSearchPodcastViewModel() {
-        searchPodcastViewModel.delegate = self
-        searchPodcastViewModel.fetchPodcasts()
+        
+        self.searchPodcastViewModel.fetchPodcastsObservable()
+        searchPodcastViewModel
+            .podcastsObserver
+            .subscribe(onNext: { podcasts in
+                DispatchQueue.main.async {
+                    self.tableView.reloadData() 
+                }
+            }).disposed(by: disposeBag)
+            
     }
     
     fileprivate func setupTableView() {
@@ -34,8 +46,26 @@ class PodcastsListViewController: UITableViewController {
     fileprivate func setupSearchBar() {
         searchController = UISearchController(searchResultsController: nil)
         searchController?.obscuresBackgroundDuringPresentation = false
-        searchController?.searchBar.delegate = self
         navigationItem.searchController = searchController
+        
+        searchController?.searchBar
+            .rx
+            .text
+            .ifEmpty(default: "podcasts")
+            .throttle(RxTimeInterval.milliseconds(750) , scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .subscribe(onNext: { input in
+                guard let searchText = input?.description else { return }
+                self.searchPodcastViewModel.fetchPodcastsObservable(query: searchText)
+            }).disposed(by: disposeBag)
+        
+        searchController?.searchBar
+            .rx
+            .cancelButtonClicked
+            .subscribe(onNext: {
+                self.searchPodcastViewModel.fetchPodcastsObservable(query: "podcasts")
+            }).disposed(by: disposeBag)
+        
     }
 }
 
@@ -46,7 +76,7 @@ extension PodcastsListViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchPodcastViewModel.numberOfPodcasts
+        return searchPodcastViewModel.podcasts.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -66,24 +96,6 @@ extension PodcastsListViewController {
         let activityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
         activityIndicatorView.color = .darkGray
         activityIndicatorView.startAnimating()
-        return searchPodcastViewModel.numberOfPodcasts == 0 ? activityIndicatorView : UIView()
-    }
-}
-
-// MARK:- SearchBar methods
-extension PodcastsListViewController : UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchPodcastViewModel.searchPodcasts(podcast: searchText)
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.searchPodcastViewModel.fetchPodcasts()
-    }
-}
-
-// MARK:- SearchPodcastViewModelDelegate
-extension PodcastsListViewController : PodcastsListViewModelDelegate {
-    func onPodcastsFetchComplete() {
-        tableView.reloadData()
+        return searchPodcastViewModel.podcasts.count == 0 ? activityIndicatorView : UIView()
     }
 }
