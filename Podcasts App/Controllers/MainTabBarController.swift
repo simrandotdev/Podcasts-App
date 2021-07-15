@@ -84,5 +84,22 @@ class MainTabBarController : UITabBarController
         maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height)
         maximizeTopAnchorConstraint.isActive = true
         minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
+        
+        let swipeDownGesture = UIPanGestureRecognizer(target: self, action: #selector(panPiece))
+        playerDetailsView.addGestureRecognizer(swipeDownGesture)
+    }
+    
+    @objc func panPiece(_ gestureRecognizer : UIPanGestureRecognizer) {
+        guard gestureRecognizer.view != nil else {return}
+        let piece = gestureRecognizer.view!
+        let translation = gestureRecognizer.translation(in: piece.superview)
+        
+        if translation.y > 170 {
+            minimizePlayerDetails()
+        }
+        
+        if translation.y < -170 {
+            maximizePlayerDetails(episode: nil, playListEpisodes: nil)
+        }
     }
 }
