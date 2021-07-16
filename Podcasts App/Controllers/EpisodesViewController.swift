@@ -26,7 +26,10 @@ class EpisodesViewController: UITableViewController
         setupTableView()
         setupSearchBar()
         setupViewModel()
-        
+        setupSubscriptions()
+    }
+    
+    private func setupSubscriptions() {
         episodesListViewModel.episodesPublishSubject.subscribe(onNext: { _ in
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -88,18 +91,10 @@ extension EpisodesViewController: UISearchBarDelegate {
     }
 }
 
-// MARK:- EpisodesListViewModel Protocol
-extension EpisodesViewController : EpisodesListViewModelDelegate {
-    func onFetchEpisodesComplete() {
-        tableView.reloadData()
-    }
-}
-
 // MARK:- UI Setup methods
 fileprivate extension EpisodesViewController {
     func setupViewModel() {
         guard let podcastViewModel = podcastViewModel else { return }
-        episodesListViewModel.delegate = self
         episodesListViewModel.fetchEpisodes(forPodcast: podcastViewModel)
     }
     

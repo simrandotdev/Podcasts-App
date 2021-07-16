@@ -2,7 +2,6 @@ import Foundation
 
 class RecentEpisodesListViewModel {
     var podcast: PodcastViewModel?
-    var delegate: EpisodesListViewModelDelegate?
     
     var episodesList: [EpisodeViewModel] {
         return self.isSearching ? self.filteredEpisodesList : self.episodeListViewModel

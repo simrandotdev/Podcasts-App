@@ -4,7 +4,6 @@ import RxRelay
 
 class EpisodesListViewModel {
     var podcast: PodcastViewModel?
-    var delegate: EpisodesListViewModelDelegate?
     
     var episodesPublishSubject = BehaviorRelay<[EpisodeViewModel]>(value: [])
     var filteredEpisodesPublishSubject = BehaviorRelay<[EpisodeViewModel]>(value: [])
