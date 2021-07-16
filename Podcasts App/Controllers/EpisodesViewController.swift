@@ -1,11 +1,13 @@
 import UIKit
 import SDWebImage
+import RxSwift
 
 class EpisodesViewController: UITableViewController
 {
-    private let cellId = "cellId"
+    private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
     private var episodesListViewModel: EpisodesListViewModel!
+    private let bag = DisposeBag()
     
     var podcastViewModel: PodcastViewModel! { didSet { navigationItem.title = podcastViewModel?.title } }
     
@@ -24,53 +26,25 @@ class EpisodesViewController: UITableViewController
         setupTableView()
         setupSearchBar()
         setupViewModel()
+        setupSubscriptions()
     }
     
-    fileprivate func setupViewModel() {
-        guard let podcastViewModel = podcastViewModel else { return }
-        episodesListViewModel.delegate = self
-        episodesListViewModel.fetchEpisodes(forPodcast: podcastViewModel)
-    }
-    
-    fileprivate func setupTableView() {
-        tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
-        tableView.separatorStyle = .none
-        let nib = UINib(nibName: "EpisodeCell", bundle: nil)
-        tableView.register(nib, forCellReuseIdentifier: cellId)
-    }
-    
-    fileprivate func setupSearchBar() {
-        searchController = UISearchController(searchResultsController: nil)
-        searchController?.obscuresBackgroundDuringPresentation = false
-        searchController?.searchBar.delegate = self
-        navigationItem.searchController = searchController
-    }
-    
-    fileprivate func setupNavigationbar() {
-        navigationController?.isNavigationBarHidden = false
-        setupFavoriteNavigationBarItem()
-    }
-    
-    fileprivate func setupFavoriteNavigationBarItem() {
-        if podcastViewModel.isFavorite() {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
-        } else {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
-        }
-    }
-    
-    @objc fileprivate func handleSaveToFavorites() {
-        podcastViewModel?.favorite()
-        setupFavoriteNavigationBarItem()
-    }
-    
-    @objc fileprivate func handleUnFavorite() {
-        podcastViewModel?.unfavorite()
-        setupFavoriteNavigationBarItem()
+    private func setupSubscriptions() {
+        episodesListViewModel.episodesPublishSubject.subscribe(onNext: { _ in
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }).disposed(by: bag)
+        
+        episodesListViewModel.filteredEpisodesPublishSubject.subscribe(onNext: { _ in
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }).disposed(by: bag)
     }
 }
 
-// MARK: TableView methods
+// MARK:- TableView methods
 extension EpisodesViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 110.0 }
     
@@ -80,9 +54,8 @@ extension EpisodesViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
-        cell.episode = self.episodesListViewModel.episode(atIndex: indexPath.row)
-        guard let url = URL(string: podcastViewModel?.image ?? "") else { return cell }
-        cell.thumbnailImageView.sd_setImage(with: url, completed: nil)
+        let episodeViewModel = self.episodesListViewModel.episode(atIndex: indexPath.row)
+        cell.configure(withViewModel: episodeViewModel, podcastImageURL: podcastViewModel.image)
         return cell
     }
     
@@ -106,7 +79,7 @@ extension EpisodesViewController {
     }
 }
 
-// MARK: Searchbar methods
+// MARK:- Searchbar methods
 extension EpisodesViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         episodesListViewModel.search(forValue: searchText)
@@ -118,9 +91,50 @@ extension EpisodesViewController: UISearchBarDelegate {
     }
 }
 
-// MARK: EpisodesListViewModel Protocol
-extension EpisodesViewController : EpisodesListViewModelDelegate {
-    func didFetchedEpisodes() {
-        tableView.reloadData()
+// MARK:- UI Setup methods
+fileprivate extension EpisodesViewController {
+    func setupViewModel() {
+        guard let podcastViewModel = podcastViewModel else { return }
+        episodesListViewModel.fetchEpisodes(forPodcast: podcastViewModel)
+    }
+    
+    func setupTableView() {
+        tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
+        let nib = UINib(nibName: "\(EpisodeCell.self)", bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: cellId)
+    }
+    
+    func setupSearchBar() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController?.obscuresBackgroundDuringPresentation = false
+        searchController?.searchBar.delegate = self
+        navigationItem.searchController = searchController
+    }
+    
+    func setupNavigationbar() {
+        navigationController?.isNavigationBarHidden = false
+        setupFavoriteNavigationBarItem()
+    }
+    
+    func setupFavoriteNavigationBarItem() {
+        if podcastViewModel.isFavorite() {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
+        } else {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
+        }
+    }
+}
+
+
+// MARK:- Action handlers
+fileprivate extension EpisodesViewController {
+    @objc func handleSaveToFavorites() {
+        podcastViewModel?.favorite()
+        setupFavoriteNavigationBarItem()
+    }
+    
+    @objc func handleUnFavorite() {
+        podcastViewModel?.unfavorite()
+        setupFavoriteNavigationBarItem()
     }
 }

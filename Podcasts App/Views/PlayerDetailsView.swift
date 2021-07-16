@@ -83,10 +83,6 @@ class PlayerDetailsView : UIView {
         player.seek(to: seekTime)
     }
     
-    @IBAction func handleVolumeChanged(_ sender: Any) {
-        player.volume = volumeSlider.value
-    }
-    
     @objc func handlePlayPause() {
         if player.timeControlStatus == .paused { play() }
         else { pause() }
@@ -172,7 +168,6 @@ class PlayerDetailsView : UIView {
         let time = CMTime(value: 1, timescale: 3)
         let times = [NSValue(time: time)]
         player.addBoundaryTimeObserver(forTimes: times, queue: .main) { [weak self] in
-            print("Episode started playing")
             self?.enlargeEpisodeView()
         }
     }
@@ -308,11 +303,9 @@ class PlayerDetailsView : UIView {
         guard let type = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt else { return }
         
         if type == AVAudioSession.InterruptionType.began.rawValue {
-            print("Interruption begain...")
             pause()
         }
         else {
-            print("Interruption ended...")
             guard let options = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt else { return }
             
             if options == AVAudioSession.InterruptionOptions.shouldResume.rawValue {
@@ -331,7 +324,6 @@ class PlayerDetailsView : UIView {
     @IBOutlet weak var currentTimeLabel: UILabel!
     @IBOutlet weak var episodeTitleLabel: UILabel!
     @IBOutlet weak var authorLabel: UILabel!
-    @IBOutlet weak var volumeSlider: UISlider!
     @IBOutlet var blankViewBetweenMediaPlayerControls: [UIView]!
     
     @IBOutlet weak var miniPlayPauseButton: UIButton!  {
@@ -365,9 +357,16 @@ class PlayerDetailsView : UIView {
     // MARK: UI Setup
     func setupUI() {
         backgroundColor = .systemBackground
-        volumeSlider.tintColor = .systemGray6
+        
         currentTimeSlider.tintColor = .systemGray6
+        
         blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = .systemBackground }
+        
+        episodeImageView.layer.cornerRadius = 20
+        episodeImageView.layer.masksToBounds = true
+        
+        miniEpisodeImageView.layer.cornerRadius = 10
+        miniEpisodeImageView.layer.masksToBounds = true
     }
 }
 
