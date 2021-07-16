@@ -1,11 +1,13 @@
 import UIKit
 import SDWebImage
+import RxSwift
 
 class EpisodesViewController: UITableViewController
 {
     private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
     private var episodesListViewModel: EpisodesListViewModel!
+    private let bag = DisposeBag()
     
     var podcastViewModel: PodcastViewModel! { didSet { navigationItem.title = podcastViewModel?.title } }
     
@@ -24,6 +26,18 @@ class EpisodesViewController: UITableViewController
         setupTableView()
         setupSearchBar()
         setupViewModel()
+        
+        episodesListViewModel.episodesPublishSubject.subscribe(onNext: { _ in
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }).disposed(by: bag)
+        
+        episodesListViewModel.filteredEpisodesPublishSubject.subscribe(onNext: { _ in
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }).disposed(by: bag)
     }
 }
 

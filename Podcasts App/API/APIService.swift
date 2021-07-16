@@ -20,7 +20,7 @@ class APIService {
             .data(request: request)
             .map { data in
                 try JSONDecoder().decode([Podcast].self, from: data)
-            }.timeout(RxTimeInterval.seconds(5), scheduler: MainScheduler.instance)
+            }
     }
     
     func fetchEpisodes(forPodcast rssUrl:String) -> Observable<[Episode]> {
