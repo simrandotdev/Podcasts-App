@@ -61,7 +61,6 @@ extension EpisodesViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let episode = self.episodesListViewModel.episode(atIndex: indexPath.row)
-        episode.imageUrl = podcastViewModel?.image
         self.view.window?.endEditing(true)
         let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
         mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: episodesListViewModel.episodesList)

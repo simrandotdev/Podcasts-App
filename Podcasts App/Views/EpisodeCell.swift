@@ -32,7 +32,7 @@ class EpisodeCell: UITableViewCell {
         descriptionLabel.text = episodeViewModel.description
         publishedDateLabel.text = episodeViewModel.pubDate.toString(withFormat: "MMM dd, yyyy")
         
-        guard let url = URL(string: episodeViewModel.imageUrl ?? "") else { return }
+        guard let url = URL(string: episodeViewModel.imageUrl ?? podcastImageURL) else { return }
         thumbnailImageView.sd_setImage(with: url, completed: nil)
     }
     
