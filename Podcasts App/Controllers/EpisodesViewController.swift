@@ -118,9 +118,9 @@ fileprivate extension EpisodesViewController {
     
     func setupFavoriteNavigationBarItem() {
         if podcastViewModel.isFavorite() {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
         } else {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
         }
     }
 }

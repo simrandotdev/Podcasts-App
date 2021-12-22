@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 class MainTabBarController : UITabBarController
 {
@@ -61,16 +62,27 @@ class MainTabBarController : UITabBarController
     }
     
     fileprivate func setupViewController() {
-        let favoriteNavController =
-            setupTabBarNavigationController(title: "Favorites", image: #imageLiteral(resourceName: "favorites"), viewController: FavoritePodcastsViewController(collectionViewLayout: UICollectionViewFlowLayout()))
-        let searchNavController =
-            setupTabBarNavigationController(title: "Search", image: #imageLiteral(resourceName: "search"), viewController: PodcastsListViewController())
-        let recentEpisodesNavController = setupTabBarNavigationController(title: "History", image: UIImage(named: "downloads")!, viewController: RecentEpisodesViewController())
+        let favoriteNavController = setupTabBarNavigationController(title: "Favorites",
+                                                                    image: UIImage(systemName: "star.fill") ?? UIImage(),
+                                                                    viewController: FavoritePodcastsViewController(collectionViewLayout: UICollectionViewFlowLayout()))
+        
+        let searchNavController = setupTabBarNavigationController(title: "Search",
+                                                                  image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
+                                                                  viewController: PodcastsListViewController())
+        
+        let recentEpisodesNavController = setupTabBarNavigationController(title: "History",
+                                                                          image: UIImage(systemName: "square.stack.fill") ?? UIImage(),
+                                                                          viewController: RecentEpisodesViewController())
+        
+        let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
+                                                                        image: UIImage(systemName: "gear") ?? UIImage(),
+                                                                        viewController: UIHostingController(rootView: SettingsView()))
         
         viewControllers = [
             searchNavController,
             favoriteNavController,
-            recentEpisodesNavController
+            recentEpisodesNavController,
+            settingsViewNavController
         ]
     }
     
