@@ -9,8 +9,16 @@
 import SwiftUI
 
 struct SettingsView: View {
+    
+    @State private var isSyncingWithiCloud = false
+    
     var body: some View {
-        Text("Hello, Settings View!")
+        Form {
+            Button("Subscribe to get all features") { }
+            .foregroundColor(Color.purple)
+            
+            Toggle("Sync with iCloud", isOn: $isSyncingWithiCloud)
+        }
     }
 }
 
