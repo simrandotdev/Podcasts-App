@@ -1,36 +1,31 @@
 import Foundation
-import RxSwift
-import RxRelay
 
 class EpisodesListViewModel {
     var podcast: PodcastViewModel?
     
-    var episodesPublishSubject = BehaviorRelay<[EpisodeViewModel]>(value: [])
-    var filteredEpisodesPublishSubject = BehaviorRelay<[EpisodeViewModel]>(value: [])
+    private var episodes = [EpisodeViewModel]()
+    private var filteredEpisodes = [EpisodeViewModel]()
     
     var episodesList: [EpisodeViewModel] {
-        return self.isSearching ? self.filteredEpisodesPublishSubject.value : episodesPublishSubject.value
+        return self.isSearching ? self.filteredEpisodes : episodes
     }
     
-    private let bag = DisposeBag()
     
     var isSearching: Bool  = false {
         didSet {
             guard let podcast = self.podcast else { return }
-            fetchEpisodes(forPodcast: podcast)
+            Task {
+                try await fetchEpisodes(forPodcast: podcast)
+            }
         }
     }
     
     private let api = APIService.shared
     
-    func fetchEpisodes(forPodcast podcast: PodcastViewModel) {
+    func fetchEpisodes(forPodcast podcast: PodcastViewModel) async throws {
         self.podcast = podcast
-        api.fetchEpisodes(forPodcast: podcast.rssFeedUrl)
-            .subscribe(onNext: { [weak self] episodes in
-                DispatchQueue.main.async {
-                    self?.episodesPublishSubject.accept(episodes.map{ EpisodeViewModel(episode: $0) })
-                }
-            }).disposed(by: bag)
+        let episodesResult = try await api.fetchEpisodesAsync(forPodcast: podcast.rssFeedUrl)
+        episodes = episodesResult.map{ EpisodeViewModel(episode: $0) }
     }
     
     func episode(atIndex index: Int) -> EpisodeViewModel {
@@ -40,11 +35,9 @@ class EpisodesListViewModel {
     func search(forValue value: String) {
         isSearching = value.count > 0
         
-        episodesPublishSubject.map { episodes in
-            episodes.filter { $0.title.lowercased().contains(value.lowercased()) }
-        }.subscribe(onNext: {
-            self.filteredEpisodesPublishSubject.accept($0)
-        }).disposed(by: bag)
+        if isSearching {
+            filteredEpisodes = episodes.filter { $0.title.lowercased().contains(value.lowercased()) }
+        }
     }
     
     func finishSearch() {

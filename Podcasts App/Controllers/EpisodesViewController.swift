@@ -1,6 +1,5 @@
 import UIKit
 import SDWebImage
-import RxSwift
 import Resolver
 
 class EpisodesViewController: UITableViewController
@@ -9,7 +8,6 @@ class EpisodesViewController: UITableViewController
     
     private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
-    private let bag = DisposeBag()
     
     var podcastViewModel: PodcastViewModel! { didSet { navigationItem.title = podcastViewModel?.title } }
     
@@ -23,21 +21,6 @@ class EpisodesViewController: UITableViewController
         setupTableView()
         setupSearchBar()
         setupViewModel()
-        setupSubscriptions()
-    }
-    
-    private func setupSubscriptions() {
-        episodesListViewModel.episodesPublishSubject.subscribe(onNext: { _ in
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }).disposed(by: bag)
-        
-        episodesListViewModel.filteredEpisodesPublishSubject.subscribe(onNext: { _ in
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }).disposed(by: bag)
     }
 }
 
@@ -92,7 +75,12 @@ extension EpisodesViewController: UISearchBarDelegate {
 fileprivate extension EpisodesViewController {
     func setupViewModel() {
         guard let podcastViewModel = podcastViewModel else { return }
-        episodesListViewModel.fetchEpisodes(forPodcast: podcastViewModel)
+        Task {
+            try await episodesListViewModel.fetchEpisodes(forPodcast: podcastViewModel)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
     }
     
     func setupTableView() {
