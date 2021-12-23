@@ -1,16 +1,12 @@
 import Foundation
-import RxSwift
-import RxCocoa
+import Combine
 
 class PodcastsListViewModel {
 
     var searchTerm: String = ""
     
-    private var disposeBag = DisposeBag()
     private let api: APIService
     
-    private var podcastsPublishSubject = PublishSubject<[Podcast]>()
-    var podcastsObserver: Observable<[Podcast]> { return podcastsPublishSubject.asObserver() }
     var podcasts = [PodcastViewModel]()
     
     init(podcasts: [Podcast] = [], api: APIService = APIService.shared) {
@@ -18,17 +14,15 @@ class PodcastsListViewModel {
         self.api = api
     }
     
-    func fetchPodcastsObservable(query: String = "podcast") {
+    
+    func fetchPodcastsAsync(query: String = "podcast") async throws {
         var searchQuery = query
         if searchQuery.isEmpty {
             searchQuery = "podcast"
         }
         
-        api.fetchPodcasts(searchText: searchQuery)
-            .subscribe(onNext: { podcasts in
-                self.podcastsPublishSubject.onNext(podcasts)
-                self.podcasts = podcasts.map{ PodcastViewModel(podcast: $0) }
-            }).disposed(by: disposeBag)
+        let podcastsResults = try await api.fetchPodcastsAsync(searchText: query)
+        self.podcasts = podcastsResults.map{ PodcastViewModel(podcast: $0) }
     }
     
     
