@@ -2,9 +2,9 @@ import UIKit
 import SDWebImage
 import Resolver
 
-class EpisodesViewController: UITableViewController
+class PodcastDetailsViewController: UITableViewController
 {
-    @Injected private var episodesListViewModel: EpisodesListViewModel
+    @Injected private var episodesListViewModel: PodcastDetailViewModel
     
     private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
@@ -25,7 +25,7 @@ class EpisodesViewController: UITableViewController
 }
 
 // MARK:- TableView methods
-extension EpisodesViewController {
+extension PodcastDetailsViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 110.0 }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -60,7 +60,7 @@ extension EpisodesViewController {
 }
 
 // MARK:- Searchbar methods
-extension EpisodesViewController: UISearchBarDelegate {
+extension PodcastDetailsViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         episodesListViewModel.search(forValue: searchText)
         tableView.reloadData()
@@ -72,7 +72,7 @@ extension EpisodesViewController: UISearchBarDelegate {
 }
 
 // MARK:- UI Setup methods
-fileprivate extension EpisodesViewController {
+fileprivate extension PodcastDetailsViewController {
     func setupViewModel() {
         guard let podcastViewModel = podcastViewModel else { return }
         Task {
@@ -112,7 +112,7 @@ fileprivate extension EpisodesViewController {
 
 
 // MARK:- Action handlers
-fileprivate extension EpisodesViewController {
+fileprivate extension PodcastDetailsViewController {
     @objc func handleSaveToFavorites() {
         podcastViewModel?.favorite()
         setupFavoriteNavigationBarItem()

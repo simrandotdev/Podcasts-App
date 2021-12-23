@@ -1,15 +1,17 @@
 import Foundation
+import Resolver
 
-class EpisodesListViewModel {
-    var podcast: PodcastViewModel?
+class PodcastDetailViewModel {
     
+    @Injected var api: APIService
+    
+    private var podcast: PodcastViewModel?
     private var episodes = [EpisodeViewModel]()
     private var filteredEpisodes = [EpisodeViewModel]()
     
     var episodesList: [EpisodeViewModel] {
         return self.isSearching ? self.filteredEpisodes : episodes
     }
-    
     
     var isSearching: Bool  = false {
         didSet {
@@ -19,8 +21,6 @@ class EpisodesListViewModel {
             }
         }
     }
-    
-    private let api = APIService.shared
     
     func fetchEpisodes(forPodcast podcast: PodcastViewModel) async throws {
         self.podcast = podcast

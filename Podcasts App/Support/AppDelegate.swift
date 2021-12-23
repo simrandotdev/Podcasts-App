@@ -47,7 +47,7 @@ extension Resolver: ResolverRegistering {
         register { LocalStorageManager() }.scope(.application)
         register { APIService.shared }
         register { PodcastsListViewModel() }
-        register { EpisodesListViewModel() }
+        register { PodcastDetailViewModel() }
         register { RecentEpisodesListViewModel() }
         register { PodcastsPersistantManager() }
     }

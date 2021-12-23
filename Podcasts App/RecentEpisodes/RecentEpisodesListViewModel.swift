@@ -1,7 +1,12 @@
 import Foundation
+import Resolver
 
 class RecentEpisodesListViewModel {
-    var podcast: PodcastViewModel?
+    
+    @Injected var persistanceManager: PodcastsPersistantManager
+
+    private var episodeListViewModel = [EpisodeViewModel]()
+    private var filteredEpisodesList = [EpisodeViewModel]()
     
     var episodesList: [EpisodeViewModel] {
         return self.isSearching ? self.filteredEpisodesList : self.episodeListViewModel
@@ -13,11 +18,7 @@ class RecentEpisodesListViewModel {
         }
     }
     
-    private var episodeListViewModel = [EpisodeViewModel]()
-    private var filteredEpisodesList = [EpisodeViewModel]()
-    private let persistanceManager = PodcastsPersistantManager()
-
-    
+        
     func fetchEpisodes() {
         let x = persistanceManager.fetchAllRecentlyPlayedPodcasts()
         episodeListViewModel = x?.map{ EpisodeViewModel(episode: $0)} ?? [EpisodeViewModel]()

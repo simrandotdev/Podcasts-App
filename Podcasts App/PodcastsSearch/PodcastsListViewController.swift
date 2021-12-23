@@ -1,7 +1,8 @@
 import UIKit
 import Resolver
 
-class PodcastsListViewController: UITableViewController {
+class PodcastsSearchViewController: UITableViewController {
+    
     @Injected fileprivate var searchPodcastViewModel: PodcastsListViewModel
     
     fileprivate var searchController: UISearchController?
@@ -45,7 +46,7 @@ class PodcastsListViewController: UITableViewController {
 }
 
 
-extension PodcastsListViewController: UISearchResultsUpdating {
+extension PodcastsSearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let searchText = searchController.searchBar.text ?? "podcast"
         Task {
@@ -59,7 +60,7 @@ extension PodcastsListViewController: UISearchResultsUpdating {
 
 
 // MARK:- TableView methods
-extension PodcastsListViewController {
+extension PodcastsSearchViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 116.0
     }
@@ -76,7 +77,7 @@ extension PodcastsListViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedPodcast = searchPodcastViewModel.podcast(atIndex: indexPath.row)
-        let controller = EpisodesViewController()
+        let controller = PodcastDetailsViewController()
         controller.podcastViewModel = selectedPodcast
         self.navigationController?.pushViewController(controller, animated: true)
     }

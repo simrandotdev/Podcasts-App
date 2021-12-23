@@ -68,7 +68,7 @@ class MainTabBarController : UITabBarController
         
         let searchNavController = setupTabBarNavigationController(title: "Search",
                                                                   image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
-                                                                  viewController: PodcastsListViewController())
+                                                                  viewController: PodcastsSearchViewController())
         
         let recentEpisodesNavController = setupTabBarNavigationController(title: "History",
                                                                           image: UIImage(systemName: "square.stack.fill") ?? UIImage(),
