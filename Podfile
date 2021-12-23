@@ -8,6 +8,7 @@ target 'Podcasts App' do
   pod 'RxCocoa', '~> 5'
   pod 'FeedKit', '~> 9.0'
   pod 'SDWebImage', '~> 5.0'
+  pod "Resolver"
   
 
   # Pods for Podcasts App

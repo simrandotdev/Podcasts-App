@@ -5,6 +5,7 @@ import RxCocoa
 
 class APIService {
     static let shared = APIService()
+    
     private init() { }
     
     func fetchPodcasts(searchText: String) -> Observable<[Podcast]> {
@@ -15,6 +16,7 @@ class APIService {
             fatalError("Failed to create a URL")
         }
         let request = URLRequest(url: url)
+        
         return URLSession.shared
             .rx
             .data(request: request)

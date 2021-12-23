@@ -82,7 +82,7 @@ class MainTabBarController : UITabBarController
             searchNavController,
             favoriteNavController,
             recentEpisodesNavController,
-            settingsViewNavController
+//            settingsViewNavController
         ]
     }
     

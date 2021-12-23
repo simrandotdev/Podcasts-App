@@ -1,4 +1,5 @@
 import UIKit
+import Resolver
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,5 +20,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func setupAppUI() {
         UINavigationBar.appearance().prefersLargeTitles = true
+    }
+}
+
+
+extension Resolver: ResolverRegistering {
+    public static func registerAllServices() {
+        register { URLSession(configuration: .default) }
+        register { APIService.shared }
+        register { PodcastsListViewModel() }
+        register { EpisodesListViewModel() }
+        register { RecentEpisodesListViewModel() }
+        register { PodcastsPersistantManager() }
+        
     }
 }

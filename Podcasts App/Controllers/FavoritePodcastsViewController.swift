@@ -1,9 +1,11 @@
 import UIKit
+import Resolver
 
 class FavoritePodcastsViewController: UICollectionViewController {
     private let cellId = "favoritesCellId"
     var favoritePodcasts : [Podcast]? = [Podcast]()
-    fileprivate let favoritePodcastRepository = PodcastsPersistantManager()
+    
+    @Injected fileprivate var favoritePodcastRepository: PodcastsPersistantManager
     
     override func viewDidLoad() {
         super.viewDidLoad()

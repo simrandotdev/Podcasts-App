@@ -1,24 +1,21 @@
 import UIKit
 import SDWebImage
 import RxSwift
+import Resolver
 
 class EpisodesViewController: UITableViewController
 {
+    @Injected private var episodesListViewModel: EpisodesListViewModel
+    
     private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
-    private var episodesListViewModel: EpisodesListViewModel!
     private let bag = DisposeBag()
     
     var podcastViewModel: PodcastViewModel! { didSet { navigationItem.title = podcastViewModel?.title } }
     
-    init(episodesListViewModel: EpisodesListViewModel = EpisodesListViewModel()) {
-        super.init(nibName: nil, bundle: nil)
-        self.episodesListViewModel = episodesListViewModel
-    }
+    init() { super.init(nibName: nil, bundle: nil) }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -1,16 +1,15 @@
 import UIKit
 import SDWebImage
+import Resolver
 
 class RecentEpisodesViewController: UITableViewController {
     private let cellId = "cellId"
     private var searchController: UISearchController?
-    fileprivate let repo = PodcastsPersistantManager()
-    fileprivate var episodesListViewModel: RecentEpisodesListViewModel!
     
-    init(episodesListViewModel: RecentEpisodesListViewModel = RecentEpisodesListViewModel()) {
-        super.init(nibName: nil, bundle: nil)
-        self.episodesListViewModel = episodesListViewModel
-    }
+    @Injected fileprivate var repo: PodcastsPersistantManager
+    @Injected fileprivate var episodesListViewModel: RecentEpisodesListViewModel
+    
+    init() { super.init(nibName: nil, bundle: nil) }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

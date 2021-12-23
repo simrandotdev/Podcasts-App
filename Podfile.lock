@@ -1,5 +1,6 @@
 PODS:
   - FeedKit (9.1.2)
+  - Resolver (1.5.0)
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
@@ -12,6 +13,7 @@ PODS:
 
 DEPENDENCIES:
   - FeedKit (~> 9.0)
+  - Resolver
   - RxCocoa (~> 5)
   - RxSwift (~> 5)
   - SDWebImage (~> 5.0)
@@ -19,6 +21,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - FeedKit
+    - Resolver
     - RxCocoa
     - RxRelay
     - RxSwift
@@ -26,11 +29,12 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   FeedKit: 71653273ab08e618cd6fd1301ca08fc02dca6a9e
+  Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SDWebImage: c666b97e1fa9c64b4909816a903322018f0a9c84
 
-PODFILE CHECKSUM: 66db15b679cfe9cfdc58ef444e0a632f29434038
+PODFILE CHECKSUM: e8ce073249e29202b190566545d4679e3ab8d585
 
 COCOAPODS: 1.11.2

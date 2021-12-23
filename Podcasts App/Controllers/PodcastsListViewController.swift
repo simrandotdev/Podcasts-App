@@ -1,17 +1,18 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Resolver
 
 class PodcastsListViewController: UITableViewController {
-    fileprivate var searchPodcastViewModel: PodcastsListViewModel!
+    @Injected fileprivate var searchPodcastViewModel: PodcastsListViewModel
+    
     fileprivate var searchController: UISearchController?
     fileprivate let cellId = "\(PodcastCell.self)"
     
     fileprivate let disposeBag = DisposeBag()
     
-    init(searchPodcastViewModel: PodcastsListViewModel = PodcastsListViewModel()) {
+    init() {
         super.init(nibName: nil, bundle: nil)
-        self.searchPodcastViewModel = searchPodcastViewModel
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }

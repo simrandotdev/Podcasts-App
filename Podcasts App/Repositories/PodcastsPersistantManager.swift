@@ -8,6 +8,7 @@ class PodcastsPersistantManager {
 
 // MARK:- Favorite Podcasts
 extension PodcastsPersistantManager {
+    
     func favoritePodcast(podcast: Podcast) -> [Podcast]? {
         guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
         do {
