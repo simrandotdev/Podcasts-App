@@ -11,6 +11,7 @@ import Foundation
 enum LocalStorageError: Error {
     case failedToEncode(errorMessage: String, friendlyMessage: String)
     case failedToDecode(errorMessage: String, friendlyMessage: String)
+    case invalidKey(errorMessage: String, friendlyMessage: String)
 }
 
 struct LocalStorageManager {
@@ -29,12 +30,15 @@ struct LocalStorageManager {
     
     func load<T: Codable>(fromKey key: String) throws -> T {
         let decoder = JSONDecoder()
-        
         do {
-            
+            guard let encodedData = storage.data(forKey: key) else {
+                throw LocalStorageError.invalidKey(errorMessage: "❌ No data found for key: \(key)",
+                                                   friendlyMessage: "No data found.")
+            }
+            return try decoder.decode(T.self, from: encodedData)
         } catch {
             throw LocalStorageError.failedToDecode(errorMessage: "❌ Failed to retrieve due to decoding error: \(error.localizedDescription) for key: \(key)",
-                                                   friendlyMessage: "Could save information. Please try again" )
+                                                   friendlyMessage: "Could load information. Please try again" )
         }
     }
 }

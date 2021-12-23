@@ -27,6 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
         register { URLSession(configuration: .default) }
+        register { LocalStorageManager() }.scope(.application)
         register { APIService.shared }
         register { PodcastsListViewModel() }
         register { EpisodesListViewModel() }

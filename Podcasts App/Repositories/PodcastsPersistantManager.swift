@@ -1,58 +1,58 @@
 import Foundation
+import Resolver
 
 class PodcastsPersistantManager {
     fileprivate let favoritePodcastsKey = "favoritePodcasts"
     fileprivate let downloadedEpisodeKey = "downloadedEpisodeKey"
     fileprivate let recentlyPlayedPodcastsKey = "recentlyPlayedPodcasts"
+    
+    @Injected private var localStorageManager: LocalStorageManager
 }
 
 // MARK:- Favorite Podcasts
 extension PodcastsPersistantManager {
     
     func favoritePodcast(podcast: Podcast) -> [Podcast]? {
-        guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
+        var favoritePodcasts = fetchFavoritePodcasts()
         do {
             if favoritePodcasts.contains(where: { podcast == $0 }) { return nil }
             favoritePodcasts.append(podcast)
-            let favoritePostcastsData = try NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts, requiringSecureCoding: false)
-            UserDefaults.standard.setValue(favoritePostcastsData, forKey: favoritePodcastsKey)
-            
+            try localStorageManager.save(favoritePodcasts, forKey: favoritePodcastsKey)
         } catch {
-            print("Failed to save Podcasts.")
+            print("Failed to save Podcasts: \(error)")
         }
         return favoritePodcasts
     }
     
-    func unfavoritePodcast(podcast: Podcast) -> [Podcast]? {
-        guard var favoritePodcasts = fetchFavoritePodcasts() else { return nil }
+    func unfavoritePodcast(podcast: Podcast) -> [Podcast] {
+        var favoritePodcasts = fetchFavoritePodcasts()
         do {
             let indexToDelete = indexOfPodcastToDelete(podcast: podcast, from: favoritePodcasts)
             if let indexToDelete = indexToDelete,
                 indexToDelete >= 0 {
                 favoritePodcasts.remove(at: indexToDelete)
             }
-            let favoritePostcastsData = try NSKeyedArchiver.archivedData(withRootObject: favoritePodcasts, requiringSecureCoding: false)
-            UserDefaults.standard.setValue(favoritePostcastsData, forKey: favoritePodcastsKey)
+            
+            try localStorageManager.save(favoritePodcasts, forKey: favoritePodcastsKey)
         } catch {
-            print("Failed to save Podcasts.")
+            print("Failed to save Podcasts: \(error)")
         }
         return favoritePodcasts
     }
     
-    func fetchFavoritePodcasts() -> [Podcast]? {
+    func fetchFavoritePodcasts() -> [Podcast] {
         var favoritePodcasts = [Podcast]()
         do {
-            let podcastsData = UserDefaults.standard.data(forKey: favoritePodcastsKey)
-            favoritePodcasts = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(podcastsData ?? Data()) as? [Podcast] ?? [Podcast]()
+            favoritePodcasts = try localStorageManager.load(fromKey: favoritePodcastsKey)
         } catch  {
-            print("Failed to fetch Podcasts")
+            print("Failed to fetch Podcasts: \(error)")
         }
         return favoritePodcasts
     }
     
     func isFavorite(podcast: Podcast) -> Bool {
         let podcasts = fetchFavoritePodcasts()
-        return podcasts?.contains(podcast) ?? false
+        return podcasts.contains(podcast)
     }
     
     // MARK: Helper methods
@@ -73,17 +73,13 @@ extension PodcastsPersistantManager {
     }
     
     func downloadedEpisodes() -> [Episode] {
-        guard let data = UserDefaults.standard.data(forKey: downloadedEpisodeKey) else { return [Episode]()}
-        do
-        {
-            let episodes = try JSONDecoder().decode([Episode].self, from: data)
-            return episodes
+        do {
+            return try localStorageManager.load(fromKey: downloadedEpisodeKey)
         }
-        catch let decodeErr
-        {
+        catch let decodeErr {
             print("Error Decoding Episodes: ", decodeErr)
         }
-        return [Episode]()
+        return []
     }
     
     func deleteEpisode(at index: Int) {
@@ -93,11 +89,9 @@ extension PodcastsPersistantManager {
     }
     
     // MARK: Helper methods
-    fileprivate func saveEpisodes(_ episodes: [Episode])
-    {
+    fileprivate func saveEpisodes(_ episodes: [Episode]) {
         do {
-            let data = try JSONEncoder().encode(episodes)
-            UserDefaults.standard.set(data, forKey: downloadedEpisodeKey)
+            try localStorageManager.save(episodes, forKey: downloadedEpisodeKey)
         } catch let encodeErr {
             print("Failed to encode episode: ", encodeErr)
         }
@@ -136,8 +130,7 @@ extension PodcastsPersistantManager {
         recentlyPlayedPosts.insert(episode, at: 0)
         
         do {
-            let recentlyPlayedPodcastsJSONString = try recentlyPlayedPosts.toJSONString()
-            UserDefaults.standard.set(recentlyPlayedPodcastsJSONString, forKey: recentlyPlayedPodcastsKey)
+            try localStorageManager.save(recentlyPlayedPosts, forKey: recentlyPlayedPodcastsKey)
         } catch {
             print("Failed to save recently played Podcast")
         }
@@ -152,11 +145,8 @@ extension PodcastsPersistantManager {
     }
     
     func fetchAllRecentlyPlayedPodcasts() -> [Episode]? {
-        guard let recentlyPlayedPodcastJSONString
-            = UserDefaults.standard.string(forKey: recentlyPlayedPodcastsKey) else { return [Episode]() }
         do {
-            let recentPodcasts = try recentlyPlayedPodcastJSONString.fromJsonString(to: [Episode].self)
-            return recentPodcasts
+            return try localStorageManager.load(fromKey: recentlyPlayedPodcastsKey)
         } catch  {
             print("Failed to Convert Recently played JSON String to Array of Episodes")
         }
