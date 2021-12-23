@@ -20,7 +20,7 @@ class EpisodeCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        backgroundColor = .systemBackground
+        backgroundColor = Theme.Color.systemBackgroundColor
         thumbnailImageView.contentMode = .scaleAspectFill
         thumbnailImageView.layer.cornerRadius = 10
         thumbnailImageView.layer.masksToBounds = true

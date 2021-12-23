@@ -58,7 +58,7 @@ class MainTabBarController : UITabBarController
     }
     
     fileprivate func setupTabBarController() {
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Theme.Color.systemBackgroundColor
     }
     
     fileprivate func setupViewController() {

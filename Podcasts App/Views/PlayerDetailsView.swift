@@ -356,11 +356,11 @@ class PlayerDetailsView : UIView {
     
     // MARK: UI Setup
     func setupUI() {
-        backgroundColor = .systemBackground
+        backgroundColor = Theme.Color.systemBackgroundColor
         
         currentTimeSlider.tintColor = .systemGray6
         
-        blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = .systemBackground }
+        blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = Theme.Color.systemBackgroundColor }
         
         episodeImageView.layer.cornerRadius = 20
         episodeImageView.layer.masksToBounds = true

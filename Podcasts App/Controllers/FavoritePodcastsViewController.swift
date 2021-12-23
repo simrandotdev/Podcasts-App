@@ -9,7 +9,7 @@ class FavoritePodcastsViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.backgroundColor = .systemBackground
+        collectionView.backgroundColor = Theme.Color.systemBackgroundColor
         setupCollectionView()
     }
     

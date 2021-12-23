@@ -29,7 +29,7 @@ class RecentEpisodesViewController: UITableViewController {
     }
     
     fileprivate func setupTableView() {
-        tableView.backgroundColor = .systemBackground
+        tableView.backgroundColor = Theme.Color.systemBackgroundColor
         tableView.separatorStyle = .none
         let nib = UINib(nibName: "EpisodeCell", bundle: nil)
         tableView.register(nib, forCellReuseIdentifier: cellId)

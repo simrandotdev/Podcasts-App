@@ -4,7 +4,7 @@ class FavoritePodcastCell : UICollectionViewCell {
    
     // MARK:- Setups
     fileprivate func stylizeUI() {
-        backgroundColor = .systemBackground
+        backgroundColor = Theme.Color.systemBackgroundColor
         layer.cornerRadius = 2.0
         layer.masksToBounds = true
         
