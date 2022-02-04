@@ -1,27 +1,34 @@
 import Foundation
 import Combine
+import Resolver
 
 class PodcastsListViewModel {
 
-    var searchTerm: String = ""
+    @Published var searchTerm: String = "podcast"
+    @Published var podcasts = [PodcastViewModel]()
+    fileprivate var cancellable = Set<AnyCancellable>()
     
-    private let api: APIService
+    @Injected var api: APIService
     
-    var podcasts = [PodcastViewModel]()
     
     init(podcasts: [Podcast] = [], api: APIService = APIService.shared) {
         self.podcasts = podcasts.map{ PodcastViewModel(podcast: $0) }
         self.api = api
+        
+        $searchTerm
+            .filter{ $0.count > 2 }
+            .debounce(for: .milliseconds(1000), scheduler: DispatchQueue.main)
+            .sink { [fetchPodcastsAsync] value in
+                Task {
+                    try await fetchPodcastsAsync()
+                }
+            }
+            .store(in: &cancellable)
     }
     
     
-    func fetchPodcastsAsync(query: String = "podcast") async throws {
-        var searchQuery = query
-        if searchQuery.isEmpty {
-            searchQuery = "podcast"
-        }
-        
-        let podcastsResults = try await api.fetchPodcastsAsync(searchText: query)
+    func fetchPodcastsAsync() async throws {        
+        let podcastsResults = try await api.fetchPodcastsAsync(searchText: searchTerm)
         self.podcasts = podcastsResults.map{ PodcastViewModel(podcast: $0) }
     }
     

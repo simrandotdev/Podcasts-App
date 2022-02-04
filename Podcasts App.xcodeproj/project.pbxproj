@@ -109,10 +109,10 @@
 			isa = PBXGroup;
 			children = (
 				D429ED6F20AB85FC008C66DD /* PodcastsListViewController.swift */,
-				D414F0D520ACDC4200D92DA8 /* PodcastCell.swift */,
-				D414F0D320ACDA7500D92DA8 /* PodcastCell.xib */,
 				49456DE324B5AA160077CA12 /* PodcastsListViewModel.swift */,
 				49456DE524B5B7710077CA12 /* PodcastViewModel.swift */,
+				D414F0D520ACDC4200D92DA8 /* PodcastCell.swift */,
+				D414F0D320ACDA7500D92DA8 /* PodcastCell.xib */,
 			);
 			path = PodcastsSearch;
 			sourceTree = "<group>";
@@ -193,7 +193,6 @@
 				D429ED3E20AB81FA008C66DD /* AppDelegate.swift */,
 				D429ED4520AB81FC008C66DD /* Assets.xcassets */,
 				D429ED4720AB81FC008C66DD /* LaunchScreen.storyboard */,
-				4960E43C24B03BD8009A3806 /* Podcasts App.entitlements */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -242,6 +241,7 @@
 			children = (
 				D429ED3D20AB81FA008C66DD /* Podcasts App */,
 				D429ED4A20AB81FC008C66DD /* Info.plist */,
+				4960E43C24B03BD8009A3806 /* Podcasts App.entitlements */,
 				F859B12925275F5A0051B984 /* Podcasts Bin.app */,
 				BA46427BE3E90A066A6A70AA /* Pods */,
 				A623A5FDC3B137F8F996ED98 /* Frameworks */,

@@ -1,5 +1,6 @@
 import UIKit
 import Resolver
+import Combine
 
 class PodcastsSearchViewController: UITableViewController {
     
@@ -7,6 +8,7 @@ class PodcastsSearchViewController: UITableViewController {
     
     fileprivate var searchController: UISearchController?
     fileprivate let cellId = "\(PodcastCell.self)"
+    fileprivate var cancellable = Set<AnyCancellable>()
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -23,12 +25,12 @@ class PodcastsSearchViewController: UITableViewController {
     
     // MARK:- Helper methods
     fileprivate func setupSearchPodcastViewModel() {
-        Task {
-            try await searchPodcastViewModel.fetchPodcastsAsync()
-            DispatchQueue.main.async {
+        searchPodcastViewModel
+            .$podcasts
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
                 self.tableView.reloadData()
-            }
-        }
+            }.store(in: &cancellable)
     }
     
     fileprivate func setupTableView() {
@@ -47,14 +49,15 @@ class PodcastsSearchViewController: UITableViewController {
 
 
 extension PodcastsSearchViewController: UISearchResultsUpdating {
+    
     func updateSearchResults(for searchController: UISearchController) {
-        let searchText = searchController.searchBar.text ?? "podcast"
-        Task {
-            try await searchPodcastViewModel.fetchPodcastsAsync(query: searchText)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+        
+        guard let searchText = searchController.searchBar.text else {
+            searchPodcastViewModel.searchTerm = "podcast"
+            return
         }
+        
+        searchPodcastViewModel.searchTerm = searchText.isEmpty ? "podcast" : searchText
     }
 }
 
