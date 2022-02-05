@@ -7,7 +7,7 @@ class FavoritePodcastsViewController: UICollectionViewController {
     private let cellId = "favoritesCellId"
     private var cancellable = Set<AnyCancellable>()
     
-    @Injected var vm: FavoritePodcastsViewModel
+    @Injected var vm: PodcastsSearchViewModel
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,7 +17,7 @@ class FavoritePodcastsViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        vm.fetchPodcasts()
+        vm.fetchFavoritePodcasts()
         
         vm.$favoritePodcasts
             .receive(on: DispatchQueue.main)

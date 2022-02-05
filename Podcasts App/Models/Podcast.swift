@@ -1,6 +1,7 @@
 import Foundation
 
 class Podcast : NSObject, Codable, NSCoding {
+    
     func encode(with aCoder: NSCoder) {
         aCoder.encode(title ?? "", forKey: "title")
         aCoder.encode(author ?? "", forKey: "author")
@@ -25,6 +26,16 @@ class Podcast : NSObject, Codable, NSCoding {
         self.rssFeedUrl = podcastViewModel.rssFeedUrl
     }
     
+    init(recordId: String, title: String, author: String, image: String, totalEpisodes: Int, rssFeedUrl: String) {
+        self.recordId = recordId
+        self.title = title
+        self.author = author
+        self.image = image
+        self.totalEpisodes = totalEpisodes
+        self.rssFeedUrl = rssFeedUrl
+    }
+    
+    var recordId: String?
     var title: String?
     var author: String?
     var image: String?

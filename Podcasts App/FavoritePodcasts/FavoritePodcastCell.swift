@@ -1,6 +1,13 @@
 import UIKit
 
 class FavoritePodcastCell : UICollectionViewCell {
+    
+    
+    // MARK:- UI properties
+    @IBOutlet var imageView: UIImageView!
+    @IBOutlet var nameLabel: UILabel!
+    @IBOutlet var artistNameLabel: UILabel!
+    @IBOutlet weak var backgroundTitleView: UIView!
    
     // MARK:- Setups
     fileprivate func stylizeUI() {
@@ -29,10 +36,4 @@ class FavoritePodcastCell : UICollectionViewCell {
         nameLabel.text = podcast.title
         artistNameLabel.text = podcast.author
     }
-    
-    // MARK:- UI properties
-    @IBOutlet var imageView: UIImageView!
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var artistNameLabel: UILabel!
-    @IBOutlet weak var backgroundTitleView: UIView!
 }

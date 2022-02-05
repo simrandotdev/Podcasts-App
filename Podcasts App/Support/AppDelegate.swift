@@ -1,5 +1,6 @@
 import UIKit
 import Resolver
+//import BaadalKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -46,10 +47,10 @@ extension Resolver: ResolverRegistering {
         register { URLSession(configuration: .default) }
         register { LocalStorageManager() }.scope(.application)
         register { APIService.shared }
-        register { PodcastsListViewModel() }
+        register { PodcastsSearchViewModel() }
         register { PodcastDetailViewModel() }
-        register { FavoritePodcastsViewModel() }
         register { RecentEpisodesListViewModel() }
         register { PodcastsPersistantManager() }
+//        register { BaadalManager(identifier: "PodcastsBin") } // TODO: Extract the identifier to some place common
     }
 }

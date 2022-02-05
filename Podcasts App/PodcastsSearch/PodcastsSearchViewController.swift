@@ -4,7 +4,7 @@ import Combine
 
 class PodcastsSearchViewController: UITableViewController {
     
-    @Injected fileprivate var searchPodcastViewModel: PodcastsListViewModel
+    @Injected fileprivate var searchPodcastViewModel: PodcastsSearchViewModel
     
     fileprivate var searchController: UISearchController?
     fileprivate let cellId = "\(PodcastCell.self)"

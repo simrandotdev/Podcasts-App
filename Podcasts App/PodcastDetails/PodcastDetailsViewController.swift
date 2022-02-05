@@ -5,7 +5,7 @@ import Resolver
 class PodcastDetailsViewController: UITableViewController
 {
     @Injected private var episodesListViewModel: PodcastDetailViewModel
-    @Injected private var favoritePodcastsViewModel: FavoritePodcastsViewModel
+    @Injected private var favoritePodcastsViewModel: PodcastsSearchViewModel
     
     private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
