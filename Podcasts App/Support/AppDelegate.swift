@@ -48,6 +48,7 @@ extension Resolver: ResolverRegistering {
         register { APIService.shared }
         register { PodcastsListViewModel() }
         register { PodcastDetailViewModel() }
+        register { FavoritePodcastsViewModel() }
         register { RecentEpisodesListViewModel() }
         register { PodcastsPersistantManager() }
     }

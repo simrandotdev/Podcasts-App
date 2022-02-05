@@ -32,16 +32,4 @@ class PodcastViewModel {
         self.numberOfEpisodes = podcast.totalEpisodes ?? 0
         self.rssFeedUrl = podcast.rssFeedUrl ?? ""
     }
-    
-    func favorite() {
-        _ = repo.favoritePodcast(podcast: Podcast(podcastViewModel: self))
-    }
-    
-    func unfavorite() {
-        _ = repo.unfavoritePodcast(podcast: Podcast(podcastViewModel: self))
-    }
-    
-    func isFavorite() -> Bool {
-        return repo.isFavorite(podcast: Podcast(podcastViewModel: self))
-    }
 }

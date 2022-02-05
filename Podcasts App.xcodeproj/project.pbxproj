@@ -3,12 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		4907236324CBA63C00AF9203 /* RecentEpisodesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4907236224CBA63C00AF9203 /* RecentEpisodesListViewModel.swift */; };
 		493E60B22774024600B64B10 /* LocalStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493E60B12774024600B64B10 /* LocalStorageManager.swift */; };
+		494036E627ADED03007207F2 /* BaadalKit in Frameworks */ = {isa = PBXBuildFile; productRef = 494036E527ADED03007207F2 /* BaadalKit */; };
+		494036E827ADEF38007207F2 /* FavoritePodcastsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494036E727ADEF38007207F2 /* FavoritePodcastsViewModel.swift */; };
 		49456DE424B5AA160077CA12 /* PodcastsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49456DE324B5AA160077CA12 /* PodcastsListViewModel.swift */; };
 		49456DE624B5B7710077CA12 /* PodcastViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49456DE524B5B7710077CA12 /* PodcastViewModel.swift */; };
 		495E9E5424CAB52900F080D6 /* PodcastDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495E9E5324CAB52900F080D6 /* PodcastDetailViewModel.swift */; };
@@ -52,6 +54,7 @@
 		2636EEA62AD5E74280931919 /* Pods_Podcasts_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Podcasts_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4907236224CBA63C00AF9203 /* RecentEpisodesListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentEpisodesListViewModel.swift; sourceTree = "<group>"; };
 		493E60B12774024600B64B10 /* LocalStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageManager.swift; sourceTree = "<group>"; };
+		494036E727ADEF38007207F2 /* FavoritePodcastsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritePodcastsViewModel.swift; sourceTree = "<group>"; };
 		49456DE324B5AA160077CA12 /* PodcastsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastsListViewModel.swift; sourceTree = "<group>"; };
 		49456DE524B5B7710077CA12 /* PodcastViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastViewModel.swift; sourceTree = "<group>"; };
 		495E9E5324CAB52900F080D6 /* PodcastDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastDetailViewModel.swift; sourceTree = "<group>"; };
@@ -98,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				494036E627ADED03007207F2 /* BaadalKit in Frameworks */,
 				CD9597F290653D9B81AFEF84 /* Pods_Podcasts_App.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -120,9 +124,10 @@
 		499282282774F21600AF919E /* FavoritePodcasts */ = {
 			isa = PBXGroup;
 			children = (
+				D429ED7120AB8606008C66DD /* FavoritePodcastsViewController.swift */,
+				494036E727ADEF38007207F2 /* FavoritePodcastsViewModel.swift */,
 				849FE7EC20D2016400166425 /* FavoritePodcastCell.swift */,
 				F807946A2623962900ED3B4E /* FavoritePodcastCell.xib */,
-				D429ED7120AB8606008C66DD /* FavoritePodcastsViewController.swift */,
 				D439488420D44BB4008BB6E2 /* PodcastsPersistantManager.swift */,
 			);
 			path = FavoritePodcasts;
@@ -292,6 +297,9 @@
 			dependencies = (
 			);
 			name = "Podcasts App";
+			packageProductDependencies = (
+				494036E527ADED03007207F2 /* BaadalKit */,
+			);
 			productName = "Podcasts App";
 			productReference = F859B12925275F5A0051B984 /* Podcasts Bin.app */;
 			productType = "com.apple.product-type.application";
@@ -326,6 +334,9 @@
 				Base,
 			);
 			mainGroup = D429ED3220AB81FA008C66DD;
+			packageReferences = (
+				494036E427ADED03007207F2 /* XCRemoteSwiftPackageReference "BaadalKit" */,
+			);
 			productRefGroup = D429ED3220AB81FA008C66DD;
 			projectDirPath = "";
 			projectRoot = "";
@@ -404,6 +415,7 @@
 				D4397CE620ADBC3F00FF7839 /* PodcastDetailsViewController.swift in Sources */,
 				D429ED7020AB85FC008C66DD /* PodcastsListViewController.swift in Sources */,
 				4960E44024B12B1A009A3806 /* RSSFeed.swift in Sources */,
+				494036E827ADEF38007207F2 /* FavoritePodcastsViewModel.swift in Sources */,
 				D429ED6D20AB826F008C66DD /* MainTabBarController.swift in Sources */,
 				846FC96120B25DCE00791331 /* CMTime.swift in Sources */,
 				495E9E5424CAB52900F080D6 /* PodcastDetailViewModel.swift in Sources */,
@@ -634,6 +646,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		494036E427ADED03007207F2 /* XCRemoteSwiftPackageReference "BaadalKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simransdsu/BaadalKit";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		494036E527ADED03007207F2 /* BaadalKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 494036E427ADED03007207F2 /* XCRemoteSwiftPackageReference "BaadalKit" */;
+			productName = BaadalKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D429ED3320AB81FA008C66DD /* Project object */;
 }

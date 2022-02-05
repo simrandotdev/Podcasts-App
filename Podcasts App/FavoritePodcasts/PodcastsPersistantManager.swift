@@ -12,10 +12,10 @@ class PodcastsPersistantManager {
 // MARK:- Favorite Podcasts
 extension PodcastsPersistantManager {
     
-    func favoritePodcast(podcast: Podcast) -> [Podcast]? {
+    func favoritePodcast(podcast: Podcast) -> [Podcast] {
         var favoritePodcasts = fetchFavoritePodcasts()
         do {
-            if favoritePodcasts.contains(where: { podcast == $0 }) { return nil }
+            if favoritePodcasts.contains(where: { podcast == $0 }) { return [] }
             favoritePodcasts.append(podcast)
             try localStorageManager.save(favoritePodcasts, forKey: favoritePodcastsKey)
         } catch {

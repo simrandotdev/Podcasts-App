@@ -6,7 +6,6 @@ class RecentEpisodesViewController: UITableViewController {
     private let cellId = "cellId"
     private var searchController: UISearchController?
     
-    @Injected fileprivate var repo: PodcastsPersistantManager
     @Injected fileprivate var episodesListViewModel: RecentEpisodesListViewModel
     
     init() { super.init(nibName: nil, bundle: nil) }

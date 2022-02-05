@@ -5,6 +5,7 @@ import Resolver
 class PodcastDetailsViewController: UITableViewController
 {
     @Injected private var episodesListViewModel: PodcastDetailViewModel
+    @Injected private var favoritePodcastsViewModel: FavoritePodcastsViewModel
     
     private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
@@ -102,7 +103,7 @@ fileprivate extension PodcastDetailsViewController {
     }
     
     func setupFavoriteNavigationBarItem() {
-        if podcastViewModel.isFavorite() {
+        if favoritePodcastsViewModel.isFavorite(Podcast(podcastViewModel: podcastViewModel)) {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
         } else {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
@@ -114,12 +115,12 @@ fileprivate extension PodcastDetailsViewController {
 // MARK:- Action handlers
 fileprivate extension PodcastDetailsViewController {
     @objc func handleSaveToFavorites() {
-        podcastViewModel?.favorite()
+        favoritePodcastsViewModel.favoritePodcast(Podcast(podcastViewModel: podcastViewModel))
         setupFavoriteNavigationBarItem()
     }
     
     @objc func handleUnFavorite() {
-        podcastViewModel?.unfavorite()
+        favoritePodcastsViewModel.unfavoritePodcast(Podcast(podcastViewModel: podcastViewModel))
         setupFavoriteNavigationBarItem()
     }
 }

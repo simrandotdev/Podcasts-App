@@ -10,7 +10,6 @@ class PodcastsListViewModel {
     
     @Injected var api: APIService
     
-    
     init(podcasts: [Podcast] = [], api: APIService = APIService.shared) {
         self.podcasts = podcasts.map{ PodcastViewModel(podcast: $0) }
         self.api = api
