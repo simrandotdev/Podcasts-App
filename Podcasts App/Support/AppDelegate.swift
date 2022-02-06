@@ -83,6 +83,7 @@ extension Resolver: ResolverRegistering {
         register { PodcastDetailViewModel() }
         register { RecentEpisodesListViewModel() }
         register { PodcastsPersistantManager() }
-        register { BaadalManager(identifier: "iCloud.app.simran.PodcastsApp") } // TODO: Extract the identifier to some place common
+        register { BaadalManager(identifier: Constants.BKConstants.container) }
+        register { FavoritePodcastsService() }
     }
 }

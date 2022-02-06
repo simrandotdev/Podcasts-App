@@ -13,6 +13,9 @@
 		494036E627ADED03007207F2 /* BaadalKit in Frameworks */ = {isa = PBXBuildFile; productRef = 494036E527ADED03007207F2 /* BaadalKit */; };
 		49456DE424B5AA160077CA12 /* PodcastsSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49456DE324B5AA160077CA12 /* PodcastsSearchViewModel.swift */; };
 		49456DE624B5B7710077CA12 /* PodcastViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49456DE524B5B7710077CA12 /* PodcastViewModel.swift */; };
+		494AA17927B0426C0009E357 /* FavoritePodcastsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494AA17827B0426C0009E357 /* FavoritePodcastsService.swift */; };
+		494AA17B27B042E50009E357 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494AA17A27B042E50009E357 /* Constants.swift */; };
+		494AA17D27B045130009E357 /* BKFavoritePodcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494AA17C27B045130009E357 /* BKFavoritePodcast.swift */; };
 		495E9E5424CAB52900F080D6 /* PodcastDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495E9E5324CAB52900F080D6 /* PodcastDetailViewModel.swift */; };
 		495E9E5624CAB54400F080D6 /* EpisodeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495E9E5524CAB54400F080D6 /* EpisodeViewModel.swift */; };
 		4960E44024B12B1A009A3806 /* RSSFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4960E43F24B12B1A009A3806 /* RSSFeed.swift */; };
@@ -57,6 +60,9 @@
 		493E60B12774024600B64B10 /* LocalStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageManager.swift; sourceTree = "<group>"; };
 		49456DE324B5AA160077CA12 /* PodcastsSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastsSearchViewModel.swift; sourceTree = "<group>"; };
 		49456DE524B5B7710077CA12 /* PodcastViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastViewModel.swift; sourceTree = "<group>"; };
+		494AA17827B0426C0009E357 /* FavoritePodcastsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritePodcastsService.swift; sourceTree = "<group>"; };
+		494AA17A27B042E50009E357 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		494AA17C27B045130009E357 /* BKFavoritePodcast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BKFavoritePodcast.swift; sourceTree = "<group>"; };
 		495E9E5324CAB52900F080D6 /* PodcastDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastDetailViewModel.swift; sourceTree = "<group>"; };
 		495E9E5524CAB54400F080D6 /* EpisodeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeViewModel.swift; sourceTree = "<group>"; };
 		4960E43C24B03BD8009A3806 /* Podcasts App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Podcasts App.entitlements"; sourceTree = "<group>"; };
@@ -129,6 +135,8 @@
 				849FE7EC20D2016400166425 /* FavoritePodcastCell.swift */,
 				F807946A2623962900ED3B4E /* FavoritePodcastCell.xib */,
 				D439488420D44BB4008BB6E2 /* PodcastsPersistantManager.swift */,
+				494AA17827B0426C0009E357 /* FavoritePodcastsService.swift */,
+				494AA17C27B045130009E357 /* BKFavoritePodcast.swift */,
 			);
 			path = Favorites;
 			sourceTree = "<group>";
@@ -139,6 +147,7 @@
 				4992822E2774F5E400AF919E /* Managers */,
 				D414F0CF20ACD1D100D92DA8 /* API */,
 				84A4329620AF5CB7004F32AD /* Extensions */,
+				494AA17A27B042E50009E357 /* Constants.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -415,11 +424,14 @@
 				4907236324CBA63C00AF9203 /* RecentEpisodesListViewModel.swift in Sources */,
 				D4397CE620ADBC3F00FF7839 /* PodcastDetailsViewController.swift in Sources */,
 				D429ED7020AB85FC008C66DD /* PodcastsSearchViewController.swift in Sources */,
+				494AA17927B0426C0009E357 /* FavoritePodcastsService.swift in Sources */,
 				4960E44024B12B1A009A3806 /* RSSFeed.swift in Sources */,
 				D429ED6D20AB826F008C66DD /* MainTabBarController.swift in Sources */,
+				494AA17B27B042E50009E357 /* Constants.swift in Sources */,
 				846FC96120B25DCE00791331 /* CMTime.swift in Sources */,
 				495E9E5424CAB52900F080D6 /* PodcastDetailViewModel.swift in Sources */,
 				D429ED7A20AB8C66008C66DD /* Podcast.swift in Sources */,
+				494AA17D27B045130009E357 /* BKFavoritePodcast.swift in Sources */,
 				849FE7ED20D2016400166425 /* FavoritePodcastCell.swift in Sources */,
 				D429ED7220AB8606008C66DD /* FavoritePodcastsViewController.swift in Sources */,
 				84A432A320AF5CC6004F32AD /* DateExtensions.swift in Sources */,

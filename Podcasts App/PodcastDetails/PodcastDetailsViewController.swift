@@ -27,8 +27,11 @@ class PodcastDetailsViewController: UITableViewController
     }
 }
 
+
+
 // MARK:- TableView methods
 extension PodcastDetailsViewController {
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 110.0 }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -73,6 +76,8 @@ extension PodcastDetailsViewController: UISearchBarDelegate {
         episodesListViewModel.finishSearch()
     }
 }
+
+
 
 // MARK:- UI Setup methods
 fileprivate extension PodcastDetailsViewController {
@@ -128,7 +133,9 @@ fileprivate extension PodcastDetailsViewController {
 
 // MARK:- Action handlers
 fileprivate extension PodcastDetailsViewController {
+    
     @objc func handleSaveToFavorites() {
+        
         setupFavoriteNavigationBarItem()
         Task {
             try await favoritePodcastsViewModel.favoritePodcast(Podcast(podcastViewModel: podcastViewModel))
@@ -137,7 +144,10 @@ fileprivate extension PodcastDetailsViewController {
     }
     
     @objc func handleUnFavorite() {
-        favoritePodcastsViewModel.unfavoritePodcast(Podcast(podcastViewModel: podcastViewModel))
+        
         setupFavoriteNavigationBarItem()
+        Task {
+            try await favoritePodcastsViewModel.unfavoritePodcast(Podcast(podcastViewModel: podcastViewModel))
+        }
     }
 }
