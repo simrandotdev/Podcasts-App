@@ -110,7 +110,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		499282272774F11100AF919E /* PodcastsSearch */ = {
+		499282272774F11100AF919E /* Search */ = {
 			isa = PBXGroup;
 			children = (
 				D429ED6F20AB85FC008C66DD /* PodcastsSearchViewController.swift */,
@@ -119,10 +119,10 @@
 				D414F0D520ACDC4200D92DA8 /* PodcastCell.swift */,
 				D414F0D320ACDA7500D92DA8 /* PodcastCell.xib */,
 			);
-			path = PodcastsSearch;
+			path = Search;
 			sourceTree = "<group>";
 		};
-		499282282774F21600AF919E /* FavoritePodcasts */ = {
+		499282282774F21600AF919E /* Favorites */ = {
 			isa = PBXGroup;
 			children = (
 				D429ED7120AB8606008C66DD /* FavoritePodcastsViewController.swift */,
@@ -130,7 +130,7 @@
 				F807946A2623962900ED3B4E /* FavoritePodcastCell.xib */,
 				D439488420D44BB4008BB6E2 /* PodcastsPersistantManager.swift */,
 			);
-			path = FavoritePodcasts;
+			path = Favorites;
 			sourceTree = "<group>";
 		};
 		499282292774F2CA00AF919E /* Utility */ = {
@@ -143,13 +143,13 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
-		4992822A2774F2EF00AF919E /* RecentEpisodes */ = {
+		4992822A2774F2EF00AF919E /* History */ = {
 			isa = PBXGroup;
 			children = (
 				F8C514ED21DEFDDF004149F4 /* RecentEpisodesViewController.swift */,
 				4907236224CBA63C00AF9203 /* RecentEpisodesListViewModel.swift */,
 			);
-			path = RecentEpisodes;
+			path = History;
 			sourceTree = "<group>";
 		};
 		4992822B2774F31F00AF919E /* PodcastDetails */ = {
@@ -246,7 +246,6 @@
 			isa = PBXGroup;
 			children = (
 				D429ED3D20AB81FA008C66DD /* Podcasts App */,
-				D429ED4A20AB81FC008C66DD /* Info.plist */,
 				F859B12925275F5A0051B984 /* Podcasts Bin.app */,
 				BA46427BE3E90A066A6A70AA /* Pods */,
 				A623A5FDC3B137F8F996ED98 /* Frameworks */,
@@ -257,12 +256,13 @@
 			isa = PBXGroup;
 			children = (
 				4960E43C24B03BD8009A3806 /* Podcasts App.entitlements */,
+				D429ED4A20AB81FC008C66DD /* Info.plist */,
 				4992822D2774F57C00AF919E /* Home */,
 				4992822C2774F57100AF919E /* Settings */,
 				4992822B2774F31F00AF919E /* PodcastDetails */,
-				4992822A2774F2EF00AF919E /* RecentEpisodes */,
-				499282282774F21600AF919E /* FavoritePodcasts */,
-				499282272774F11100AF919E /* PodcastsSearch */,
+				4992822A2774F2EF00AF919E /* History */,
+				499282282774F21600AF919E /* Favorites */,
+				499282272774F11100AF919E /* Search */,
 				499282292774F2CA00AF919E /* Utility */,
 				D429ED7720AB8C4A008C66DD /* Models */,
 				4992822F2774F5F300AF919E /* Support */,
@@ -583,7 +583,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Podcasts App/Podcasts App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = 3GTE9X3BX2;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -591,12 +591,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mydailymistakes.PodcastsApp;
 				PRODUCT_NAME = "Podcasts Bin";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -607,7 +607,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Podcasts App/Podcasts App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = 3GTE9X3BX2;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -615,12 +615,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mydailymistakes.PodcastsApp;
 				PRODUCT_NAME = "Podcasts Bin";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

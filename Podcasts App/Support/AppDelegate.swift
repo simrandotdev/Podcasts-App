@@ -1,6 +1,7 @@
 import UIKit
 import Resolver
-//import BaadalKit
+import BaadalKit
+import CloudKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -11,6 +12,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         window = UIWindow()
+        
+        syncLocalFavoritesWithCloudKit()
+        
         window?.makeKeyAndVisible()
         window?.rootViewController = MainTabBarController()
         setupAppUI()
@@ -25,6 +29,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UITabBar.appearance().tintColor = Theme.Color.primaryColor
         UINavigationBar.appearance().tintColor = Theme.Color.primaryColor
+    }
+}
+
+
+extension AppDelegate {
+    func syncLocalFavoritesWithCloudKit() {
+        let localPersistance = PodcastsPersistantManager()
+        let bkManager = BaadalManager(identifier: "iCloud.app.simran.PodcastsApp")
+        let favoritePodcasts = localPersistance.fetchFavoritePodcasts()
+        
+        if favoritePodcasts.count > 0 {
+            for podcast in favoritePodcasts {
+                Task {
+                    let favoritePodcastRecord = CKRecord(recordType: "FavoritePodcasts") // TODO: Extract into some place common
+                    favoritePodcastRecord.setValue(podcast.author, forKey: "author")
+                    favoritePodcastRecord.setValue(podcast.title, forKey: "title")
+                    favoritePodcastRecord.setValue(podcast.image, forKey: "image")
+                    favoritePodcastRecord.setValue(podcast.totalEpisodes, forKey: "totalEpisodes")
+                    favoritePodcastRecord.setValue(podcast.rssFeedUrl, forKey: "rssFeedUrl")
+                    
+                    do {
+                        _ = try await bkManager.save(record: favoritePodcastRecord)
+                    } catch {
+                        print("❌ Error syncing favorite podcasts with error: \(error)")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -51,6 +83,6 @@ extension Resolver: ResolverRegistering {
         register { PodcastDetailViewModel() }
         register { RecentEpisodesListViewModel() }
         register { PodcastsPersistantManager() }
-//        register { BaadalManager(identifier: "PodcastsBin") } // TODO: Extract the identifier to some place common
+        register { BaadalManager(identifier: "iCloud.app.simran.PodcastsApp") } // TODO: Extract the identifier to some place common
     }
 }

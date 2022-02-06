@@ -1,6 +1,7 @@
 import UIKit
 import SDWebImage
 import Resolver
+import Combine
 
 class PodcastDetailsViewController: UITableViewController
 {
@@ -9,6 +10,7 @@ class PodcastDetailsViewController: UITableViewController
     
     private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
+    private var cancellable = Set<AnyCancellable>()
     
     var podcastViewModel: PodcastViewModel! { didSet { navigationItem.title = podcastViewModel?.title } }
     
@@ -74,6 +76,7 @@ extension PodcastDetailsViewController: UISearchBarDelegate {
 
 // MARK:- UI Setup methods
 fileprivate extension PodcastDetailsViewController {
+    
     func setupViewModel() {
         guard let podcastViewModel = podcastViewModel else { return }
         Task {
@@ -103,11 +106,22 @@ fileprivate extension PodcastDetailsViewController {
     }
     
     func setupFavoriteNavigationBarItem() {
-        if favoritePodcastsViewModel.isFavorite(Podcast(podcastViewModel: podcastViewModel)) {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark.fill"), style: .plain, target: self, action: #selector(handleUnFavorite))
-        } else {
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark"), style: .plain, target: self, action: #selector(handleSaveToFavorites))
+        
+        Task {
+            _ = try await favoritePodcastsViewModel.isFavorite(Podcast(podcastViewModel: podcastViewModel))
         }
+        
+        favoritePodcastsViewModel
+            .$isFavorite
+            .sink { isFavorite in
+                DispatchQueue.main.async {
+                    if isFavorite {
+                        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark.fill"), style: .plain, target: self, action: #selector(self.handleUnFavorite))
+                    } else {
+                        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark"), style: .plain, target: self, action: #selector(self.handleSaveToFavorites))
+                    }
+                }
+            }.store(in: &cancellable)
     }
 }
 
@@ -115,8 +129,11 @@ fileprivate extension PodcastDetailsViewController {
 // MARK:- Action handlers
 fileprivate extension PodcastDetailsViewController {
     @objc func handleSaveToFavorites() {
-        favoritePodcastsViewModel.favoritePodcast(Podcast(podcastViewModel: podcastViewModel))
         setupFavoriteNavigationBarItem()
+        Task {
+            try await favoritePodcastsViewModel.favoritePodcast(Podcast(podcastViewModel: podcastViewModel))
+        }
+        
     }
     
     @objc func handleUnFavorite() {

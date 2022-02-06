@@ -45,9 +45,18 @@ extension PodcastsPersistantManager {
         do {
             favoritePodcasts = try localStorageManager.load(fromKey: favoritePodcastsKey)
         } catch  {
-            print("Failed to fetch Podcasts: \(error)")
+            print("❌ Failed to fetch Podcasts: \(error)")
         }
         return favoritePodcasts
+    }
+    
+    func removeAllFavoritePodcasts() {
+        let podcasts = [Podcast]()
+        do {
+            try localStorageManager.save(podcasts, forKey: favoritePodcastsKey)
+        } catch {
+            print("❌ Failed to remote all favorite podcasts: \(error)")
+        }
     }
     
     func isFavorite(podcast: Podcast) -> Bool {

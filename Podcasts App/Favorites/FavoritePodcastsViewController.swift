@@ -17,13 +17,15 @@ class FavoritePodcastsViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        vm.fetchFavoritePodcasts()
-        
         vm.$favoritePodcasts
             .receive(on: DispatchQueue.main)
             .sink { [collectionView] _ in
                 collectionView?.reloadData()
             }.store(in: &cancellable)
+        
+        Task {
+            try await vm.fetchFavoritePodcasts()
+        }
     }
     
     // MARK:- Setups
