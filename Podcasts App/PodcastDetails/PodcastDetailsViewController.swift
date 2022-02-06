@@ -113,7 +113,7 @@ fileprivate extension PodcastDetailsViewController {
     func setupFavoriteNavigationBarItem() {
         
         Task {
-            _ = try await favoritePodcastsViewModel.isFavorite(Podcast(podcastViewModel: podcastViewModel))
+            _ = try await favoritePodcastsViewModel.isFavorite(podcastViewModel)
         }
         
         favoritePodcastsViewModel
@@ -136,18 +136,18 @@ fileprivate extension PodcastDetailsViewController {
     
     @objc func handleSaveToFavorites() {
         
-        setupFavoriteNavigationBarItem()
         Task {
-            try await favoritePodcastsViewModel.favoritePodcast(Podcast(podcastViewModel: podcastViewModel))
+            try await favoritePodcastsViewModel.favoritePodcast(podcastViewModel)
+            try await favoritePodcastsViewModel.isFavorite(podcastViewModel)
         }
         
     }
     
     @objc func handleUnFavorite() {
         
-        setupFavoriteNavigationBarItem()
         Task {
-            try await favoritePodcastsViewModel.unfavoritePodcast(Podcast(podcastViewModel: podcastViewModel))
+            try await favoritePodcastsViewModel.unfavoritePodcast(podcastViewModel)
+            try await favoritePodcastsViewModel.isFavorite(podcastViewModel)
         }
     }
 }

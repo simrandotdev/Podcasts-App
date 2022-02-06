@@ -11,21 +11,24 @@ import Foundation
 class PodcastViewModel {
     private let repo = PodcastsPersistantManager()
     
+    var recordId: String?
     var title: String
     var author: String
     var image: String
     var numberOfEpisodes: Int
     var rssFeedUrl: String
     
-    init(title: String, author: String, image: String, totalEpisodes: Int, rssFeedUrl: String) {
+    init(title: String, author: String, image: String, totalEpisodes: Int, rssFeedUrl: String, recordId: String? = nil) {
         self.title = title
         self.author = author
         self.image = image
         self.numberOfEpisodes = totalEpisodes
         self.rssFeedUrl = rssFeedUrl
+        self.recordId = recordId
     }
     
     init(podcast: Podcast) {
+        self.recordId = podcast.recordId ?? ""
         self.title = podcast.title ?? ""
         self.author = podcast.author ?? ""
         self.image = podcast.image ?? ""

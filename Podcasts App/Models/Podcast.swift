@@ -24,6 +24,7 @@ class Podcast : NSObject, Codable, NSCoding {
         self.image = podcastViewModel.image
         self.totalEpisodes = podcastViewModel.numberOfEpisodes
         self.rssFeedUrl = podcastViewModel.rssFeedUrl
+        self.recordId = podcastViewModel.recordId
     }
     
     init(recordId: String, title: String, author: String, image: String, totalEpisodes: Int, rssFeedUrl: String) {

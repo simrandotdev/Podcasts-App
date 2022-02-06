@@ -59,18 +59,21 @@ class PodcastsSearchViewModel {
         try await favoritePodcastCloudService.fetchFavoritePodcasts()
     }
 
-    func favoritePodcast(_ podcast: Podcast) async throws {
+    func favoritePodcast(_ podcast: PodcastViewModel) async throws {
 
-        try await favoritePodcastCloudService.favoritePodcast(podcast)
+        let podcastsToSave = Podcast(podcastViewModel: podcast)
+        try await favoritePodcastCloudService.favoritePodcast(podcastsToSave)
     }
 
-    func unfavoritePodcast(_ podcast: Podcast) async throws {
+    func unfavoritePodcast(_ podcast: PodcastViewModel) async throws {
 
-        try await favoritePodcastCloudService.unfavoritePodcast(podcast)
+        let podcastsToUnsave = Podcast(podcastViewModel: podcast)
+        try await favoritePodcastCloudService.unfavoritePodcast(podcastsToUnsave)
     }
 
-    func isFavorite(_ podcast: Podcast) async throws {
+    func isFavorite(_ podcastViewModel: PodcastViewModel) async throws {
         
-        isFavorite = try await favoritePodcastCloudService.isFavorite(podcast)
+        let podcastModel = Podcast(podcastViewModel: podcastViewModel)
+        isFavorite = try await favoritePodcastCloudService.isFavorite(podcastModel)
     }
 }
