@@ -20,3 +20,7 @@ func err(_ message: String) {
 func warn(_ message: String) {
     print("☢️ ⚠️", message)
 }
+
+func debug(_ message: String) {
+    print("☢️ 📱", message)
+}

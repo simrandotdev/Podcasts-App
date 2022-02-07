@@ -13,7 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow()
         
-        syncLocalFavoritesWithCloudKit()
+//        syncLocalFavoritesWithCloudKit()
         
         window?.makeKeyAndVisible()
         window?.rootViewController = MainTabBarController()

@@ -29,7 +29,7 @@ class FavoritePodcastCell : UICollectionViewCell {
         backgroundTitleView.alpha = 0.8
     }
     
-    func setupCell(podcast: Podcast) {
+    func setupCell(podcast: PodcastViewModel) {
         stylizeUI()
         guard let imageUrl = URL(string: podcast.image ?? "") else { return }
         imageView.sd_setImage(with: imageUrl)

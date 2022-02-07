@@ -46,7 +46,8 @@ fileprivate extension PodcastDetailsViewController {
             .sink { podcasts in
                 info("Favorite podcasts received.")
                 DispatchQueue.main.async {
-                    self.setupFavoriteNavigationBarItem(podcasts.contains(Podcast(podcastViewModel: self.podcastViewModel)))
+                    
+                    self.setupFavoriteNavigationBarItem(podcasts.contains { $0.rssFeedUrl == self.podcastViewModel.rssFeedUrl })
                 }
             }.store(in: &cancellable)
     }
@@ -92,22 +93,22 @@ fileprivate extension PodcastDetailsViewController {
     
     @objc func handleSaveToFavorites() {
         Task {
-            ProgressHUD.show()
+//            ProgressHUD.show()
             try await favoritePodcastsViewModel.favoritePodcast(podcastViewModel)
-            try await Task.sleep(nanoseconds: 1_333_000_000)
-            try await favoritePodcastsViewModel.fetchFavoritePodcasts()
-            ProgressHUD.dismiss()
+//            try await Task.sleep(nanoseconds: 1_333_000_000)
+//            try await favoritePodcastsViewModel.fetchFavoritePodcasts()
+//            ProgressHUD.dismiss()
         }
         
     }
     
     @objc func handleUnFavorite() {
         Task {
-            ProgressHUD.show()
+//            ProgressHUD.show()
             try await favoritePodcastsViewModel.unfavoritePodcast(podcastViewModel)
-            try await Task.sleep(nanoseconds: 1_333_000_000)
-            try await favoritePodcastsViewModel.fetchFavoritePodcasts()
-            ProgressHUD.dismiss()
+//            try await Task.sleep(nanoseconds: 1_333_000_000)
+//            try await favoritePodcastsViewModel.fetchFavoritePodcasts()
+//            ProgressHUD.dismiss()
         }
     }
 }
