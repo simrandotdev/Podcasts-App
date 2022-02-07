@@ -178,7 +178,7 @@ class PlayerDetailsView : UIView {
             try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category(rawValue: convertFromAVAudioSessionCategory(AVAudioSession.Category.playback)), mode: .default)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch let sessionError {
-            print("Failed to activate sessions: ", sessionError)
+            err("Failed to activate sessions: \(sessionError)")
         }
     }
     

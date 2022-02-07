@@ -49,10 +49,6 @@ fileprivate extension PodcastDetailsViewController {
                     self.setupFavoriteNavigationBarItem(podcasts.contains(Podcast(podcastViewModel: self.podcastViewModel)))
                 }
             }.store(in: &cancellable)
-        
-        Task {
-            try await favoritePodcastsViewModel.fetchFavoritePodcasts()
-        }
     }
     
     
@@ -169,4 +165,12 @@ extension PodcastDetailsViewController: UISearchBarDelegate {
 
 func info(_ message: String) {
     print("ℹ️", message)
+}
+
+func err(_ message: String) {
+    print("❌", message)
+}
+
+func warn(_ message: String) {
+    print("⚠️", message)
 }

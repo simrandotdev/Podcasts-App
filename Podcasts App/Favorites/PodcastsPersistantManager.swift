@@ -19,7 +19,7 @@ extension PodcastsPersistantManager {
             favoritePodcasts.append(podcast)
             try localStorageManager.save(favoritePodcasts, forKey: favoritePodcastsKey)
         } catch {
-            print("Failed to save Podcasts: \(error)")
+            err("Failed to save Podcasts: \(error)")
         }
         return favoritePodcasts
     }
@@ -35,7 +35,7 @@ extension PodcastsPersistantManager {
             
             try localStorageManager.save(favoritePodcasts, forKey: favoritePodcastsKey)
         } catch {
-            print("Failed to save Podcasts: \(error)")
+            err("Failed to save Podcasts: \(error)")
         }
         return favoritePodcasts
     }
@@ -45,7 +45,7 @@ extension PodcastsPersistantManager {
         do {
             favoritePodcasts = try localStorageManager.load(fromKey: favoritePodcastsKey)
         } catch  {
-            print("❌ Failed to fetch Podcasts: \(error)")
+            err("Failed to fetch Podcasts: \(error)")
         }
         return favoritePodcasts
     }
@@ -55,7 +55,7 @@ extension PodcastsPersistantManager {
         do {
             try localStorageManager.save(podcasts, forKey: favoritePodcastsKey)
         } catch {
-            print("❌ Failed to remote all favorite podcasts: \(error)")
+            err("Failed to remote all favorite podcasts: \(error)")
         }
     }
     
@@ -86,7 +86,7 @@ extension PodcastsPersistantManager {
             return try localStorageManager.load(fromKey: downloadedEpisodeKey)
         }
         catch let decodeErr {
-            print("Error Decoding Episodes: ", decodeErr)
+            err("Error Decoding Episodes: \(decodeErr.localizedDescription)")
         }
         return []
     }
@@ -102,7 +102,7 @@ extension PodcastsPersistantManager {
         do {
             try localStorageManager.save(episodes, forKey: downloadedEpisodeKey)
         } catch let encodeErr {
-            print("Failed to encode episode: ", encodeErr)
+            err("Failed to encode episode: \(encodeErr.localizedDescription)")
         }
     }
     
@@ -141,7 +141,7 @@ extension PodcastsPersistantManager {
         do {
             try localStorageManager.save(recentlyPlayedPosts, forKey: recentlyPlayedPodcastsKey)
         } catch {
-            print("Failed to save recently played Podcast")
+            err("Failed to save recently played Podcast")
         }
     }
     
@@ -157,7 +157,7 @@ extension PodcastsPersistantManager {
         do {
             return try localStorageManager.load(fromKey: recentlyPlayedPodcastsKey)
         } catch  {
-            print("Failed to Convert Recently played JSON String to Array of Episodes")
+            err("Failed to Convert Recently played JSON String to Array of Episodes")
         }
         return [Episode]()
     }
