@@ -38,13 +38,13 @@ class FavoritePodcastsViewModel {
         if isSubscribedUser {
 
             do {
-                favoritePodcasts = try await fetchCloudPodcasts()
+                favoritePodcasts = try await fetchCloudPodcasts().sorted(by: { return $0.title < $1.title })
             } catch {
-                favoritePodcasts = fetchLocalPodcasts()
+                favoritePodcasts = fetchLocalPodcasts().sorted(by: { return $0.title < $1.title })
                 throw error
             }
         } else {
-            favoritePodcasts = fetchLocalPodcasts()
+            favoritePodcasts = fetchLocalPodcasts().sorted(by: { return $0.title < $1.title })
         }
     }
     
@@ -65,11 +65,11 @@ class FavoritePodcastsViewModel {
     // MARK: - favoritePodcast
     func favoritePodcast(_ podcastViewModel: PodcastViewModel) async throws {
 
-        favoritePodcasts = favoritePodcastLocally(podcastViewModel)
+        favoritePodcasts = favoritePodcastLocally(podcastViewModel).sorted(by: { return $0.title < $1.title })
         
         if isSubscribedUser {
             
-            let favoritePodcasts = try await fetchCloudPodcasts()
+            let favoritePodcasts = try await fetchCloudPodcasts().sorted(by: { return $0.title < $1.title })
             
             let existingPodcast = favoritePodcasts.first(where: { favoritePodcast in
                 return favoritePodcast.rssFeedUrl == podcastViewModel.rssFeedUrl
@@ -96,7 +96,7 @@ class FavoritePodcastsViewModel {
     // MARK: - unfavoritePodcast
     func unfavoritePodcast(_ podcastViewModel: PodcastViewModel) async throws {
         
-        favoritePodcasts = unfavoritePodcastLocally(podcastViewModel)
+        favoritePodcasts = unfavoritePodcastLocally(podcastViewModel).sorted(by: { return $0.title < $1.title })
         
         
         if isSubscribedUser {
