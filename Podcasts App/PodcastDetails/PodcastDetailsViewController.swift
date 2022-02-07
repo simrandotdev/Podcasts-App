@@ -162,15 +162,3 @@ extension PodcastDetailsViewController: UISearchBarDelegate {
     }
 }
 
-
-func info(_ message: String) {
-    print("ℹ️", message)
-}
-
-func err(_ message: String) {
-    print("❌", message)
-}
-
-func warn(_ message: String) {
-    print("⚠️", message)
-}
