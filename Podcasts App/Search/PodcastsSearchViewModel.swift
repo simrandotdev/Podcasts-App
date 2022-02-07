@@ -6,20 +6,13 @@ class PodcastsSearchViewModel {
 
     @Published var searchTerm: String = "podcast"
     @Published var podcasts = [PodcastViewModel]()
-    @Published var favoritePodcasts : [Podcast] = []
-    @Published var isFavorite: Bool = false
     
     @Injected private var api: APIService
-    @Injected private var favoritePodcastLocalService: PodcastsPersistantManager
-    @Injected private var favoritePodcastCloudService: FavoritePodcastsService
     
     fileprivate var cancellable = Set<AnyCancellable>()
     
     init() {
         setupSubscriptions()
-        Task {
-            try await fetchFavoritePodcasts()
-        }
     }
     
     
@@ -32,12 +25,6 @@ class PodcastsSearchViewModel {
                 Task {
                     try await searchPodcasts()
                 }
-            }
-            .store(in: &cancellable)
-        
-        favoritePodcastCloudService.$podcasts
-            .sink { podcasts in
-                self.favoritePodcasts = podcasts
             }
             .store(in: &cancellable)
     }
@@ -53,27 +40,5 @@ class PodcastsSearchViewModel {
     func podcast(atIndex index: Int) -> PodcastViewModel {
         if index >= podcasts.count { return podcasts.last! }
         return podcasts[index]
-    }
-    
-    func fetchFavoritePodcasts() async throws {
-        try await favoritePodcastCloudService.fetchFavoritePodcasts()
-    }
-
-    func favoritePodcast(_ podcast: PodcastViewModel) async throws {
-
-        let podcastsToSave = Podcast(podcastViewModel: podcast)
-        try await favoritePodcastCloudService.favoritePodcast(podcastsToSave)
-    }
-
-    func unfavoritePodcast(_ podcast: PodcastViewModel) async throws {
-
-        let podcastsToUnsave = Podcast(podcastViewModel: podcast)
-        try await favoritePodcastCloudService.unfavoritePodcast(podcastsToUnsave)
-    }
-
-    func isFavorite(_ podcastViewModel: PodcastViewModel) async throws {
-        
-        let podcastModel = Podcast(podcastViewModel: podcastViewModel)
-        isFavorite = try await favoritePodcastCloudService.isFavorite(podcastModel)
     }
 }

@@ -16,11 +16,9 @@ class FavoritePodcastsService {
     @Injected private var favoritePodcastRepository: PodcastsPersistantManager
     @Injected private var bkManager: BaadalManager
     
-    @Published var podcasts: [Podcast] = []
-    
-    func fetchFavoritePodcasts() async throws {
+    func fetchFavoritePodcasts() async throws -> [Podcast] {
 
-        podcasts = try await bkManager.fetch(recordType: Constants.BKConstants.recordTypeFavoritePodcasts)
+        return try await bkManager.fetch(recordType: Constants.BKConstants.recordTypeFavoritePodcasts)
             .compactMap({ record in
                 guard let author = record.object(forKey: "author") as? String,
                       let title = record.object(forKey: "title") as? String,
@@ -30,19 +28,20 @@ class FavoritePodcastsService {
                           return nil
                       }
                 
-                return Podcast(recordId: record.recordID.recordName,
-                               title: title,
-                               author: author,
-                               image: image,
-                               totalEpisodes: totalEpisodes,
-                               rssFeedUrl: rssFeedUrl)
+                let podcast = Podcast(recordId: record.recordID.recordName,
+                                      title: title,
+                                      author: author,
+                                      image: image,
+                                      totalEpisodes: totalEpisodes,
+                                      rssFeedUrl: rssFeedUrl)
+                info("\(podcast.title) fetched")
+                return podcast
             })
-        
     }
 
     func favoritePodcast(_ podcast: Podcast) async throws {
 
-        let favoritePodcastRecord = CKRecord(recordType: Constants.BKConstants.recordTypeFavoritePodcasts) // TODO: Extract into some place common
+        let favoritePodcastRecord = CKRecord(recordType: Constants.BKConstants.recordTypeFavoritePodcasts)
         favoritePodcastRecord.setValue(podcast.author, forKey: "author")
         favoritePodcastRecord.setValue(podcast.title, forKey: "title")
         favoritePodcastRecord.setValue(podcast.image, forKey: "image")
@@ -53,14 +52,14 @@ class FavoritePodcastsService {
     }
 
     func unfavoritePodcast(_ podcast: Podcast) async throws {
-
+        let podcasts = try await fetchFavoritePodcasts()
         let podcastToUnfavorite = podcasts.first { $0.recordId == podcast.recordId }
         guard let unfavorite = podcastToUnfavorite else { return }
         _ = try await bkManager.delete(BKFavoritePodcast(podcast: unfavorite))
     }
 
     func isFavorite(_ podcast: Podcast) async throws -> Bool {
-        try await fetchFavoritePodcasts()
+        let podcasts = try await fetchFavoritePodcasts()
         return podcasts.contains(podcast)
     }
 }

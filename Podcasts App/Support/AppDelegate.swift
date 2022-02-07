@@ -85,5 +85,6 @@ extension Resolver: ResolverRegistering {
         register { PodcastsPersistantManager() }
         register { BaadalManager(identifier: Constants.BKConstants.container) }
         register { FavoritePodcastsService() }
+        register { FavoritePodcastsViewModel() }
     }
 }

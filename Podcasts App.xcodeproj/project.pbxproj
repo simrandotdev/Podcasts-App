@@ -18,6 +18,8 @@
 		494AA17D27B045130009E357 /* BKFavoritePodcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494AA17C27B045130009E357 /* BKFavoritePodcast.swift */; };
 		495E9E5424CAB52900F080D6 /* PodcastDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495E9E5324CAB52900F080D6 /* PodcastDetailViewModel.swift */; };
 		495E9E5624CAB54400F080D6 /* EpisodeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495E9E5524CAB54400F080D6 /* EpisodeViewModel.swift */; };
+		495EF2B527B0860100C85191 /* FavoritePodcastsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495EF2B427B0860100C85191 /* FavoritePodcastsViewModel.swift */; };
+		495EF2B827B17ACA00C85191 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 495EF2B727B17ACA00C85191 /* ProgressHUD */; };
 		4960E44024B12B1A009A3806 /* RSSFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4960E43F24B12B1A009A3806 /* RSSFeed.swift */; };
 		49B1AF212772DDB8005F498D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B1AF202772DDB8005F498D /* SettingsView.swift */; };
 		846F224520AFDE8400CA2FC9 /* PlayerDetailsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 846F224420AFDE8400CA2FC9 /* PlayerDetailsView.xib */; };
@@ -65,6 +67,7 @@
 		494AA17C27B045130009E357 /* BKFavoritePodcast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BKFavoritePodcast.swift; sourceTree = "<group>"; };
 		495E9E5324CAB52900F080D6 /* PodcastDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastDetailViewModel.swift; sourceTree = "<group>"; };
 		495E9E5524CAB54400F080D6 /* EpisodeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeViewModel.swift; sourceTree = "<group>"; };
+		495EF2B427B0860100C85191 /* FavoritePodcastsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritePodcastsViewModel.swift; sourceTree = "<group>"; };
 		4960E43C24B03BD8009A3806 /* Podcasts App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Podcasts App.entitlements"; sourceTree = "<group>"; };
 		4960E43F24B12B1A009A3806 /* RSSFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSFeed.swift; sourceTree = "<group>"; };
 		49B1AF202772DDB8005F498D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -108,6 +111,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				492538A127AF1B49009C54E2 /* CloudKit.framework in Frameworks */,
+				495EF2B827B17ACA00C85191 /* ProgressHUD in Frameworks */,
 				494036E627ADED03007207F2 /* BaadalKit in Frameworks */,
 				CD9597F290653D9B81AFEF84 /* Pods_Podcasts_App.framework in Frameworks */,
 			);
@@ -132,6 +136,7 @@
 			isa = PBXGroup;
 			children = (
 				D429ED7120AB8606008C66DD /* FavoritePodcastsViewController.swift */,
+				495EF2B427B0860100C85191 /* FavoritePodcastsViewModel.swift */,
 				849FE7EC20D2016400166425 /* FavoritePodcastCell.swift */,
 				F807946A2623962900ED3B4E /* FavoritePodcastCell.xib */,
 				D439488420D44BB4008BB6E2 /* PodcastsPersistantManager.swift */,
@@ -309,6 +314,7 @@
 			name = "Podcasts App";
 			packageProductDependencies = (
 				494036E527ADED03007207F2 /* BaadalKit */,
+				495EF2B727B17ACA00C85191 /* ProgressHUD */,
 			);
 			productName = "Podcasts App";
 			productReference = F859B12925275F5A0051B984 /* Podcasts Bin.app */;
@@ -346,6 +352,7 @@
 			mainGroup = D429ED3220AB81FA008C66DD;
 			packageReferences = (
 				494036E427ADED03007207F2 /* XCRemoteSwiftPackageReference "BaadalKit" */,
+				495EF2B627B17ACA00C85191 /* XCRemoteSwiftPackageReference "ProgressHUD" */,
 			);
 			productRefGroup = D429ED3220AB81FA008C66DD;
 			projectDirPath = "";
@@ -453,6 +460,7 @@
 				493E60B22774024600B64B10 /* LocalStorageManager.swift in Sources */,
 				D414F0D620ACDC4200D92DA8 /* PodcastCell.swift in Sources */,
 				F8C514EE21DEFDDF004149F4 /* RecentEpisodesViewController.swift in Sources */,
+				495EF2B527B0860100C85191 /* FavoritePodcastsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -668,6 +676,14 @@
 				kind = branch;
 			};
 		};
+		495EF2B627B17ACA00C85191 /* XCRemoteSwiftPackageReference "ProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/relatedcode/ProgressHUD";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -675,6 +691,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 494036E427ADED03007207F2 /* XCRemoteSwiftPackageReference "BaadalKit" */;
 			productName = BaadalKit;
+		};
+		495EF2B727B17ACA00C85191 /* ProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 495EF2B627B17ACA00C85191 /* XCRemoteSwiftPackageReference "ProgressHUD" */;
+			productName = ProgressHUD;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -2,11 +2,12 @@ import UIKit
 import SDWebImage
 import Resolver
 import Combine
+import ProgressHUD
 
 class PodcastDetailsViewController: UITableViewController
 {
     @Injected private var episodesListViewModel: PodcastDetailViewModel
-    @Injected private var favoritePodcastsViewModel: PodcastsSearchViewModel
+    @Injected private var favoritePodcastsViewModel: FavoritePodcastsViewModel
     
     private let cellId = "\(EpisodeCell.self)"
     private var searchController: UISearchController?
@@ -19,11 +20,99 @@ class PodcastDetailsViewController: UITableViewController
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
-        setupNavigationbar()
         setupTableView()
         setupSearchBar()
         setupViewModel()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        setupSubscriptions()
+    }
+}
+
+
+// MARK:- UI Setup methods
+fileprivate extension PodcastDetailsViewController {
+    
+    
+    func setupSubscriptions() {
+        
+        favoritePodcastsViewModel
+            .$favoritePodcasts
+            .sink { podcasts in
+                info("Favorite podcasts received.")
+                DispatchQueue.main.async {
+                    self.setupFavoriteNavigationBarItem(podcasts.contains(Podcast(podcastViewModel: self.podcastViewModel)))
+                }
+            }.store(in: &cancellable)
+        
+        Task {
+            try await favoritePodcastsViewModel.fetchFavoritePodcasts()
+        }
+    }
+    
+    
+    func setupViewModel() {
+        
+        guard let podcastViewModel = podcastViewModel else { return }
+        Task {
+            try await episodesListViewModel.fetchEpisodes(forPodcast: podcastViewModel)
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    func setupTableView() {
+        tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
+        let nib = UINib(nibName: "\(EpisodeCell.self)", bundle: nil)
+        tableView.register(nib, forCellReuseIdentifier: cellId)
+    }
+    
+    func setupSearchBar() {
+        searchController = UISearchController(searchResultsController: nil)
+        searchController?.obscuresBackgroundDuringPresentation = false
+        searchController?.searchBar.delegate = self
+        navigationItem.searchController = searchController
+    }
+    
+    
+    func setupFavoriteNavigationBarItem(_ isFavorite: Bool) {
+        if isFavorite {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark.fill"), style: .plain, target: self, action: #selector(self.handleUnFavorite))
+        } else {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark"), style: .plain, target: self, action: #selector(self.handleSaveToFavorites))
+        }
+    }
+}
+
+
+// MARK:- Action handlers
+fileprivate extension PodcastDetailsViewController {
+    
+    @objc func handleSaveToFavorites() {
+        Task {
+            ProgressHUD.show()
+            try await favoritePodcastsViewModel.favoritePodcast(podcastViewModel)
+            try await Task.sleep(nanoseconds: 1_333_000_000)
+            try await favoritePodcastsViewModel.fetchFavoritePodcasts()
+            ProgressHUD.dismiss()
+        }
+        
+    }
+    
+    @objc func handleUnFavorite() {
+        Task {
+            ProgressHUD.show()
+            try await favoritePodcastsViewModel.unfavoritePodcast(podcastViewModel)
+            try await Task.sleep(nanoseconds: 1_333_000_000)
+            try await favoritePodcastsViewModel.fetchFavoritePodcasts()
+            ProgressHUD.dismiss()
+        }
     }
 }
 
@@ -78,76 +167,6 @@ extension PodcastDetailsViewController: UISearchBarDelegate {
 }
 
 
-
-// MARK:- UI Setup methods
-fileprivate extension PodcastDetailsViewController {
-    
-    func setupViewModel() {
-        guard let podcastViewModel = podcastViewModel else { return }
-        Task {
-            try await episodesListViewModel.fetchEpisodes(forPodcast: podcastViewModel)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-        }
-    }
-    
-    func setupTableView() {
-        tableView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 40.0, right: 0)
-        let nib = UINib(nibName: "\(EpisodeCell.self)", bundle: nil)
-        tableView.register(nib, forCellReuseIdentifier: cellId)
-    }
-    
-    func setupSearchBar() {
-        searchController = UISearchController(searchResultsController: nil)
-        searchController?.obscuresBackgroundDuringPresentation = false
-        searchController?.searchBar.delegate = self
-        navigationItem.searchController = searchController
-    }
-    
-    func setupNavigationbar() {
-        navigationController?.isNavigationBarHidden = false
-        setupFavoriteNavigationBarItem()
-    }
-    
-    func setupFavoriteNavigationBarItem() {
-        
-        Task {
-            _ = try await favoritePodcastsViewModel.isFavorite(podcastViewModel)
-        }
-        
-        favoritePodcastsViewModel
-            .$isFavorite
-            .sink { isFavorite in
-                DispatchQueue.main.async {
-                    if isFavorite {
-                        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark.fill"), style: .plain, target: self, action: #selector(self.handleUnFavorite))
-                    } else {
-                        self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "bookmark"), style: .plain, target: self, action: #selector(self.handleSaveToFavorites))
-                    }
-                }
-            }.store(in: &cancellable)
-    }
-}
-
-
-// MARK:- Action handlers
-fileprivate extension PodcastDetailsViewController {
-    
-    @objc func handleSaveToFavorites() {
-        
-        Task {
-            try await favoritePodcastsViewModel.favoritePodcast(podcastViewModel)
-            try await favoritePodcastsViewModel.isFavorite(podcastViewModel)
-        }
-        
-    }
-    
-    @objc func handleUnFavorite() {
-        
-        Task {
-            try await favoritePodcastsViewModel.unfavoritePodcast(podcastViewModel)
-            try await favoritePodcastsViewModel.isFavorite(podcastViewModel)
-        }
-    }
+func info(_ message: String) {
+    print("ℹ️", message)
 }

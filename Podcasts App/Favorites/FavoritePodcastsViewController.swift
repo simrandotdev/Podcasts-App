@@ -7,7 +7,7 @@ class FavoritePodcastsViewController: UICollectionViewController {
     private let cellId = "favoritesCellId"
     private var cancellable = Set<AnyCancellable>()
     
-    @Injected var vm: PodcastsSearchViewModel
+    @Injected var favoritePodcastsViewModel: FavoritePodcastsViewModel
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,14 +17,15 @@ class FavoritePodcastsViewController: UICollectionViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        vm.$favoritePodcasts
+        
+        favoritePodcastsViewModel.$favoritePodcasts
             .receive(on: DispatchQueue.main)
             .sink { [collectionView] _ in
                 collectionView?.reloadData()
             }.store(in: &cancellable)
         
         Task {
-            try await vm.fetchFavoritePodcasts()
+            try await favoritePodcastsViewModel.fetchFavoritePodcasts()
         }
     }
     
@@ -39,18 +40,18 @@ class FavoritePodcastsViewController: UICollectionViewController {
 // MARK: CollectionView
 extension FavoritePodcastsViewController : UICollectionViewDelegateFlowLayout {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return vm.favoritePodcasts.count
+        return favoritePodcastsViewModel.favoritePodcasts.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! FavoritePodcastCell
-        let podcast = vm.favoritePodcasts[indexPath.row]
+        let podcast = favoritePodcastsViewModel.favoritePodcasts[indexPath.row]
         cell.setupCell(podcast: podcast)
         return cell
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let favoritePodcast = vm.favoritePodcasts[indexPath.row]
+        let favoritePodcast = favoritePodcastsViewModel.favoritePodcasts[indexPath.row]
         let episodeController = PodcastDetailsViewController()
         episodeController.podcastViewModel = PodcastViewModel(podcast: favoritePodcast)
         navigationController?.pushViewController(episodeController, animated: true)
