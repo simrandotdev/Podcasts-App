@@ -12,13 +12,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         window = UIWindow()
-        
-        syncLocalFavoritesWithCloudKit()
-        
         window?.makeKeyAndVisible()
         window?.rootViewController = MainTabBarController()
         setupAppUI()
-
+        
         return true
     }
     
@@ -29,43 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UITabBar.appearance().tintColor = Theme.Color.primaryColor
         UINavigationBar.appearance().tintColor = Theme.Color.primaryColor
-    }
-}
-
-
-extension AppDelegate {
-    func syncLocalFavoritesWithCloudKit() {
-        
-        Task {
-            let cloudPersistance = FavoritePodcastsService()
-            let localPersistance = PodcastsPersistantManager()
-            
-            let bkManager = BaadalManager(identifier: "iCloud.app.simran.PodcastsApp")
-            
-            let favoritePodcasts = localPersistance.fetchFavoritePodcasts()
-            let cloudPodcasts = try await cloudPersistance.fetchFavoritePodcasts()
-            
-            if favoritePodcasts.count > 0 {
-                for podcast in favoritePodcasts {
-                    
-                    if !cloudPodcasts.contains(where: { $0.rssFeedUrl == podcast.rssFeedUrl }) {
-                        
-                        let favoritePodcastRecord = CKRecord(recordType: "FavoritePodcasts") // TODO: Extract into some place common
-                        favoritePodcastRecord.setValue(podcast.author, forKey: "author")
-                        favoritePodcastRecord.setValue(podcast.title, forKey: "title")
-                        favoritePodcastRecord.setValue(podcast.image, forKey: "image")
-                        favoritePodcastRecord.setValue(podcast.totalEpisodes, forKey: "totalEpisodes")
-                        favoritePodcastRecord.setValue(podcast.rssFeedUrl, forKey: "rssFeedUrl")
-                        
-                        do {
-                            _ = try await bkManager.save(record: favoritePodcastRecord)
-                        } catch {
-                            print("❌ Error syncing favorite podcasts with error: \(error)")
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 

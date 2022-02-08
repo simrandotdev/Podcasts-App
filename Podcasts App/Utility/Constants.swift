@@ -12,8 +12,35 @@ struct Constants {
     
     struct BKConstants {
         static let container = "iCloud.app.simran.PodcastsApp"
-        
         static let recordTypeFavoritePodcasts = "FavoritePodcasts"
         
+    }
+    
+    
+    struct InAppSubscribed {
+        static var isUserSubscribed: Bool {
+            set {
+                DispatchQueue.main.async {
+                    UserDefaults.standard.set(newValue, forKey: "isUserSubscribed")
+                }
+            }
+            
+            get {
+                return UserDefaults.standard.bool(forKey: "isUserSubscribed")
+            }
+        }
+        
+        
+        static var firstTimeSync: Bool {
+            set {
+                DispatchQueue.main.async {
+                    UserDefaults.standard.set(newValue, forKey: "firstTimeSync")
+                }
+            }
+            
+            get {
+                return UserDefaults.standard.bool(forKey: "firstTimeSync")
+            }
+        }
     }
 }

@@ -50,6 +50,15 @@ extension PodcastsPersistantManager {
         return favoritePodcasts
     }
     
+    func saveFavoritePodcasts(_ podcasts: [Podcast]) -> [Podcast] {
+        do {
+            try localStorageManager.save(podcasts, forKey: favoritePodcastsKey)
+        } catch {
+            err("Failed to save Podcasts: \(error)")
+        }
+        return fetchFavoritePodcasts()
+    }
+    
     func removeAllFavoritePodcasts() {
         let podcasts = [Podcast]()
         do {

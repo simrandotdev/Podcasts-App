@@ -27,6 +27,13 @@ class FavoritePodcastsViewController: UICollectionViewController {
         Task {
             try await favoritePodcastsViewModel.fetchFavoritePodcasts()
         }
+        
+        let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
+        timer.sink { _ in
+            Task {
+                try await self.favoritePodcastsViewModel.fetchFavoritePodcasts()
+            }
+        }.store(in: &cancellable)
     }
     
     // MARK:- Setups

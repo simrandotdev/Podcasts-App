@@ -18,13 +18,10 @@ class FavoritePodcastsViewModel {
     @Injected private var favoritePodcastLocalService: PodcastsPersistantManager
     @Injected private var favoritePodcastCloudService: FavoritePodcastsService
     
-    #if DEBUG
-    private var isSubscribedUser = true
-    #endif
-    
     fileprivate var cancellable = Set<AnyCancellable>()
     
     init() {
+        
         Task {
             try await fetchFavoritePodcasts()
         }
@@ -35,7 +32,7 @@ class FavoritePodcastsViewModel {
     // MARK: - fetchFavoritePodcasts
     func fetchFavoritePodcasts() async throws {
         
-        if isSubscribedUser {
+        if Constants.InAppSubscribed.isUserSubscribed {
 
             do {
                 favoritePodcasts = try await fetchCloudPodcasts().sorted(by: { return $0.title < $1.title })
@@ -55,8 +52,10 @@ class FavoritePodcastsViewModel {
     }
     
     private func fetchCloudPodcasts() async throws -> [PodcastViewModel] {
-        return try await favoritePodcastCloudService
-            .fetchFavoritePodcasts()
+        let favoritePodcasts = try await favoritePodcastCloudService
+                                            .fetchFavoritePodcasts()
+        _ = favoritePodcastLocalService.saveFavoritePodcasts(favoritePodcasts)
+        return favoritePodcasts
             .map({ PodcastViewModel(podcast: $0) })
     }
 
@@ -67,7 +66,7 @@ class FavoritePodcastsViewModel {
 
         favoritePodcasts = favoritePodcastLocally(podcastViewModel).sorted(by: { return $0.title < $1.title })
         
-        if isSubscribedUser {
+        if Constants.InAppSubscribed.isUserSubscribed {
             
             let favoritePodcasts = try await fetchCloudPodcasts().sorted(by: { return $0.title < $1.title })
             
@@ -99,7 +98,7 @@ class FavoritePodcastsViewModel {
         favoritePodcasts = unfavoritePodcastLocally(podcastViewModel).sorted(by: { return $0.title < $1.title })
         
         
-        if isSubscribedUser {
+        if Constants.InAppSubscribed.isUserSubscribed {
             
             try await unfavoritePodcastInCloud(podcastViewModel)
         }

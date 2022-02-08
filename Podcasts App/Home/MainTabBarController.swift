@@ -10,6 +10,7 @@ class MainTabBarController : UITabBarController
     override
     func viewDidLoad() {
         super.viewDidLoad()
+//        firstTimeSync()
         setupTabBarController()
         setupViewController()
         setupPlayerDetailsView()
@@ -61,6 +62,21 @@ class MainTabBarController : UITabBarController
         view.backgroundColor = Theme.Color.systemBackgroundColor
     }
     
+    private func firstTimeSync() {
+        
+        let service = FavoritePodcastsService()
+        
+        if !Constants.InAppSubscribed.firstTimeSync {
+            Task {
+                try await service.syncLocalToCloud()
+                
+                DispatchQueue.main.async {
+                    Constants.InAppSubscribed.firstTimeSync = true
+                }
+            }
+        }
+    }
+    
     fileprivate func setupViewController() {
         let favoriteNavController = setupTabBarNavigationController(title: "Favorites",
                                                                     image: UIImage(systemName: "star.fill") ?? UIImage(),
@@ -82,8 +98,11 @@ class MainTabBarController : UITabBarController
             searchNavController,
             favoriteNavController,
             recentEpisodesNavController,
-//            settingsViewNavController
         ]
+        
+        #if DEBUG
+        viewControllers?.append(settingsViewNavController)
+        #endif
     }
     
     fileprivate func setupPlayerDetailsView() {

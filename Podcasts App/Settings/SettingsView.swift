@@ -7,17 +7,19 @@
 //
 
 import SwiftUI
+import Combine
+import Resolver
 
 struct SettingsView: View {
     
-    @State private var isSyncingWithiCloud = false
+    @StateObject private var settingsViewModel = DebugSettingsViewModel()
+    
     
     var body: some View {
         Form {
-            Button("Subscribe to get all features") { }
-            .foregroundColor(Color.purple)
-            
-            Toggle("Sync with iCloud", isOn: $isSyncingWithiCloud)
+            #if DEBUG
+            Toggle("Is User subscriber", isOn: $settingsViewModel.isUserSubscriber)
+            #endif
         }
     }
 }
@@ -25,5 +27,26 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
+    }
+}
+
+
+class DebugSettingsViewModel: ObservableObject {
+    
+    @Published var isUserSubscriber = false
+    
+    private var cancallable = Set<AnyCancellable>()
+    
+    @Injected private var favoritePodcastService: FavoritePodcastsService
+    
+    init() {
+        
+        isUserSubscriber = Constants.InAppSubscribed.isUserSubscribed
+        
+        $isUserSubscriber
+            .sink { isUserSubscriber in
+            Constants.InAppSubscribed.isUserSubscribed = isUserSubscriber
+        }
+        .store(in: &cancallable)
     }
 }
