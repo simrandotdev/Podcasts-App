@@ -33,8 +33,8 @@
                                         <rect key="frame" x="0.0" y="0.0" width="234" height="86"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="7" translatesAutoresizingMaskIntoConstraints="NO" id="uCh-7T-xGp">
-                                                <rect key="frame" x="0.0" y="0.0" width="234" height="40.5"/>
-                                                <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="18"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="234" height="40"/>
+                                                <fontDescription key="fontDescription" name="ArialRoundedMTBold" family="Arial Rounded MT Bold" pointSize="18"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
