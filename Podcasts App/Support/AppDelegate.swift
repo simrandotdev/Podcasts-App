@@ -23,9 +23,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().prefersLargeTitles = true
         UINavigationBar.appearance().isOpaque = true
         UINavigationBar.appearance().isTranslucent = true
+        UINavigationBar.appearance().tintColor = Theme.Color.primaryColor
+        UINavigationBar.appearance().largeTitleTextAttributes = [
+            .font: UIFont(name: "Arial Rounded MT Bold", size: 36) ?? UIFont.systemFont(ofSize: 36),
+        ]
+        UINavigationBar.appearance().titleTextAttributes = [
+            .font: UIFont(name: "Arial Rounded MT Bold", size: 20) ?? UIFont.systemFont(ofSize: 20)
+        ]
         
         UITabBar.appearance().tintColor = Theme.Color.primaryColor
-        UINavigationBar.appearance().tintColor = Theme.Color.primaryColor
     }
 }
 
