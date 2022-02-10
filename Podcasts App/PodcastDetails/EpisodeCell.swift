@@ -24,6 +24,9 @@ class EpisodeCell: UITableViewCell {
         thumbnailImageView.contentMode = .scaleAspectFill
         thumbnailImageView.layer.cornerRadius = 10
         thumbnailImageView.layer.masksToBounds = true
+        
+        titleLabel.font = Theme.Font.body
+        publishedDateLabel.font = Theme.Font.caption2
     }
     
     func configure(withViewModel episodeViewModel: EpisodeViewModel, podcastImageURL: String) {

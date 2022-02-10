@@ -22,5 +22,9 @@ class PodcastCell: UITableViewCell {
         backgroundColor = Theme.Color.systemBackgroundColor
         thumbnailImage?.layer.cornerRadius = 10
         thumbnailImage?.layer.masksToBounds = true
+        
+        trackNameLabel.font = Theme.Font.body
+        artistNameLabel.font = Theme.Font.caption1
+        numberOfEpisodesLabel.font = Theme.Font.caption2
     }
 }

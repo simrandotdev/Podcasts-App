@@ -16,12 +16,11 @@ class FavoritePodcastCell : UICollectionViewCell {
         layer.masksToBounds = true
         
         nameLabel.text = ""
-//        nameLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
-//        nameLabel.font = UIFont(name: "", size: <#T##CGFloat#>)
+        nameLabel.font = Theme.Font.title3
         nameLabel.numberOfLines = 2
         
         artistNameLabel.text = ""
-        artistNameLabel.font = UIFont.systemFont(ofSize: 13)
+        artistNameLabel.font = Theme.Font.caption1
         
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 20

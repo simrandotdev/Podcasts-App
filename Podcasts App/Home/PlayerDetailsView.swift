@@ -367,6 +367,12 @@ class PlayerDetailsView : UIView {
         
         miniEpisodeImageView.layer.cornerRadius = 10
         miniEpisodeImageView.layer.masksToBounds = true
+        
+        miniTitleLabel.font = Theme.Font.title2
+        authorLabel.font = Theme.Font.title3
+        durationLabel.font = Theme.Font.footnote
+        currentTimeLabel.font = Theme.Font.footnote
+        
     }
 }
 
