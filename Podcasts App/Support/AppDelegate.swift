@@ -1,7 +1,7 @@
 import UIKit
 import Resolver
 import BaadalKit
-import CloudKit
+import Purchases
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,8 +15,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         window?.rootViewController = MainTabBarController()
         setupAppUI()
+        setupRevenueCat()
         
         return true
+    }
+    
+    private func setupRevenueCat() {
+        #if DEBUG
+        Purchases.logLevel = .debug
+        #endif
+        
+        Purchases.configure(withAPIKey: "appl_gFncRMfPejgzHbNdSpkRffRoutB")
     }
     
     private func setupAppUI() {
