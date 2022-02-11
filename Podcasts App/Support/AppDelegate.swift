@@ -50,7 +50,6 @@ struct Theme {
     }
     
     struct Font {
-        private static var fontName = "Arial Rounded MT Bold"
         
         static var largeTitle: UIFont {
             let font = UIFont.systemFont(ofSize: 34)
@@ -73,9 +72,23 @@ struct Theme {
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 28))
         }
         
+        static var title1Bold: UIFont {
+            let font = UIFont.systemFont(ofSize: 28, weight: .bold)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.title1)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 28))
+        }
+        
         
         static var title2: UIFont {
             let font = UIFont.systemFont(ofSize: 22)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.title2)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 22))
+        }
+        
+        static var title2Bold: UIFont {
+            let font = UIFont.systemFont(ofSize: 22, weight: .bold)
             let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.title2)
             let description = font.fontDescriptor.withDesign(.rounded)!
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 22))
@@ -103,8 +116,22 @@ struct Theme {
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 17))
         }
         
+        static var bodyBold: UIFont {
+            let font = UIFont.systemFont(ofSize: 17, weight: .bold)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.body)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 17))
+        }
+        
         static var callout: UIFont {
             let font = UIFont.systemFont(ofSize: 16)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.callout)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 16))
+        }
+        
+        static var calloutBold: UIFont {
+            let font = UIFont.systemFont(ofSize: 16, weight: .bold)
             let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.callout)
             let description = font.fontDescriptor.withDesign(.rounded)!
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 16))
@@ -117,8 +144,22 @@ struct Theme {
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 15))
         }
         
+        static var subHeadBold: UIFont {
+            let font = UIFont.systemFont(ofSize: 15, weight: .bold)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.subheadline)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 15))
+        }
+        
         static var footnote: UIFont {
             let font = UIFont.systemFont(ofSize: 13)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.footnote)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 13))
+        }
+        
+        static var footnoteBold: UIFont {
+            let font = UIFont.systemFont(ofSize: 13, weight: .bold)
             let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.footnote)
             let description = font.fontDescriptor.withDesign(.rounded)!
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 13))
@@ -131,8 +172,22 @@ struct Theme {
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 12))
         }
         
+        static var caption1Bold: UIFont {
+            let font = UIFont.systemFont(ofSize: 12, weight: .bold)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.caption1)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 12))
+        }
+        
         static var caption2: UIFont {
             let font = UIFont.systemFont(ofSize: 11)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.caption2)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 11))
+        }
+        
+        static var caption2Bold: UIFont {
+            let font = UIFont.systemFont(ofSize: 11, weight: .bold)
             let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.caption2)
             let description = font.fontDescriptor.withDesign(.rounded)!
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 11))
