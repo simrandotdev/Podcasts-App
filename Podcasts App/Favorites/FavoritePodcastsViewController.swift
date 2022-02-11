@@ -4,6 +4,7 @@ import Combine
 
 class FavoritePodcastsViewController: UICollectionViewController {
     
+    private var numberOfSpaces: CGFloat = 3
     private let cellId = "favoritesCellId"
     private var cancellable = Set<AnyCancellable>()
     
@@ -67,7 +68,9 @@ extension FavoritePodcastsViewController : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let size = (collectionView.frame.width  - (3 * 8)) / 2
+        
+        
+        let size = (collectionView.frame.width  - (numberOfSpaces * 8)) / (numberOfSpaces - 1)
         return CGSize(width: size, height: size)
     }
     
@@ -81,5 +84,18 @@ extension FavoritePodcastsViewController : UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 4
+    }
+    
+    private func layoutTrait(traitCollection:UITraitCollection) {
+        if traitCollection.horizontalSizeClass == .regular {
+            numberOfSpaces = 4
+        } else {
+            numberOfSpaces = 3
+        }
+    }
+        
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        layoutTrait(traitCollection: traitCollection)
     }
 }
