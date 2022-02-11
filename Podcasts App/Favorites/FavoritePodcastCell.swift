@@ -16,7 +16,7 @@ class FavoritePodcastCell : UICollectionViewCell {
         layer.masksToBounds = true
         
         nameLabel.text = ""
-        nameLabel.font = Theme.Font.title3
+        nameLabel.font = Theme.Font.body
         nameLabel.numberOfLines = 2
         
         artistNameLabel.text = ""

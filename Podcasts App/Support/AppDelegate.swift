@@ -25,10 +25,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().isTranslucent              = true
         UINavigationBar.appearance().tintColor                  = Theme.Color.primaryColor
         UINavigationBar.appearance().largeTitleTextAttributes   = [
-            .font: Theme.Font.largeTitle
+            .font: Theme.Font.largeTitleBold
         ]
         UINavigationBar.appearance().titleTextAttributes        = [
-            .font: Theme.Font.title3
+            .font: Theme.Font.callout
         ]
         
         UITabBar.appearance().tintColor = Theme.Color.primaryColor
@@ -59,6 +59,13 @@ struct Theme {
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 34))
         }
         
+        static var largeTitleBold: UIFont {
+            let font = UIFont.systemFont(ofSize: 34, weight: .bold)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.largeTitle)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 34))
+        }
+        
         static var title1: UIFont {
             let font = UIFont.systemFont(ofSize: 28)
             let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.title1)
@@ -76,6 +83,13 @@ struct Theme {
         
         static var title3: UIFont {
             let font = UIFont.systemFont(ofSize: 20)
+            let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.title3)
+            let description = font.fontDescriptor.withDesign(.rounded)!
+            return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 20))
+        }
+        
+        static var title3Bold: UIFont {
+            let font = UIFont.systemFont(ofSize: 20, weight: .bold)
             let fontMetrics = UIFontMetrics(forTextStyle: UIFont.TextStyle.title3)
             let description = font.fontDescriptor.withDesign(.rounded)!
             return fontMetrics.scaledFont(for: UIFont(descriptor: description, size: 20))
