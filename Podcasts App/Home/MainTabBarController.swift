@@ -10,7 +10,6 @@ class MainTabBarController : UITabBarController
     override
     func viewDidLoad() {
         super.viewDidLoad()
-//        firstTimeSync()
         setupTabBarController()
         setupViewController()
         setupPlayerDetailsView()
@@ -78,17 +77,23 @@ class MainTabBarController : UITabBarController
     }
     
     fileprivate func setupViewController() {
+        let favoritesVC = FavoritePodcastsViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        favoritesVC.maximizePlayer = maximizePlayerDetails
         let favoriteNavController = setupTabBarNavigationController(title: "Favorites",
                                                                     image: UIImage(systemName: "star.fill") ?? UIImage(),
-                                                                    viewController: FavoritePodcastsViewController(collectionViewLayout: UICollectionViewFlowLayout()))
+                                                                    viewController: favoritesVC)
         
+        let podcastsSearchVC = PodcastsSearchViewController()
+        podcastsSearchVC.maximizePlayer = maximizePlayerDetails
         let searchNavController = setupTabBarNavigationController(title: "Search",
                                                                   image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
-                                                                  viewController: PodcastsSearchViewController())
+                                                                  viewController: podcastsSearchVC)
         
+        let recentEpisodesVC = RecentEpisodesViewController()
+        recentEpisodesVC.maximizePlayer = maximizePlayerDetails
         let recentEpisodesNavController = setupTabBarNavigationController(title: "History",
                                                                           image: UIImage(systemName: "square.stack.fill") ?? UIImage(),
-                                                                          viewController: RecentEpisodesViewController())
+                                                                          viewController:recentEpisodesVC)
         
         let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
                                                                         image: UIImage(systemName: "gear") ?? UIImage(),
@@ -118,6 +123,8 @@ class MainTabBarController : UITabBarController
         
         let swipeDownGesture = UIPanGestureRecognizer(target: self, action: #selector(panPiece))
         playerDetailsView.addGestureRecognizer(swipeDownGesture)
+        playerDetailsView.minimizePlayerDetails = minimizePlayerDetails
+        playerDetailsView.maximizePlayer = maximizePlayerDetails
     }
     
     @objc func panPiece(_ gestureRecognizer : UIPanGestureRecognizer) {

@@ -6,6 +6,8 @@ class RecentEpisodesViewController: UITableViewController {
     private let cellId = "cellId"
     private var searchController: UISearchController?
     
+    var maximizePlayer: ((EpisodeViewModel?, [EpisodeViewModel]?) -> Void)?
+    
     @Injected fileprivate var episodesListViewModel: RecentEpisodesListViewModel
     
     init() { super.init(nibName: nil, bundle: nil) }
@@ -71,8 +73,7 @@ extension RecentEpisodesViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let episode = episodesListViewModel.episodesList[indexPath.row]
-        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
-        mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: self.episodesListViewModel.episodesList)
+        maximizePlayer?(episode, self.episodesListViewModel.episodesList)
         
     }
 }

@@ -10,6 +10,8 @@ class PodcastsSearchViewController: UITableViewController {
     fileprivate let cellId = "\(PodcastCell.self)"
     fileprivate var cancellable = Set<AnyCancellable>()
     
+    var maximizePlayer: ((EpisodeViewModel?, [EpisodeViewModel]?) -> Void)?
+    
     init() {
         super.init(nibName: nil, bundle: nil)
     }
@@ -82,6 +84,7 @@ extension PodcastsSearchViewController {
         let selectedPodcast = searchPodcastViewModel.podcast(atIndex: indexPath.row)
         let controller = PodcastDetailsViewController()
         controller.podcastViewModel = selectedPodcast
+        controller.maximizePlayer = maximizePlayer
         self.navigationController?.pushViewController(controller, animated: true)
     }
     

@@ -14,6 +14,7 @@ class PodcastDetailsViewController: UITableViewController
     private var cancellable = Set<AnyCancellable>()
     
     var podcastViewModel: PodcastViewModel! { didSet { navigationItem.title = podcastViewModel?.title } }
+    var maximizePlayer: ((EpisodeViewModel?, [EpisodeViewModel]?) -> Void)?
     
     init() { super.init(nibName: nil, bundle: nil) }
     
@@ -127,8 +128,8 @@ extension PodcastDetailsViewController {
         let episode = self.episodesListViewModel.episode(atIndex: indexPath.row)
         episode.imageUrl = podcastViewModel?.image
         self.view.window?.endEditing(true)
-        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
-        mainTabBarController?.maximizePlayerDetails(episode: episode, playListEpisodes: episodesListViewModel.episodesList)
+    
+        maximizePlayer?(episode, episodesListViewModel.episodesList)
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {

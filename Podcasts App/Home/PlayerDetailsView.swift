@@ -6,6 +6,8 @@ import MediaPlayer
 class PlayerDetailsView : UIView {
     let podcastsPersistantManager = PodcastsPersistantManager()
     
+    var minimizePlayerDetails: (() -> Void)?
+    
     // MARK:- Properties
     var episodeViewModel: EpisodeViewModel? {
         didSet {
@@ -37,6 +39,8 @@ class PlayerDetailsView : UIView {
         }
     }
     
+    var maximizePlayer: ((EpisodeViewModel?, [EpisodeViewModel]?) -> Void)?
+    
     let player: AVPlayer = {
         let player = AVPlayer()
         player.automaticallyWaitsToMinimizeStalling = false
@@ -60,8 +64,7 @@ class PlayerDetailsView : UIView {
     
     // MARK:- IBActions
     @IBAction func handleDismiss(_ sender: UIButton) {
-        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
-        mainTabBarController?.minimizePlayerDetails()
+        minimizePlayerDetails?()
     }
     
     @IBAction func handleCurrentTimeSliderChange(_ sender: Any) {
@@ -89,8 +92,7 @@ class PlayerDetailsView : UIView {
     }
     
     @objc func handleTapMaximize() {
-        let mainTabBarController = UIApplication.shared.windows.first?.rootViewController as? MainTabBarController
-        mainTabBarController?.maximizePlayerDetails(episode: nil, playListEpisodes: nil)
+        maximizePlayer?(nil, nil)
     }
     
     // MARK:- Private Methods

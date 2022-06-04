@@ -8,6 +8,8 @@ class FavoritePodcastsViewController: UICollectionViewController {
     private let cellId = "favoritesCellId"
     private var cancellable = Set<AnyCancellable>()
     
+    var maximizePlayer: ((EpisodeViewModel?, [EpisodeViewModel]?) -> Void)?
+    
     @Injected var favoritePodcastsViewModel: FavoritePodcastsViewModel
     
     override func viewDidLoad() {
@@ -61,6 +63,7 @@ extension FavoritePodcastsViewController : UICollectionViewDelegateFlowLayout {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let favoritePodcast = favoritePodcastsViewModel.favoritePodcasts[indexPath.row]
         let episodeController = PodcastDetailsViewController()
+        episodeController.maximizePlayer =  maximizePlayer
         episodeController.podcastViewModel = favoritePodcast
         navigationController?.pushViewController(episodeController, animated: true)
     }
