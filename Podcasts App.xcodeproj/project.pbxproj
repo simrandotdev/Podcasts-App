@@ -61,6 +61,7 @@
 		2636EEA62AD5E74280931919 /* Pods_Podcasts_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Podcasts_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4907236224CBA63C00AF9203 /* RecentEpisodesListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentEpisodesListViewModel.swift; sourceTree = "<group>"; };
 		490AF41627B60EFF00E40AB2 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		491F15B8284BEC6700A4534D /* Podcasts Bin.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = "Podcasts Bin.app"; path = "../../../../../../Library/Developer/Xcode/DerivedData/Podcasts_App-fofgmnjjoqovemdjioemjhkygisp/Build/Products/Debug-iphonesimulator/Podcasts Bin.app"; sourceTree = "<group>"; };
 		492538A027AF1B49009C54E2 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		493E60B12774024600B64B10 /* LocalStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageManager.swift; sourceTree = "<group>"; };
 		49456DE324B5AA160077CA12 /* PodcastsSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastsSearchViewModel.swift; sourceTree = "<group>"; };
@@ -125,14 +126,46 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		491F15B5284BEB7A00A4534D /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				49B94FDD284B26A000573910 /* CloudKit */,
+				4992822E2774F5E400AF919E /* Managers */,
+				D414F0CF20ACD1D100D92DA8 /* API */,
+				84A4329620AF5CB7004F32AD /* Extensions */,
+				499282292774F2CA00AF919E /* Utility */,
+				491F15B6284BEB8300A4534D /* UI */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		491F15B6284BEB8300A4534D /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				491F15B7284BEB8700A4534D /* Cells */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		491F15B7284BEB8700A4534D /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				849FE7EC20D2016400166425 /* FavoritePodcastCell.swift */,
+				F807946A2623962900ED3B4E /* FavoritePodcastCell.xib */,
+				D414F0D520ACDC4200D92DA8 /* PodcastCell.swift */,
+				D414F0D320ACDA7500D92DA8 /* PodcastCell.xib */,
+				84A4329220AF3101004F32AD /* EpisodeCell.swift */,
+				84A4329320AF3101004F32AD /* EpisodeCell.xib */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		499282272774F11100AF919E /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				D429ED6F20AB85FC008C66DD /* PodcastsSearchViewController.swift */,
 				49456DE324B5AA160077CA12 /* PodcastsSearchViewModel.swift */,
 				49456DE524B5B7710077CA12 /* PodcastViewModel.swift */,
-				D414F0D520ACDC4200D92DA8 /* PodcastCell.swift */,
-				D414F0D320ACDA7500D92DA8 /* PodcastCell.xib */,
+				D429ED6F20AB85FC008C66DD /* PodcastsSearchViewController.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -142,8 +175,6 @@
 			children = (
 				D429ED7120AB8606008C66DD /* FavoritePodcastsViewController.swift */,
 				495EF2B427B0860100C85191 /* FavoritePodcastsViewModel.swift */,
-				849FE7EC20D2016400166425 /* FavoritePodcastCell.swift */,
-				F807946A2623962900ED3B4E /* FavoritePodcastCell.xib */,
 			);
 			path = Favorites;
 			sourceTree = "<group>";
@@ -151,9 +182,6 @@
 		499282292774F2CA00AF919E /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				4992822E2774F5E400AF919E /* Managers */,
-				D414F0CF20ACD1D100D92DA8 /* API */,
-				84A4329620AF5CB7004F32AD /* Extensions */,
 				494AA17A27B042E50009E357 /* Constants.swift */,
 				495EF2B927B17F2900C85191 /* Log.swift */,
 			);
@@ -173,8 +201,6 @@
 			isa = PBXGroup;
 			children = (
 				D4397CE520ADBC3F00FF7839 /* PodcastDetailsViewController.swift */,
-				84A4329220AF3101004F32AD /* EpisodeCell.swift */,
-				84A4329320AF3101004F32AD /* EpisodeCell.xib */,
 				495E9E5324CAB52900F080D6 /* PodcastDetailViewModel.swift */,
 				495E9E5524CAB54400F080D6 /* EpisodeViewModel.swift */,
 			);
@@ -283,18 +309,18 @@
 		D429ED3D20AB81FA008C66DD /* Podcasts App */ = {
 			isa = PBXGroup;
 			children = (
-				4960E43C24B03BD8009A3806 /* Podcasts App.entitlements */,
-				D429ED4A20AB81FC008C66DD /* Info.plist */,
+				491F15B5284BEB7A00A4534D /* Shared */,
 				4992822D2774F57C00AF919E /* Home */,
 				4992822C2774F57100AF919E /* Settings */,
 				4992822B2774F31F00AF919E /* PodcastDetails */,
 				4992822A2774F2EF00AF919E /* History */,
 				499282282774F21600AF919E /* Favorites */,
 				499282272774F11100AF919E /* Search */,
-				499282292774F2CA00AF919E /* Utility */,
 				D429ED7720AB8C4A008C66DD /* Models */,
-				49B94FDD284B26A000573910 /* CloudKit */,
 				4992822F2774F5F300AF919E /* Support */,
+				4960E43C24B03BD8009A3806 /* Podcasts App.entitlements */,
+				D429ED4A20AB81FC008C66DD /* Info.plist */,
+				491F15B8284BEC6700A4534D /* Podcasts Bin.app */,
 			);
 			path = "Podcasts App";
 			sourceTree = "<group>";

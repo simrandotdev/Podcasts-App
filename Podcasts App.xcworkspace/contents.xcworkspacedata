@@ -5,6 +5,9 @@
       location = "group:Podcasts App.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:../../../../../Library/Developer/Xcode/DerivedData/Podcasts_App-fofgmnjjoqovemdjioemjhkygisp/Build/Products/Debug-iphonesimulator/Podcasts Bin.app">
+   </FileRef>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>
