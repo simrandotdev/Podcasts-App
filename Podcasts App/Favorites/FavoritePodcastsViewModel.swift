@@ -16,7 +16,7 @@ class FavoritePodcastsViewModel {
     @Published var isFavorite: Bool = false
     
     @Injected private var favoritePodcastLocalService: PodcastsPersistantManager
-    @Injected private var favoritePodcastCloudService: FavoritePodcastsService
+    @Injected private var favoritePodcastCloudService: FavoritePodcastsCloudKitService
     
     fileprivate var cancellable = Set<AnyCancellable>()
     
@@ -33,7 +33,6 @@ class FavoritePodcastsViewModel {
     func fetchFavoritePodcasts() async throws {
         
         if Constants.InAppSubscribed.isUserSubscribed {
-
             do {
                 favoritePodcasts = try await fetchCloudPodcasts().sorted(by: { return $0.title < $1.title })
             } catch {

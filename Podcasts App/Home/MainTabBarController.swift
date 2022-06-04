@@ -64,7 +64,7 @@ class MainTabBarController : UITabBarController
     
     private func firstTimeSync() {
         
-        let service = FavoritePodcastsService()
+        let service = FavoritePodcastsCloudKitService()
         
         if !Constants.InAppSubscribed.firstTimeSync {
             Task {

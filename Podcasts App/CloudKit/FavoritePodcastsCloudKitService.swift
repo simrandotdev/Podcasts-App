@@ -11,7 +11,7 @@ import Resolver
 import BaadalKit
 import CloudKit
 
-class FavoritePodcastsService {
+class FavoritePodcastsCloudKitService {
     
     @Injected private var localPersistantManager: PodcastsPersistantManager
     @Injected private var bkManager: BaadalManager

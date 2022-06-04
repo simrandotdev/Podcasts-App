@@ -1,7 +1,6 @@
 import UIKit
 import Resolver
 import BaadalKit
-import Purchases
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,17 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         window?.rootViewController = MainTabBarController()
         setupAppUI()
-        setupRevenueCat()
         
         return true
-    }
-    
-    private func setupRevenueCat() {
-        #if DEBUG
-        Purchases.logLevel = .debug
-        #endif
-        
-        Purchases.configure(withAPIKey: "appl_gFncRMfPejgzHbNdSpkRffRoutB")
     }
     
     private func setupAppUI() {
@@ -216,7 +206,7 @@ extension Resolver: ResolverRegistering {
         register { RecentEpisodesListViewModel() }
         register { PodcastsPersistantManager() }
         register { BaadalManager(identifier: Constants.BKConstants.container) }
-        register { FavoritePodcastsService() }
+        register { FavoritePodcastsCloudKitService() }
         register { FavoritePodcastsViewModel() }
     }
 }
