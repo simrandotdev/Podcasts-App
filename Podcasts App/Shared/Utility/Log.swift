@@ -9,18 +9,18 @@
 import Foundation
 
 
-func info(_ message: String) {
+func info(_ message: String...) {
     print("☢️ ℹ️", message)
 }
 
-func err(_ message: String) {
+func err(_ message: String...) {
     print("☢️ ❌", message)
 }
 
-func warn(_ message: String) {
+func warn(_ message: String...) {
     print("☢️ ⚠️", message)
 }
 
-func debug(_ message: String) {
+func debug(_ message: String...) {
     print("☢️ 📱", message)
 }
