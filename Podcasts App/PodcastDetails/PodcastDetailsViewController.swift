@@ -32,6 +32,7 @@ class PodcastDetailsViewController: UITableViewController
         
         super.viewWillAppear(animated)
         setupSubscriptions()
+        navigationItem.largeTitleDisplayMode = .never
     }
 }
 
