@@ -79,7 +79,7 @@ class MainTabBarController : UITabBarController
     fileprivate func setupViewController() {
 //        let favoritesVC = FavoritePodcastsViewController(collectionViewLayout: UICollectionViewFlowLayout())
 //        favoritesVC.maximizePlayer = maximizePlayerDetails
-        let favoritePodcastsView = FavoritePodcastsView()
+        let favoritePodcastsView = FavoritePodcastsView(maximizePlayer: maximizePlayerDetails)
         let favoritePodcastsViewController = UIHostingController(rootView: favoritePodcastsView)
         let favoriteNavController = setupTabBarNavigationController(title: "Favorites",
                                                                     image: UIImage(systemName: "star.fill") ?? UIImage(),

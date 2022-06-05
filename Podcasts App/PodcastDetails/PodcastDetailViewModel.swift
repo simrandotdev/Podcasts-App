@@ -1,12 +1,12 @@
 import Foundation
 import Resolver
 
-class PodcastDetailViewModel {
+class PodcastDetailViewModel: ObservableObject {
     
     @Injected var api: APIService
     
     private var podcast: PodcastViewModel?
-    private var episodes = [EpisodeViewModel]()
+    @Published var episodes = [EpisodeViewModel]()
     private var filteredEpisodes = [EpisodeViewModel]()
     
     var episodesList: [EpisodeViewModel] {
