@@ -271,10 +271,13 @@ class PlayerDetailsView : UIView {
     }
     
     fileprivate func setupImageInfoOnLockScreen() {
+        
+        guard let episodeImageView = miniEpisodeImageView.image else { return }
+        
         // lock screen artwork setup code
         var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo
         // some modifications here
-        let artwork = MPMediaItemArtwork(boundsSize: (miniEpisodeImageView.image?.size)!, requestHandler: { (_) -> UIImage in
+        let artwork = MPMediaItemArtwork(boundsSize: episodeImageView.size, requestHandler: { (_) -> UIImage in
             return UIImage(named: "appicon")!
         })
         nowPlayingInfo?[MPMediaItemPropertyArtwork] = artwork

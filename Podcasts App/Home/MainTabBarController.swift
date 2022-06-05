@@ -91,9 +91,10 @@ class MainTabBarController : UITabBarController
         
         let recentEpisodesVC = RecentEpisodesViewController()
         recentEpisodesVC.maximizePlayer = maximizePlayerDetails
+        let historyViewController = UIHostingController(rootView: HistoryView(maximizePlayerView: maximizePlayerDetails))
         let recentEpisodesNavController = setupTabBarNavigationController(title: "History",
                                                                           image: UIImage(systemName: "square.stack.fill") ?? UIImage(),
-                                                                          viewController:recentEpisodesVC)
+                                                                          viewController:historyViewController)
         
         let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
                                                                         image: UIImage(systemName: "gear") ?? UIImage(),
