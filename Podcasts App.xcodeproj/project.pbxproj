@@ -23,6 +23,9 @@
 		495EF2B827B17ACA00C85191 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 495EF2B727B17ACA00C85191 /* ProgressHUD */; };
 		495EF2BA27B17F2900C85191 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495EF2B927B17F2900C85191 /* Log.swift */; };
 		4960E44024B12B1A009A3806 /* RSSFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4960E43F24B12B1A009A3806 /* RSSFeed.swift */; };
+		4980A447284C53A300E74629 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980A446284C53A300E74629 /* HistoryView.swift */; };
+		4980A44B284C64A000E74629 /* HistoryViewItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980A44A284C64A000E74629 /* HistoryViewItem.swift */; };
+		4980A44E284C677A00E74629 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4980A44D284C677A00E74629 /* SDWebImageSwiftUI */; };
 		49B1AF212772DDB8005F498D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B1AF202772DDB8005F498D /* SettingsView.swift */; };
 		846F224520AFDE8400CA2FC9 /* PlayerDetailsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 846F224420AFDE8400CA2FC9 /* PlayerDetailsView.xib */; };
 		846F224720AFE15700CA2FC9 /* PlayerDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F224620AFE15700CA2FC9 /* PlayerDetailsView.swift */; };
@@ -75,6 +78,8 @@
 		495EF2B927B17F2900C85191 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		4960E43C24B03BD8009A3806 /* Podcasts App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Podcasts App.entitlements"; sourceTree = "<group>"; };
 		4960E43F24B12B1A009A3806 /* RSSFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSFeed.swift; sourceTree = "<group>"; };
+		4980A446284C53A300E74629 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		4980A44A284C64A000E74629 /* HistoryViewItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewItem.swift; sourceTree = "<group>"; };
 		49B1AF202772DDB8005F498D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		846F224420AFDE8400CA2FC9 /* PlayerDetailsView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlayerDetailsView.xib; sourceTree = "<group>"; };
 		846F224620AFE15700CA2FC9 /* PlayerDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailsView.swift; sourceTree = "<group>"; };
@@ -115,6 +120,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4980A44E284C677A00E74629 /* SDWebImageSwiftUI in Frameworks */,
 				492538A127AF1B49009C54E2 /* CloudKit.framework in Frameworks */,
 				495EF2B827B17ACA00C85191 /* ProgressHUD in Frameworks */,
 				494036E627ADED03007207F2 /* BaadalKit in Frameworks */,
@@ -142,6 +148,7 @@
 		491F15B6284BEB8300A4534D /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				4980A44F284C680300E74629 /* SwiftUI */,
 				491F15B7284BEB8700A4534D /* Cells */,
 			);
 			path = UI;
@@ -158,6 +165,22 @@
 				84A4329320AF3101004F32AD /* EpisodeCell.xib */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		4980A44F284C680300E74629 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				4980A450284C680900E74629 /* ListItems */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		4980A450284C680900E74629 /* ListItems */ = {
+			isa = PBXGroup;
+			children = (
+				4980A44A284C64A000E74629 /* HistoryViewItem.swift */,
+			);
+			path = ListItems;
 			sourceTree = "<group>";
 		};
 		499282272774F11100AF919E /* Search */ = {
@@ -193,6 +216,7 @@
 			children = (
 				F8C514ED21DEFDDF004149F4 /* RecentEpisodesViewController.swift */,
 				4907236224CBA63C00AF9203 /* RecentEpisodesListViewModel.swift */,
+				4980A446284C53A300E74629 /* HistoryView.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -356,6 +380,7 @@
 			packageProductDependencies = (
 				494036E527ADED03007207F2 /* BaadalKit */,
 				495EF2B727B17ACA00C85191 /* ProgressHUD */,
+				4980A44D284C677A00E74629 /* SDWebImageSwiftUI */,
 			);
 			productName = "Podcasts App";
 			productReference = F859B12925275F5A0051B984 /* Podcasts Bin.app */;
@@ -394,6 +419,7 @@
 			packageReferences = (
 				494036E427ADED03007207F2 /* XCRemoteSwiftPackageReference "BaadalKit" */,
 				495EF2B627B17ACA00C85191 /* XCRemoteSwiftPackageReference "ProgressHUD" */,
+				4980A44C284C677A00E74629 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			productRefGroup = D429ED3220AB81FA008C66DD;
 			projectDirPath = "";
@@ -493,8 +519,10 @@
 				495EF2BA27B17F2900C85191 /* Log.swift in Sources */,
 				D439488520D44BB4008BB6E2 /* PodcastsPersistantManager.swift in Sources */,
 				84A432A020AF5CC6004F32AD /* CodableDecodableExtensions.swift in Sources */,
+				4980A447284C53A300E74629 /* HistoryView.swift in Sources */,
 				84A432A220AF5CC6004F32AD /* DataExtension.swift in Sources */,
 				49456DE424B5AA160077CA12 /* PodcastsSearchViewModel.swift in Sources */,
+				4980A44B284C64A000E74629 /* HistoryViewItem.swift in Sources */,
 				D429ED7C20AC61F8008C66DD /* SearchResults.swift in Sources */,
 				49456DE624B5B7710077CA12 /* PodcastViewModel.swift in Sources */,
 				D429ED3F20AB81FA008C66DD /* AppDelegate.swift in Sources */,
@@ -726,6 +754,14 @@
 				minimumVersion = 13.0.0;
 			};
 		};
+		4980A44C284C677A00E74629 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -738,6 +774,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 495EF2B627B17ACA00C85191 /* XCRemoteSwiftPackageReference "ProgressHUD" */;
 			productName = ProgressHUD;
+		};
+		4980A44D284C677A00E74629 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4980A44C284C677A00E74629 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
