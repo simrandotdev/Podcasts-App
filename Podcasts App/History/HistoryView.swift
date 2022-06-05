@@ -11,31 +11,22 @@ import Resolver
 
 struct HistoryView: View {
     
-    @Injected var persistanceManager: PodcastsPersistantManager
-    @State private var episodes: [EpisodeViewModel] = []
-    @State private var searchText: String = ""
-    
+    @StateObject var viewModel = HistoryViewModel()
     var maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     
     var body: some View {
         List {
-            ForEach(episodes, id: \.streamUrl) { episode in
+            ForEach(viewModel.episodes, id: \.streamUrl) { episode in
                 HistoryViewItem(episode: episode,
-                                episodes: episodes,
+                                episodes: viewModel.episodes,
                                 maximizePlayerView: maximizePlayerView)
             }
         }
         .listStyle(.plain)
         .onAppear {
-            load()
+            viewModel.loadRecentlyPlayedEpisodes()
         }
     }
-    
-    private func load() {
-        let x = persistanceManager.fetchAllRecentlyPlayedPodcasts()
-        episodes = x?.map{ EpisodeViewModel(episode: $0)} ?? [EpisodeViewModel]()
-    }
-    
 }
 
 struct HistoryView_Previews: PreviewProvider {
