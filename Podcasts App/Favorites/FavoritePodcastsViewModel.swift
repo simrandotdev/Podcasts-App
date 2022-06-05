@@ -10,10 +10,12 @@ import Foundation
 import Combine
 import Resolver
 
-class FavoritePodcastsViewModel {
+class FavoritePodcastsViewModel: ObservableObject {
     
     @Published var favoritePodcasts : [PodcastViewModel] = []
     @Published var isFavorite: Bool = false
+    @Published var isError: Bool = false
+    @Published var errorMessage: String? = nil
     
     @Injected private var favoritePodcastLocalService: PodcastsPersistantManager
     @Injected private var favoritePodcastCloudService: FavoritePodcastsCloudKitService
@@ -23,21 +25,23 @@ class FavoritePodcastsViewModel {
     init() {
         
         Task {
-            try await fetchFavoritePodcasts()
+            await fetchFavoritePodcasts()
         }
     }
     
     
     
     // MARK: - fetchFavoritePodcasts
-    func fetchFavoritePodcasts() async throws {
+    @MainActor
+    func fetchFavoritePodcasts() async {
         
         if Constants.InAppSubscribed.isUserSubscribed {
             do {
                 favoritePodcasts = try await fetchCloudPodcasts().sorted(by: { return $0.title < $1.title })
             } catch {
                 favoritePodcasts = fetchLocalPodcasts().sorted(by: { return $0.title < $1.title })
-                throw error
+                errorMessage = "Something went wrong. Please try again."
+                isError = true
             }
         } else {
             favoritePodcasts = fetchLocalPodcasts().sorted(by: { return $0.title < $1.title })
