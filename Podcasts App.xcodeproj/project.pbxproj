@@ -197,7 +197,6 @@
 				4992822A2774F2EF00AF919E /* History */,
 				499282282774F21600AF919E /* Favorites */,
 				499282272774F11100AF919E /* Search */,
-				D429ED7720AB8C4A008C66DD /* Models */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -216,6 +215,7 @@
 		493A41942873FF8C0030D12D /* Business Layer */ = {
 			isa = PBXGroup;
 			children = (
+				D429ED7720AB8C4A008C66DD /* Models */,
 				493A41A1287401340030D12D /* Interactors */,
 				493A419D287400FA0030D12D /* ViewModels */,
 				493A419A287400A30030D12D /* Controllers */,

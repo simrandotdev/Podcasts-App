@@ -209,10 +209,14 @@ extension Resolver: ResolverRegistering {
         register { FavoritePodcastsCloudKitService() }
         register { FavoritePodcastsViewModel() }
         
+        
         // Interactors
-        register { SearchPodcastsInteractor() }
+        register { SearchPodcastsInteractor() }.implements(SearchPodcastControllable.Type.self)
         
         // Repositories
-        register { PodcastsRepository() }
+        register { PodcastsRepository() }.implements(PodcastsRepositoryProtocol.Type.self)
+        
+        // Managers
+        register { PersistanceManager() }
     }
 }

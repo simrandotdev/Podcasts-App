@@ -11,10 +11,17 @@ import SDWebImageSwiftUI
 
 struct StandardListItemView: View {
     
+    
+    // MARK: - Public properties
+    
     var title: String
     var subtitle: String
     var moreInfo: String
     var imageUrlString: String
+    
+    
+    // MARK: - Body
+    
     
     var body: some View {
         HStack(alignment: .top) {
@@ -42,6 +49,9 @@ struct StandardListItemView: View {
         .cornerRadius(10)
     }
 }
+
+
+// MARK: - Previews
 
 struct StandardListItemView_Previews: PreviewProvider {
     static var previews: some View {

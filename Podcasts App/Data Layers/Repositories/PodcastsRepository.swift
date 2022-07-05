@@ -7,13 +7,41 @@
 //
 
 import Foundation
+import Resolver
+
+// MARK: - PodcastsRepositoryProtocol
+
+
+protocol PodcastsRepositoryProtocol {
+    
+    func fetchAll() async throws -> [Podcast]
+    func search(forValue value: String) async throws -> [Podcast]
+}
+
+
+// MARK: - PodcastsRepositoryProtocol Implementation
+
 
 class PodcastsRepository {
     
-    private let api = APIService.shared
+    
+    // MARK: - Dependencies
+    
+    
+    @Injected var api: APIService
+    
+    
+    // MARK: - Public properties
+    
     
     public func fetchAll() async throws -> [Podcast] {
-        let podcasts = try await api.fetchPodcastsAsync(searchText: "podcasts")
+        let podcasts = try await search(forValue: "podcasts")
+        return podcasts
+    }
+    
+    
+    public func search(forValue value: String) async throws -> [Podcast] {
+        let podcasts = try await api.fetchPodcastsAsync(searchText: value)
         return podcasts
     }
 }

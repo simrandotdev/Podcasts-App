@@ -9,7 +9,15 @@
 import Foundation
 
 class PodcastViewModel {
+    
+    // MARK: - Dependencies
+    
+    
     private let repo = PodcastsPersistantManager()
+    
+    
+    // MARK: - Public properties
+    
     
     var recordId: String?
     var title: String
@@ -17,6 +25,10 @@ class PodcastViewModel {
     var image: String
     var numberOfEpisodes: String
     var rssFeedUrl: String
+    
+    
+    // MARK: - Initializers
+    
     
     init(title: String, author: String, image: String, totalEpisodes: Int, rssFeedUrl: String, recordId: String? = nil) {
         self.title = title

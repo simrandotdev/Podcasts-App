@@ -10,7 +10,15 @@ import SwiftUI
 
 struct SearchPodcastsScreen: View {
     
+    
+    // MARK: - States
+    
+    
     @StateObject var controller = SearchPodcastsController()
+    
+    
+    // MARK: - Body
+    
     
     var body: some View {
         
@@ -24,14 +32,25 @@ struct SearchPodcastsScreen: View {
             .listRowSeparator(.hidden)
         }
         .listStyle(.plain)
-        .onAppear {
-            Task {
-                await controller.fetchPodcasts()
-            }
+        .searchable(text: $controller.searchText)
+        .onAppear(perform: onAppear)
+    }
+    
+    
+    // MARK: - Helper methods
+    
+    
+    private func onAppear() {
+        Task {
+            await controller.fetchPodcasts()
         }
     }
         
 }
+
+
+// MARK: - Preview
+
 
 struct SearchPodcastsScreen_Previews: PreviewProvider {
     static var previews: some View {
