@@ -211,7 +211,7 @@ extension Resolver: ResolverRegistering {
         
         
         // Interactors
-        register { SearchPodcastsInteractor() }.implements(SearchPodcastControllable.Type.self)
+        register { PodcastsInteractor() }.implements(SearchPodcastControllable.Type.self)
         
         // Repositories
         register { PodcastsRepository() }.implements(PodcastsRepositoryProtocol.Type.self)

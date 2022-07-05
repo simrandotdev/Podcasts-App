@@ -1,5 +1,5 @@
 //
-//  SearchPodcastsInteractor.swift
+//  PodcastsInteractor.swift
 //  Podcasts App
 //
 //  Created by Simran Preet Narang on 2022-07-04.
@@ -10,20 +10,22 @@ import Foundation
 import Resolver
 
 
-// MARK: - SearchPodcastInteractable protocol
+// MARK: - PodcastsInteractable protocol
 
-protocol SearchPodcastsInteractable {
+protocol PodcastsInteractable {
     
     var podcasts: [Podcast] { get set }
     
+    
     func fetchPodcasts() async throws
+    func searchPodcasts(forValue value: String) async throws
 }
 
 
 // MARK: - SearchPodcastInteractable Implementation
 
 
-class SearchPodcastsInteractor {
+class PodcastsInteractor {
     
     
     // MARK: - Dependencies
@@ -36,16 +38,20 @@ class SearchPodcastsInteractor {
     
     
     @Published var podcasts: [Podcast] = []
+    private var originalPodcasts: [Podcast] = []
     
     
     // MARK: Public methods
     
     
     func fetchPodcasts() async throws {
-        podcasts = try await podcastRepository.fetchAll()
+        
+        originalPodcasts = originalPodcasts.isEmpty ? try await podcastRepository.fetchAll() : originalPodcasts
+        podcasts = originalPodcasts
     }
     
     func searchPodcasts(forValue value: String) async throws {
+        
         if value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             try await fetchPodcasts()
         } else {

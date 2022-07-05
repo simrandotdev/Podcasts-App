@@ -32,7 +32,7 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
     // MARK: - Dependencies
     
     
-    @Injected private var interactor: SearchPodcastsInteractor
+    @Injected private var interactor: PodcastsInteractor
     
     
     
@@ -84,8 +84,7 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
             .store(in: &cancellable)
         
         $searchText
-            .filter{ $0.count < 2 }
-            .debounce(for: .milliseconds(1000), scheduler: DispatchQueue.main)
+            .filter{ $0.count <= 2 }
             .sink { [fetchPodcasts] value in
                 Task {
                     await fetchPodcasts()
