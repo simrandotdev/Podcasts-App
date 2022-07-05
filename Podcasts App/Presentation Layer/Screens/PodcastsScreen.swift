@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SearchPodcastsScreen: View {
+struct PodcastsScreen: View {
     
     
     // MARK: - States
@@ -69,7 +69,7 @@ struct SearchPodcastsScreen: View {
 
 struct SearchPodcastsScreen_Previews: PreviewProvider {
     static var previews: some View {
-        SearchPodcastsScreen(maximizePlayerView: { _, _ in
+        PodcastsScreen(maximizePlayerView: { _, _ in
             
         })
     }

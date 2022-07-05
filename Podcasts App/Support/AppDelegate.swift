@@ -202,7 +202,6 @@ extension Resolver: ResolverRegistering {
         register { URLSession(configuration: .default) }
         register { LocalStorageManager() }.scope(.application)
         register { APIService.shared }
-        register { PodcastsSearchViewModel() }
         register { PodcastDetailViewModel() }
         register { RecentEpisodesListViewModel() }
         register { PodcastsPersistantManager() }

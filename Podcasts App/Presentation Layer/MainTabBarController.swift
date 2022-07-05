@@ -85,7 +85,7 @@ class MainTabBarController : UITabBarController {
     
     fileprivate func setupViewController() {
 
-        let searchPodcastScreen = SearchPodcastsScreen(maximizePlayerView: maximizePlayerDetails)
+        let searchPodcastScreen = PodcastsScreen(maximizePlayerView: maximizePlayerDetails)
         let searchNavController = setupTabBarNavigationController(title: "Search",
                                                                   image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
                                                                   viewController: UIHostingController(rootView: searchPodcastScreen))
