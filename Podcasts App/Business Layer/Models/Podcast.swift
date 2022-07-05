@@ -22,7 +22,7 @@ class Podcast : NSObject, Codable, NSCoding {
         self.title = podcastViewModel.title
         self.author = podcastViewModel.author
         self.image = podcastViewModel.image
-        self.totalEpisodes = podcastViewModel.numberOfEpisodes
+        self.totalEpisodes = Int(podcastViewModel.numberOfEpisodes) ?? 0
         self.rssFeedUrl = podcastViewModel.rssFeedUrl
         self.recordId = podcastViewModel.recordId
     }

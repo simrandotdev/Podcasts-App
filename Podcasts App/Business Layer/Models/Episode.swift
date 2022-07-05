@@ -3,6 +3,7 @@ import FeedKit
 
 struct Episode : Codable {
     let title: String
+    let subtitle: String
     let pubDate: Date
     let description: String
     let author: String
@@ -17,6 +18,8 @@ struct Episode : Codable {
         self.description = feedItem.iTunes?.iTunesSubtitle ?? feedItem.description ?? ""
         self.author = feedItem.iTunes?.iTunesAuthor ?? ""
         self.imageUrl = feedItem.iTunes?.iTunesImage?.attributes?.href
+        self.subtitle = feedItem.iTunes?.iTunesSubtitle ?? ""
+        
     }
     
     init(episodeViewModel: EpisodeViewModel) {
@@ -26,5 +29,6 @@ struct Episode : Codable {
         self.description = episodeViewModel.description
         self.author = episodeViewModel.author
         self.imageUrl = episodeViewModel.imageUrl
+        self.subtitle = episodeViewModel.subtitle
     }
 }

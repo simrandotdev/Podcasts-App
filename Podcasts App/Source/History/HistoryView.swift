@@ -23,6 +23,7 @@ struct HistoryView: View {
             }
         }
         .listStyle(.plain)
+        .searchable(text: $viewModel.searchText)
         .onAppear {
             viewModel.loadRecentlyPlayedEpisodes()
         }

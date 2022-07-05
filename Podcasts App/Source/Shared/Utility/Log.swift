@@ -10,17 +10,17 @@ import Foundation
 
 
 func info(_ message: String...) {
-    print("☢️ ℹ️", message)
+    print("ℹ️", message)
 }
 
 func err(_ message: String...) {
-    print("☢️ ❌", message)
+    print("❌", message)
 }
 
 func warn(_ message: String...) {
-    print("☢️ ⚠️", message)
+    print("⚠️", message)
 }
 
 func debug(_ message: String...) {
-    print("☢️ 📱", message)
+    print("📱", message)
 }

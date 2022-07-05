@@ -1,14 +1,14 @@
 import UIKit
 import SwiftUI
 
-class MainTabBarController : UITabBarController
-{
+class MainTabBarController : UITabBarController {
+    
     let playerDetailsView = PlayerDetailsView.initFromNib()
     var maximizeTopAnchorConstraint: NSLayoutConstraint!
     var minimizeTopAnchorConstraint: NSLayoutConstraint!
     
-    override
-    func viewDidLoad() {
+    override func viewDidLoad() {
+        
         super.viewDidLoad()
         setupTabBarController()
         setupViewController()
@@ -18,6 +18,7 @@ class MainTabBarController : UITabBarController
     
     // MARK: Handlers
     @objc func minimizePlayerDetails() {
+        
         maximizeTopAnchorConstraint.isActive = false
         minimizeTopAnchorConstraint.isActive = true
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
@@ -30,6 +31,7 @@ class MainTabBarController : UITabBarController
     }
     
     func maximizePlayerDetails(episode: EpisodeViewModel?, playListEpisodes: [EpisodeViewModel]?) {
+        
         minimizeTopAnchorConstraint.isActive = false
         maximizeTopAnchorConstraint.constant = 0
         maximizeTopAnchorConstraint.isActive = true
@@ -39,7 +41,10 @@ class MainTabBarController : UITabBarController
             playerDetailsView.playListEpisodes = playListEpisodes
         }
         
-        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: { [weak self] in
+            
+            guard let self = self else { return }
+            
             self.view.layoutIfNeeded()
             self.playerDetailsView.isHidden = false
             self.tabBar.isHidden = true
@@ -50,6 +55,7 @@ class MainTabBarController : UITabBarController
     
     // MARK:- Setup methods
     fileprivate func setupTabBarNavigationController(title: String, image: UIImage, viewController: UIViewController) -> UINavigationController {
+        
         viewController.navigationItem.title = title
         viewController.tabBarItem.title = title
         viewController.tabBarItem.image = image
@@ -58,6 +64,7 @@ class MainTabBarController : UITabBarController
     }
     
     fileprivate func setupTabBarController() {
+        
         view.backgroundColor = Theme.Color.systemBackgroundColor
     }
     
@@ -77,41 +84,28 @@ class MainTabBarController : UITabBarController
     }
     
     fileprivate func setupViewController() {
-        let favoritesVC = FavoritePodcastsViewController(collectionViewLayout: UICollectionViewFlowLayout())
-        favoritesVC.maximizePlayer = maximizePlayerDetails
-        let favoriteNavController = setupTabBarNavigationController(title: "Favorites",
-                                                                    image: UIImage(systemName: "star.fill") ?? UIImage(),
-                                                                    viewController: favoritesVC)
-        
-        let podcastsSearchVC = PodcastsSearchViewController()
-        podcastsSearchVC.maximizePlayer = maximizePlayerDetails
+
+        let searchPodcastScreen = SearchPodcastsScreen(maximizePlayerView: maximizePlayerDetails)
         let searchNavController = setupTabBarNavigationController(title: "Search",
                                                                   image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
-                                                                  viewController: podcastsSearchVC)
-        
-        let recentEpisodesVC = RecentEpisodesViewController()
-        recentEpisodesVC.maximizePlayer = maximizePlayerDetails
-        let historyViewController = UIHostingController(rootView: HistoryView(maximizePlayerView: maximizePlayerDetails))
-        let recentEpisodesNavController = setupTabBarNavigationController(title: "History",
-                                                                          image: UIImage(systemName: "square.stack.fill") ?? UIImage(),
-                                                                          viewController:historyViewController)
-        
+                                                                  viewController: UIHostingController(rootView: searchPodcastScreen))
+
+        let settingsScreen = UIHostingController(rootView: SettingsView())
         let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
                                                                         image: UIImage(systemName: "gear") ?? UIImage(),
-                                                                        viewController: UIHostingController(rootView: SettingsView()))
+                                                                        viewController: settingsScreen)
         
         viewControllers = [
             searchNavController,
-            favoriteNavController,
-            recentEpisodesNavController,
         ]
         
-        #if DEBUG
+#if DEBUG
         viewControllers?.append(settingsViewNavController)
-        #endif
+#endif
     }
     
     fileprivate func setupPlayerDetailsView() {
+        
         view.insertSubview(playerDetailsView, belowSubview: tabBar)
         playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
         playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
@@ -129,6 +123,7 @@ class MainTabBarController : UITabBarController
     }
     
     @objc func panPiece(_ gestureRecognizer : UIPanGestureRecognizer) {
+        
         guard gestureRecognizer.view != nil else {return}
         let piece = gestureRecognizer.view!
         let translation = gestureRecognizer.translation(in: piece.superview)
