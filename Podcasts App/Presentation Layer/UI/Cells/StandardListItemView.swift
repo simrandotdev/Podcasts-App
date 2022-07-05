@@ -32,21 +32,27 @@ struct StandardListItemView: View {
                 .background(Color.gray.opacity(0.3))
                 .cornerRadius(10)
             
-            VStack(alignment: .leading, spacing: 10) {
-                Text(title)
-                    .font(.body)
-                Text(subtitle)
-                    .font(.footnote)
-                Text(moreInfo)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            VStack(alignment: .leading, spacing: 8) {
+                if !title.isEmpty {
+                    Text(title)
+                        .font(.body)
+                }
+                
+                if !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(.footnote)
+                }
+                
+                if !moreInfo.isEmpty {
+                    Text(moreInfo)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
             
             Spacer()
         }
         .padding(8)
-        .background(Color.gray.opacity(0.15))
-        .cornerRadius(10)
     }
 }
 

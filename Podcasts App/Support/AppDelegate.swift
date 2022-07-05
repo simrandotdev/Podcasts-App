@@ -34,6 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UITabBarItem.appearance().setTitleTextAttributes([
             .font: Theme.Font.caption1
         ], for: .normal)
+        UITableViewCell.appearance().accessoryType = .none
     }
 }
 
@@ -212,9 +213,11 @@ extension Resolver: ResolverRegistering {
         
         // Interactors
         register { PodcastsInteractor() }.implements(SearchPodcastControllable.Type.self)
+        register { EpisodesInteractor() }.implements(EpisodesInteractable.Type.self)
         
         // Repositories
         register { PodcastsRepository() }.implements(PodcastsRepositoryProtocol.Type.self)
+        register { EpisodesRepository() }.implements(EpisodesRepositoryProtocol.Type.self)
         
         // Managers
         register { PersistanceManager() }

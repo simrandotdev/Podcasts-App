@@ -33,6 +33,7 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
     
     
     @Injected private var interactor: PodcastsInteractor
+    @Injected private var episodesInteractor: EpisodesInteractor
     
     
     
@@ -97,9 +98,20 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
     // MARK: - SearchPodcastControllable protocol implementation
     
     
-    func fetchPodcasts() async {
+    @MainActor func fetchPodcasts() async {
         do {
             try await interactor.fetchPodcasts()
+        } catch {
+            // TODO: Handle Error
+            err("\(#function)" ,error.localizedDescription)
+        }
+    }
+    
+    
+    @MainActor func fetchEpisodes(forPodcast podcast: PodcastViewModel) async {
+        do {
+            let podcastModel = Podcast(podcastViewModel: podcast)
+            try await episodesInteractor.fetchEpisodes(forPodcast: podcastModel)
         } catch {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)

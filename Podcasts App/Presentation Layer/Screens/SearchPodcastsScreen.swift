@@ -17,6 +17,12 @@ struct SearchPodcastsScreen: View {
     @StateObject var controller = SearchPodcastsController()
     
     
+    // MARK: - Public properties
+    
+    
+    var maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
+    
+    
     // MARK: - Body
     
     
@@ -24,10 +30,19 @@ struct SearchPodcastsScreen: View {
         
         List {
             ForEach(controller.podcasts, id: \.rssFeedUrl) { podcast in
-                StandardListItemView(title: podcast.title,
-                                     subtitle: podcast.author,
-                                     moreInfo: podcast.numberOfEpisodes,
-                                     imageUrlString: podcast.image)
+                NavigationLink {
+                    EpisodesScreen(podcast: podcast,
+                                   maximizePlayerView: maximizePlayerView)
+                } label: {
+                    StandardListItemView(title: podcast.title,
+                                         subtitle: podcast.author,
+                                         moreInfo: podcast.numberOfEpisodes,
+                                         imageUrlString: podcast.image)
+                }
+                .padding(.trailing)
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(10)
+
             }
             .listRowSeparator(.hidden)
         }
@@ -54,6 +69,8 @@ struct SearchPodcastsScreen: View {
 
 struct SearchPodcastsScreen_Previews: PreviewProvider {
     static var previews: some View {
-        SearchPodcastsScreen()
+        SearchPodcastsScreen(maximizePlayerView: { _, _ in
+            
+        })
     }
 }

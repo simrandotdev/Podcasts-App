@@ -84,33 +84,19 @@ class MainTabBarController : UITabBarController {
     }
     
     fileprivate func setupViewController() {
-         
-        let favoritePodcastsView = FavoritePodcastsView(maximizePlayer: maximizePlayerDetails)
-        let favoritePodcastsViewController = UIHostingController(rootView: favoritePodcastsView)
-        let favoriteNavController = setupTabBarNavigationController(title: "Favorites",
-                                                                    image: UIImage(systemName: "star.fill") ?? UIImage(),
-                                                                    viewController: favoritePodcastsViewController)
-        
-        let podcastsSearchVC = PodcastsSearchViewController()
-        podcastsSearchVC.maximizePlayer = maximizePlayerDetails
-        let searchPodcastScreen = SearchPodcastsScreen()
+
+        let searchPodcastScreen = SearchPodcastsScreen(maximizePlayerView: maximizePlayerDetails)
         let searchNavController = setupTabBarNavigationController(title: "Search",
                                                                   image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
                                                                   viewController: UIHostingController(rootView: searchPodcastScreen))
-        
-        let historyViewController = UIHostingController(rootView: HistoryView(maximizePlayerView: maximizePlayerDetails))
-        let recentEpisodesNavController = setupTabBarNavigationController(title: "History",
-                                                                          image: UIImage(systemName: "square.stack.fill") ?? UIImage(),
-                                                                          viewController:historyViewController)
-        
+
+        let settingsScreen = UIHostingController(rootView: SettingsView())
         let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
                                                                         image: UIImage(systemName: "gear") ?? UIImage(),
-                                                                        viewController: UIHostingController(rootView: SettingsView()))
+                                                                        viewController: settingsScreen)
         
         viewControllers = [
             searchNavController,
-            //            favoriteNavController,
-            //            recentEpisodesNavController,
         ]
         
 #if DEBUG
