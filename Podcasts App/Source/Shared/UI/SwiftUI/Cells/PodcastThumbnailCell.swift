@@ -19,7 +19,6 @@ struct PodcastThumbnailCell: View {
                 WebImage(url: URL(string: podcast.image))
                     .resizable()
                     .scaledToFit()
-//                        titleAuthorView(podcast: podcast)
             }
             .frame(minWidth: 150, minHeight: 150)
             .cornerRadius(10)

@@ -77,8 +77,6 @@ class MainTabBarController : UITabBarController
     }
     
     fileprivate func setupViewController() {
-//        let favoritesVC = FavoritePodcastsViewController(collectionViewLayout: UICollectionViewFlowLayout())
-//        favoritesVC.maximizePlayer = maximizePlayerDetails
         let favoritePodcastsView = FavoritePodcastsView(maximizePlayer: maximizePlayerDetails)
         let favoritePodcastsViewController = UIHostingController(rootView: favoritePodcastsView)
         let favoriteNavController = setupTabBarNavigationController(title: "Favorites",
@@ -87,9 +85,10 @@ class MainTabBarController : UITabBarController
         
         let podcastsSearchVC = PodcastsSearchViewController()
         podcastsSearchVC.maximizePlayer = maximizePlayerDetails
+        let searchPodcastScreen = SearchPodcastsScreen()
         let searchNavController = setupTabBarNavigationController(title: "Search",
                                                                   image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
-                                                                  viewController: podcastsSearchVC)
+                                                                  viewController: UIHostingController(rootView: searchPodcastScreen))
         
         let historyViewController = UIHostingController(rootView: HistoryView(maximizePlayerView: maximizePlayerDetails))
         let recentEpisodesNavController = setupTabBarNavigationController(title: "History",
@@ -102,8 +101,8 @@ class MainTabBarController : UITabBarController
         
         viewControllers = [
             searchNavController,
-            favoriteNavController,
-            recentEpisodesNavController,
+//            favoriteNavController,
+//            recentEpisodesNavController,
         ]
         
         #if DEBUG

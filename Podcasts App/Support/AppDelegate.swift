@@ -208,5 +208,11 @@ extension Resolver: ResolverRegistering {
         register { BaadalManager(identifier: Constants.BKConstants.container) }
         register { FavoritePodcastsCloudKitService() }
         register { FavoritePodcastsViewModel() }
+        
+        // Interactors
+        register { SearchPodcastsInteractor() }
+        
+        // Repositories
+        register { PodcastsRepository() }
     }
 }
