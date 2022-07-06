@@ -1,6 +1,7 @@
 import Foundation
+import GRDB
 
-class Podcast : NSObject, Codable, NSCoding {
+class Podcast : NSObject, Codable, NSCoding, FetchableRecord, PersistableRecord {
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(title ?? "", forKey: "title")

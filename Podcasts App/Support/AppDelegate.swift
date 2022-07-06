@@ -219,6 +219,6 @@ extension Resolver: ResolverRegistering {
         register { EpisodesRepository() }.implements(EpisodesRepositoryProtocol.Type.self)
         
         // Managers
-        register { PersistanceManager() }
+        register { PersistanceManager.shared }
     }
 }

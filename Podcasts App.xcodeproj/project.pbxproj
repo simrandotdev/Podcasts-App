@@ -14,6 +14,7 @@
 		491941552874B9D80034254A /* EpisodesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491941542874B9D80034254A /* EpisodesController.swift */; };
 		491941572874C60C0034254A /* EpisodesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491941562874C60C0034254A /* EpisodesScreen.swift */; };
 		492538A127AF1B49009C54E2 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 492538A027AF1B49009C54E2 /* CloudKit.framework */; };
+		492EC3D92876189E00F381FC /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 492EC3D82876189E00F381FC /* GRDB */; };
 		493A41992874008C0030D12D /* PodcastsScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A41982874008C0030D12D /* PodcastsScreen.swift */; };
 		493A419C287400BE0030D12D /* SearchPodcastsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A419B287400BE0030D12D /* SearchPodcastsController.swift */; };
 		493A41A3287401560030D12D /* PodcastsInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493A41A2287401560030D12D /* PodcastsInteractor.swift */; };
@@ -149,6 +150,7 @@
 				495EF2B827B17ACA00C85191 /* ProgressHUD in Frameworks */,
 				494036E627ADED03007207F2 /* BaadalKit in Frameworks */,
 				490AF41727B60EFF00E40AB2 /* StoreKit.framework in Frameworks */,
+				492EC3D92876189E00F381FC /* GRDB in Frameworks */,
 				CD9597F290653D9B81AFEF84 /* Pods_Podcasts_App.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -189,6 +191,13 @@
 				84A4329320AF3101004F32AD /* EpisodeCell.xib */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		492EC3D628760C2600F381FC /* ListViews */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ListViews;
 			sourceTree = "<group>";
 		};
 		493A41922873FF640030D12D /* Source */ = {
@@ -309,6 +318,7 @@
 		493A41AA287408C70030D12D /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				492EC3D628760C2600F381FC /* ListViews */,
 				493A41AB287408CC0030D12D /* Cells */,
 			);
 			path = UI;
@@ -521,6 +531,7 @@
 				494036E527ADED03007207F2 /* BaadalKit */,
 				495EF2B727B17ACA00C85191 /* ProgressHUD */,
 				4980A44D284C677A00E74629 /* SDWebImageSwiftUI */,
+				492EC3D82876189E00F381FC /* GRDB */,
 			);
 			productName = "Podcasts App";
 			productReference = F859B12925275F5A0051B984 /* Podcasts Bin.app */;
@@ -560,6 +571,7 @@
 				494036E427ADED03007207F2 /* XCRemoteSwiftPackageReference "BaadalKit" */,
 				495EF2B627B17ACA00C85191 /* XCRemoteSwiftPackageReference "ProgressHUD" */,
 				4980A44C284C677A00E74629 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				492EC3D72876189E00F381FC /* XCRemoteSwiftPackageReference "GRDB" */,
 			);
 			productRefGroup = D429ED3220AB81FA008C66DD;
 			projectDirPath = "";
@@ -892,6 +904,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		492EC3D72876189E00F381FC /* XCRemoteSwiftPackageReference "GRDB" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		494036E427ADED03007207F2 /* XCRemoteSwiftPackageReference "BaadalKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/simransdsu/BaadalKit";
@@ -919,6 +939,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		492EC3D82876189E00F381FC /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 492EC3D72876189E00F381FC /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
+		};
 		494036E527ADED03007207F2 /* BaadalKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 494036E427ADED03007207F2 /* XCRemoteSwiftPackageReference "BaadalKit" */;

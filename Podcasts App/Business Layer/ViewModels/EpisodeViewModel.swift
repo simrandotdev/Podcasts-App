@@ -9,6 +9,8 @@ class EpisodeViewModel {
     let streamUrl: String
     var fileUrl: String?
     var imageUrl: String?
+    
+    // TODO: Remove HTML tags.
     var shortDescription: String {
         let array = Array(description)
         var string = description

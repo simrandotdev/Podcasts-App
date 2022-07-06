@@ -28,22 +28,28 @@ struct EpisodesScreen: View {
     
     
     var body: some View {
-        List {
-            ForEach(controller.episodes, id: \.streamUrl) { episode in
-                StandardListItemView(title: episode.title,
-                                     subtitle: episode.author,
-                                     moreInfo: episode.shortDescription,
-                                     imageUrlString: episode.imageUrl ?? "")
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
-                .onTapGesture {
-                    maximizePlayerView(episode, controller.episodes)
+        Group {
+            if controller.isLoading {
+                ProgressView()
+            } else {
+                List {
+                    ForEach(controller.episodes, id: \.streamUrl) { episode in
+                        StandardListItemView(title: episode.title,
+                                             subtitle: episode.author,
+                                             moreInfo: episode.shortDescription,
+                                             imageUrlString: episode.imageUrl ?? "")
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(10)
+                        .onTapGesture {
+                            maximizePlayerView(episode, controller.episodes)
+                        }
+                        
+                    }
+                    .listRowSeparator(.hidden)
                 }
-                
+                .listStyle(.plain)
             }
-            .listRowSeparator(.hidden)
         }
-        .listStyle(.plain)
         .searchable(text: $controller.searchText, placement: .toolbar)
         .navigationTitle(podcast.title)
         .navigationBarTitleDisplayMode(.inline)

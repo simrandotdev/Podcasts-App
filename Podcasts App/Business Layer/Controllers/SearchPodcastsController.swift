@@ -42,6 +42,7 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
     
     @Published var podcasts: [PodcastViewModel] = []
     @Published var searchText: String = ""
+    @Published var isLoading = false
     
     
     // MARK: - Private properties
@@ -99,16 +100,21 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
     
     
     @MainActor func fetchPodcasts() async {
+        
+        isLoading = true
         do {
             try await interactor.fetchPodcasts()
         } catch {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)
         }
+        isLoading = false
     }
     
     
     @MainActor func fetchEpisodes(forPodcast podcast: PodcastViewModel) async {
+        
+        isLoading = true
         do {
             let podcastModel = Podcast(podcastViewModel: podcast)
             try await episodesInteractor.fetchEpisodes(forPodcast: podcastModel)
@@ -116,6 +122,7 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)
         }
+        isLoading = false
     }
     
     

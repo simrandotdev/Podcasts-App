@@ -75,6 +75,7 @@ class EpisodesController: EpisodesControllable, ObservableObject {
     
     
     @MainActor func fetchEpisodes(forPodcast podcast: PodcastViewModel) async {
+        
         isLoading = true
         do {
             let podcastModel = Podcast(podcastViewModel: podcast)

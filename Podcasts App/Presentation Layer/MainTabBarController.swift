@@ -94,14 +94,14 @@ class MainTabBarController : UITabBarController {
         let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
                                                                         image: UIImage(systemName: "gear") ?? UIImage(),
                                                                         viewController: settingsScreen)
-        
+
         viewControllers = [
             searchNavController,
         ]
-        
-#if DEBUG
+
+        #if DEBUG
         viewControllers?.append(settingsViewNavController)
-#endif
+        #endif
     }
     
     fileprivate func setupPlayerDetailsView() {
