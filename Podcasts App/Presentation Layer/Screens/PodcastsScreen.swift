@@ -14,7 +14,7 @@ struct PodcastsScreen: View {
     // MARK: - States
     
     
-    @StateObject var controller = SearchPodcastsController()
+    @StateObject var controller = PodcastsController()
     
     
     // MARK: - Public properties
@@ -64,7 +64,9 @@ struct PodcastsScreen: View {
     
     private func onAppear() {
         Task {
-            await controller.fetchPodcasts()
+            if controller.podcasts.count == 0 {
+                await controller.fetchPodcasts()
+            }
         }
     }
         

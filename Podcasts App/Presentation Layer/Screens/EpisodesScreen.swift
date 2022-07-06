@@ -15,7 +15,8 @@ struct EpisodesScreen: View {
     
     
     @StateObject private var controller = EpisodesController()
-    
+    @StateObject private var podcastsController = PodcastsController()
+    @State private var isFavorite = false
     
     // MARK: - Public properties
     
@@ -50,7 +51,15 @@ struct EpisodesScreen: View {
                 .listStyle(.plain)
             }
         }
-        .searchable(text: $controller.searchText, placement: .toolbar)
+        .toolbar(content: {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    onFavoriteButtonTap()
+                } label: {
+                    Image(systemName: isFavorite ? "heart.fill" : "heart")
+                }
+            }
+        })
         .navigationTitle(podcast.title)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform: onAppear)
@@ -61,6 +70,20 @@ struct EpisodesScreen: View {
         
         Task {
             await controller.fetchEpisodes(forPodcast: podcast)
+            isFavorite = await podcastsController.isfavorite(podcast: podcast)
+        }
+    }
+    
+    private func onFavoriteButtonTap() {
+        
+        Task {
+            if isFavorite {
+                await podcastsController.unfavorite(podcast: podcast)
+                isFavorite = await podcastsController.isfavorite(podcast: podcast)
+            } else {
+                await podcastsController.favorite(podcast: podcast)
+                isFavorite = await podcastsController.isfavorite(podcast: podcast)
+            }
         }
     }
 }

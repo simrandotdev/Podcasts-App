@@ -23,7 +23,7 @@ class Podcast : NSObject, Codable, NSCoding, FetchableRecord, PersistableRecord 
         self.title = podcastViewModel.title
         self.author = podcastViewModel.author
         self.image = podcastViewModel.image
-        self.totalEpisodes = Int(podcastViewModel.numberOfEpisodes) ?? 0
+        self.totalEpisodes = podcastViewModel.totalEpisodes
         self.rssFeedUrl = podcastViewModel.rssFeedUrl
         self.recordId = podcastViewModel.recordId
     }

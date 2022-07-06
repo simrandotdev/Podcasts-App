@@ -17,7 +17,6 @@ import Combine
 protocol EpisodesControllable {
     
     var episodes: [EpisodeViewModel] { get set }
-    var searchText: String { get set }
     
     func fetchEpisodes(forPodcast podcast: PodcastViewModel) async
 }
@@ -39,7 +38,6 @@ class EpisodesController: EpisodesControllable, ObservableObject {
     
     
     @Published var episodes: [EpisodeViewModel] = []
-    @Published var searchText: String = ""
     @Published var isLoading: Bool = false
     
     

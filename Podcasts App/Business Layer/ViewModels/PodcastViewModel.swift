@@ -23,6 +23,7 @@ class PodcastViewModel {
     var title: String
     var author: String
     var image: String
+    var totalEpisodes: Int
     var numberOfEpisodes: String
     var rssFeedUrl: String
     
@@ -34,6 +35,7 @@ class PodcastViewModel {
         self.title = title
         self.author = author
         self.image = image
+        self.totalEpisodes = totalEpisodes
         self.numberOfEpisodes = "\(totalEpisodes) episodes"
         self.rssFeedUrl = rssFeedUrl
         self.recordId = recordId
@@ -44,6 +46,7 @@ class PodcastViewModel {
         self.title = podcast.title ?? ""
         self.author = podcast.author ?? ""
         self.image = podcast.image ?? ""
+        self.totalEpisodes = podcast.totalEpisodes ?? 0
         self.numberOfEpisodes = "\(podcast.totalEpisodes ?? 0) episodes" 
         self.rssFeedUrl = podcast.rssFeedUrl ?? ""
     }

@@ -202,16 +202,14 @@ extension Resolver: ResolverRegistering {
         register { URLSession(configuration: .default) }
         register { LocalStorageManager() }.scope(.application)
         register { APIService.shared }
-        register { PodcastDetailViewModel() }
         register { RecentEpisodesListViewModel() }
         register { PodcastsPersistantManager() }
         register { BaadalManager(identifier: Constants.BKConstants.container) }
         register { FavoritePodcastsCloudKitService() }
-        register { FavoritePodcastsViewModel() }
         
         
         // Interactors
-        register { PodcastsInteractor() }.implements(SearchPodcastControllable.Type.self)
+        register { PodcastsInteractor() }.implements(PodcastControllable.Type.self)
         register { EpisodesInteractor() }.implements(EpisodesInteractable.Type.self)
         
         // Repositories

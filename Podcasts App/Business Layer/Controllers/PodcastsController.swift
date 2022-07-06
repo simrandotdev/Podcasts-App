@@ -1,5 +1,5 @@
 //
-//  SearchPodcastsController.swift
+//  PodcastsController.swift
 //  Podcasts App
 //
 //  Created by Simran Preet Narang on 2022-07-04.
@@ -11,22 +11,29 @@ import Resolver
 import Combine
 
 
-// MARK: - SearchPodcastControllable protocol
+// MARK: - PodcastControllable protocol
 
 
-protocol SearchPodcastControllable {
+protocol PodcastControllable {
     
     var podcasts: [PodcastViewModel] { get set }
     var searchText: String { get set }
     
+    var favoritePodcasts: [PodcastViewModel] { get set }
+    
     func fetchPodcasts() async
+    func favorite(podcast: PodcastViewModel) async
+    func unfavorite(podcast: PodcastViewModel) async
+    func isfavorite(podcast: PodcastViewModel) async -> Bool
+    func fetchFavorites() async
 }
 
 
-// MARK: - SearchPodcastControllable implementation
+// MARK: - PodcastControllable implementation
 
 
-class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
+class PodcastsController: PodcastControllable, ObservableObject {
+    
     
     
     // MARK: - Dependencies
@@ -41,6 +48,7 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
     
     
     @Published var podcasts: [PodcastViewModel] = []
+    @Published var favoritePodcasts: [PodcastViewModel] = []
     @Published var searchText: String = ""
     @Published var isLoading = false
     
@@ -70,6 +78,14 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
             }
             .store(in: &cancellable)
         
+        interactor
+            .$favoritePodcasts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] podcasts in
+                self?.favoritePodcasts = podcasts.map { PodcastViewModel(podcast: $0) }
+            }
+            .store(in: &cancellable)
+        
     }
     
     
@@ -96,11 +112,10 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
             
     }
     
-    // MARK: - SearchPodcastControllable protocol implementation
+    // MARK: - PodcastControllable protocol implementation
     
     
     @MainActor func fetchPodcasts() async {
-        
         isLoading = true
         do {
             try await interactor.fetchPodcasts()
@@ -112,18 +127,63 @@ class SearchPodcastsController: SearchPodcastControllable, ObservableObject {
     }
     
     
-    @MainActor func fetchEpisodes(forPodcast podcast: PodcastViewModel) async {
+    @MainActor func favorite(podcast: PodcastViewModel) async {
         
         isLoading = true
         do {
             let podcastModel = Podcast(podcastViewModel: podcast)
-            try await episodesInteractor.fetchEpisodes(forPodcast: podcastModel)
+            try await interactor.favorite(podcast: podcastModel)
         } catch {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)
         }
         isLoading = false
     }
+    
+    
+    @MainActor func unfavorite(podcast: PodcastViewModel) async {
+        
+        isLoading = true
+        do {
+            let podcastModel = Podcast(podcastViewModel: podcast)
+            try await interactor.unfavorite(podcast: podcastModel)
+        } catch {
+            // TODO: Handle Error
+            err("\(#function)" ,error.localizedDescription)
+        }
+        isLoading = false
+        
+    }
+    
+    
+    @MainActor func fetchFavorites() async {
+        
+        isLoading = true
+        do {
+            try await interactor.fetchFavorites()
+        } catch {
+            // TODO: Handle Error
+            err("\(#function)" ,error.localizedDescription)
+        }
+        isLoading = false
+    }
+    
+    
+    @MainActor func isfavorite(podcast: PodcastViewModel) async -> Bool {
+        
+        isLoading = true
+        do {
+            let podcastModel = Podcast(podcastViewModel: podcast)
+            return try await interactor.isFavorite(podcast: podcastModel)
+        } catch {
+            // TODO: Handle Error
+            err("\(#function)" ,error.localizedDescription)
+        }
+        isLoading = false
+        return false
+    }
+    
+    // MARK: - Private methods
     
     
     private func searchPodcasts(forValue value: String) async {

@@ -24,12 +24,12 @@ class PersistanceManager {
         try? dbQueue?.write { db in
 
             try? db.create(table: "podcast") { t in
-                t.column("recordId", .text).primaryKey()
+                t.column("recordId", .text)
                 t.column("title", .text)
                 t.column("author", .text)
                 t.column("image", .text)
                 t.column("totalEpisodes", .integer)
-                t.column("rssFeedUrl", .text)
+                t.column("rssFeedUrl", .text).primaryKey()
             }
         }
     }
