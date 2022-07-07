@@ -199,10 +199,7 @@ extension Resolver: ResolverRegistering {
     
     public static func registerAllServices() {
         register { URLSession(configuration: .default) }
-        register { LocalStorageManager() }.scope(.application)
         register { APIService.shared }
-        register { RecentEpisodesListViewModel() }
-        register { PodcastsPersistantManager() }
         
         
         // Interactors

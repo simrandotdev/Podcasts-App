@@ -9,7 +9,7 @@
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct HistoryViewItem: View {
+struct HistoryItemCell: View {
     
     var episode: EpisodeViewModel
     var episodes: [EpisodeViewModel]
