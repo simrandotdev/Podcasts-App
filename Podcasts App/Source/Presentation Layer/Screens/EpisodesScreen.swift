@@ -63,11 +63,18 @@ struct EpisodesScreen: View {
         .navigationTitle(podcast.title)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform: onAppear)
+        .refreshable(action: fetchEpisodes)
     }
     
     
     private func onAppear() {
         
+        if controller.episodes.count == 0 {
+            fetchEpisodes()
+        }
+    }
+    
+    @Sendable private func fetchEpisodes() {
         Task {
             await controller.fetchEpisodes(forPodcast: podcast)
             isFavorite = await podcastsController.isfavorite(podcast: podcast)

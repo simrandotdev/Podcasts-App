@@ -56,6 +56,7 @@ struct PodcastsScreen: View {
         }
         .searchable(text: $controller.searchText)
         .onAppear(perform: onAppear)
+        .refreshable(action: fetchPodcasts)
     }
     
     
@@ -63,13 +64,19 @@ struct PodcastsScreen: View {
     
     
     private func onAppear() {
-        Task {
-            if controller.podcasts.count == 0 {
-                await controller.fetchPodcasts()
-            }
+        
+        if controller.podcasts.count == 0 {
+           fetchPodcasts()
         }
     }
+    
+    @Sendable private func fetchPodcasts() {
         
+        Task {
+            await controller.fetchPodcasts()
+        }
+    }
+    
 }
 
 

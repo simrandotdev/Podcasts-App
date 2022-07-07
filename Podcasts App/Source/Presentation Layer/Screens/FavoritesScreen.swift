@@ -59,6 +59,7 @@ struct FavoritesScreen: View {
             .padding()
         }
         .onAppear(perform: onAppear)
+        .refreshable(action: fetchFavorites)
     }
     
     
@@ -66,6 +67,13 @@ struct FavoritesScreen: View {
     
     
     private func onAppear() {
+        
+        fetchFavorites()
+    }
+    
+    
+    @Sendable private func fetchFavorites() {
+        
         Task {
             await controller.fetchFavorites()
         }
