@@ -18,10 +18,20 @@ struct FavoritesScreen: View {
     @State var showPodcastDetailsView: Bool = false
     
     
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    
     // MARK: - UI Setup
     
     
-    private let columns = [
+    private let compactColumns = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
+    ]
+    
+    private let regularColumns = [
+        GridItem(.flexible()),
+        GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible()),
     ]
@@ -38,13 +48,14 @@ struct FavoritesScreen: View {
     
     var body: some View {
         
-        ScrollView {
-            LazyVGrid(columns: columns) {
+        ScrollView() {
+            LazyVGrid(columns: horizontalSizeClass == .regular ? regularColumns : compactColumns) {
                 ForEach(controller.favoritePodcasts, id: \.rssFeedUrl) { podcast in
                     PodcastThumbnailCell(podcast: podcast)
                         .onTapGesture(perform: {
                             segeu(podcastViewModel: podcast)
                         })
+                        .padding(4)
                 }
             }
             .background(
