@@ -1,7 +1,9 @@
 import Foundation
 import FeedKit
+import GRDB
 
-struct Episode : Codable {
+struct Episode : Codable, FetchableRecord, PersistableRecord {
+    
     let title: String
     let subtitle: String
     let pubDate: Date

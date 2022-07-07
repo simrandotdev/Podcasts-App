@@ -10,6 +10,7 @@ import Foundation
 import GRDB
 
 class PersistanceManager {
+    
     public static let shared = PersistanceManager()
     
     public var dbQueue: DatabaseQueue?
@@ -32,6 +33,17 @@ class PersistanceManager {
                 t.column("image", .text)
                 t.column("totalEpisodes", .integer)
                 t.column("rssFeedUrl", .text).primaryKey()
+            }
+            
+            try? db.create(table: "episode") { t in
+                t.column("streamUrl", .text).primaryKey()
+                t.column("title", .text)
+                t.column("subtitle", .text)
+                t.column("pubDate", .date)
+                t.column("description", .text)
+                t.column("author", .text)
+                t.column("fileUrl", .text)
+                t.column("imageUrl", .text)
             }
         }
         

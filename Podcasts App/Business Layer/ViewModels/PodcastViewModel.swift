@@ -10,11 +10,6 @@ import Foundation
 
 class PodcastViewModel {
     
-    // MARK: - Dependencies
-    
-    
-    private let repo = PodcastsPersistantManager()
-    
     
     // MARK: - Public properties
     

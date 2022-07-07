@@ -68,21 +68,6 @@ class MainTabBarController : UITabBarController {
         view.backgroundColor = Theme.Color.systemBackgroundColor
     }
     
-    private func firstTimeSync() {
-        
-        let service = FavoritePodcastsCloudKitService()
-        
-        if !Constants.InAppSubscribed.firstTimeSync {
-            Task {
-                try await service.syncLocalToCloud()
-                
-                DispatchQueue.main.async {
-                    Constants.InAppSubscribed.firstTimeSync = true
-                }
-            }
-        }
-    }
-    
     fileprivate func setupViewController() {
 
         let searchPodcastScreen = PodcastsScreen(maximizePlayerView: maximizePlayerDetails)

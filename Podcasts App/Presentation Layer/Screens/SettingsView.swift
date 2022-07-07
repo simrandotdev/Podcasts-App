@@ -36,8 +36,6 @@ class DebugSettingsViewModel: ObservableObject {
     
     private var cancallable = Set<AnyCancellable>()
     
-    @Injected private var favoritePodcastService: FavoritePodcastsCloudKitService
-    
     init() {
         
         isUserSubscriber = Constants.InAppSubscribed.isUserSubscribed

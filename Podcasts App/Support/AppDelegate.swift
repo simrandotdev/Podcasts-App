@@ -1,6 +1,5 @@
 import UIKit
 import Resolver
-import BaadalKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -204,8 +203,6 @@ extension Resolver: ResolverRegistering {
         register { APIService.shared }
         register { RecentEpisodesListViewModel() }
         register { PodcastsPersistantManager() }
-        register { BaadalManager(identifier: Constants.BKConstants.container) }
-        register { FavoritePodcastsCloudKitService() }
         
         
         // Interactors
