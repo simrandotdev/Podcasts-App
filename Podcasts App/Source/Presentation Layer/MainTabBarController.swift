@@ -21,6 +21,7 @@ class MainTabBarController : UITabBarController {
         
         maximizeTopAnchorConstraint.isActive = false
         minimizeTopAnchorConstraint.isActive = true
+        
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.view.layoutIfNeeded()
             self.playerDetailsView.isHidden = false

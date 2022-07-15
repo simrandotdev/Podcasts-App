@@ -17,7 +17,11 @@ class EpisodeViewModel {
         if array.count > 100 {
             string = String(array.dropLast(array.count - 100))
         }
-        return string
+        return string.removeHtmlTags().trimingLeadingSpaces()
+    }
+    
+    var formattedDateString: String {
+        return pubDate.formatted(date: .long, time: .omitted)
     }
     
     init(episode: Episode) {

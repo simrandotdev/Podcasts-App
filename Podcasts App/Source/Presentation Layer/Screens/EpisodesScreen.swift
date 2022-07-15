@@ -36,7 +36,7 @@ struct EpisodesScreen: View {
                 List {
                     ForEach(controller.episodes, id: \.streamUrl) { episode in
                         StandardListItemView(title: episode.title,
-                                             subtitle: episode.author,
+                                             subtitle: episode.formattedDateString,
                                              moreInfo: episode.shortDescription,
                                              imageUrlString: episode.imageUrl ?? "")
                         .background(Color.gray.opacity(0.2))
