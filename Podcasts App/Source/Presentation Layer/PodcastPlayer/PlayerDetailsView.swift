@@ -2,6 +2,7 @@ import UIKit
 import SDWebImage
 import AVKit
 import MediaPlayer
+import Resolver
 
 class PlayerDetailsView : UIView {
 
@@ -19,7 +20,6 @@ class PlayerDetailsView : UIView {
     @IBOutlet weak var episodeTitleLabel: UILabel!
     @IBOutlet weak var authorLabel: UILabel!
     @IBOutlet var blankViewBetweenMediaPlayerControls: [UIView]!
-    
     @IBOutlet weak var miniPlayPauseButton: UIButton!  {
         
         didSet {
@@ -27,7 +27,6 @@ class PlayerDetailsView : UIView {
             miniPlayPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
         }
     }
-    
     @IBOutlet weak var miniEpisodeImageView: UIImageView!  {
         
         didSet {
@@ -37,7 +36,6 @@ class PlayerDetailsView : UIView {
             miniEpisodeImageView.clipsToBounds = true
         }
     }
-    
     @IBOutlet weak var episodeImageView: UIImageView! {
         
         didSet {
@@ -47,7 +45,6 @@ class PlayerDetailsView : UIView {
             episodeImageView.clipsToBounds = true
         }
     }
-    
     @IBOutlet weak var playPauseButton: UIButton! {
         
         didSet {
@@ -80,7 +77,10 @@ class PlayerDetailsView : UIView {
             setupImageInfoOnLockScreen()
 
             // TODO: add the episode to history here
-//            guard let episode = self.episodeViewModel else { return }
+            Task {
+                guard let episode = self.episodeViewModel else { return }
+                try await episodesRepository.saveInHistory(episode: Episode(episodeViewModel: episode))
+            }
         }
     }
     
@@ -109,6 +109,7 @@ class PlayerDetailsView : UIView {
         return player
     }()
     
+    @Injected private var episodesRepository: EpisodesRepository
     
     // MARK:- Initializers
     

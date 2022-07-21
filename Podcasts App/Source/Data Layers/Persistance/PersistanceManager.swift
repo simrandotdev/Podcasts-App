@@ -35,7 +35,7 @@ class PersistanceManager {
                 t.column("rssFeedUrl", .text).primaryKey()
             }
             
-            try? db.create(table: "episode") { t in
+             try? db.create(table: "episode") { t in
                 t.column("streamUrl", .text).primaryKey()
                 t.column("title", .text)
                 t.column("subtitle", .text)
@@ -45,6 +45,8 @@ class PersistanceManager {
                 t.column("fileUrl", .text)
                 t.column("imageUrl", .text)
             }
+            
+            
         }
         
     }

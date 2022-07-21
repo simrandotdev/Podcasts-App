@@ -79,7 +79,10 @@ class MainTabBarController : UITabBarController {
         let favoritesViewNavController = setupTabBarNavigationController(title: "Favorites",
                                                                         image: UIImage(systemName: "heart.fill") ?? UIImage(),
                                                                         viewController: favoritesScreen)
-        
+        let recentlyPlayedEpisodesScreen = UIHostingController(rootView: RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerDetails))
+        let recentlyPlayedEpisodesNavController = setupTabBarNavigationController(title: "Recently Played",
+                                                                        image: UIImage(systemName: "music.mic") ?? UIImage(),
+                                                                        viewController: recentlyPlayedEpisodesScreen)
         
         let settingsScreen = UIHostingController(rootView: SettingsView())
         let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
@@ -88,7 +91,8 @@ class MainTabBarController : UITabBarController {
 
         viewControllers = [
             searchNavController,
-            favoritesViewNavController
+            favoritesViewNavController,
+            recentlyPlayedEpisodesNavController
         ]
 
         #if DEBUG

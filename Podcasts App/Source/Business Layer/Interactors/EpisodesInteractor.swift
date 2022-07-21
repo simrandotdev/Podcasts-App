@@ -38,6 +38,8 @@ class EpisodesInteractor: EpisodesInteractable {
     
     
     @Published var episodes: [Episode] = []
+    @Published var recentlyPlayedEpisodes: [Episode] = []
+    
     private var originalEpisodes: [Episode] = []
     
     
@@ -53,5 +55,17 @@ class EpisodesInteractor: EpisodesInteractable {
     
     func searchEpisodes(forValue value: String) async throws {
         
+    }
+    
+    
+    func saveInHistory(episode: Episode)  async throws {
+        
+        try await episodesRepository.saveInHistory(episode: episode)
+    }
+    
+    
+    func fetchEpisodesFromHistory() async throws {
+        
+        recentlyPlayedEpisodes = try await episodesRepository.getEpisodesFromHistory()
     }
 }

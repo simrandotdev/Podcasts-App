@@ -38,6 +38,7 @@ class EpisodesController: EpisodesControllable, ObservableObject {
     
     
     @Published var episodes: [EpisodeViewModel] = []
+    @Published var recentlyPlayedEpisodes: [EpisodeViewModel] = []
     @Published var isLoading: Bool = false
     
     
@@ -65,6 +66,14 @@ class EpisodesController: EpisodesControllable, ObservableObject {
             }
             .store(in: &cancellable)
         
+        interactor
+            .$recentlyPlayedEpisodes
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] episodes in
+                self?.recentlyPlayedEpisodes = episodes.map { EpisodeViewModel(episode: $0) }
+            }
+            .store(in: &cancellable)
+        
     }
     
     
@@ -83,5 +92,29 @@ class EpisodesController: EpisodesControllable, ObservableObject {
             err("\(#function)" ,error.localizedDescription)
         }
         isLoading = false
+    }
+    
+    
+    func saveInHistory(episode: Episode)  async {
+        
+        do {
+            try await interactor.saveInHistory(episode: episode)
+        } catch {
+            // TODO: Handle Error
+            err("\(#function)" ,error.localizedDescription)
+        }
+        
+    }
+    
+    
+    func fetchEpisodesFromHistory() async {
+        
+        do {
+            try await interactor.fetchEpisodesFromHistory()
+        } catch {
+            // TODO: Handle Error
+            err("\(#function)" ,error.localizedDescription)
+        }
+        
     }
 }

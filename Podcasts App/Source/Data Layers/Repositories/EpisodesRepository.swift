@@ -28,7 +28,7 @@ class EpisodesRepository {
     
     
     @Injected var api: APIService
-    
+    @Injected var db: PersistanceManager
     
     // MARK: - Public properties
     
@@ -39,5 +39,19 @@ class EpisodesRepository {
         
         let episodes = try await api.fetchEpisodesAsync(forPodcast: rssFeedUrl)
         return episodes
+    }
+    
+    public func saveInHistory(episode: Episode) async throws {
+        
+        try await db.dbQueue?.write({ db in
+            try episode.save(db)
+        })
+    }
+    
+    public func getEpisodesFromHistory() async throws -> [Episode] {
+        
+        return try await db.dbQueue?.read({ db in
+            return try Episode.fetchAll(db).reversed()
+        }) ?? []
     }
 }

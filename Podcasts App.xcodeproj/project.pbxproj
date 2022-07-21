@@ -31,6 +31,7 @@
 		4980A44B284C64A000E74629 /* HistoryItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4980A44A284C64A000E74629 /* HistoryItemCell.swift */; };
 		4980A44E284C677A00E74629 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 4980A44D284C677A00E74629 /* SDWebImageSwiftUI */; };
 		49B1AF212772DDB8005F498D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B1AF202772DDB8005F498D /* SettingsView.swift */; };
+		49E2B3102888FF0400081673 /* RecentlyPlayedEpisodesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E2B30F2888FF0400081673 /* RecentlyPlayedEpisodesScreen.swift */; };
 		846F224520AFDE8400CA2FC9 /* PlayerDetailsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 846F224420AFDE8400CA2FC9 /* PlayerDetailsView.xib */; };
 		846F224720AFE15700CA2FC9 /* PlayerDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846F224620AFE15700CA2FC9 /* PlayerDetailsView.swift */; };
 		846FC96120B25DCE00791331 /* CMTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846FC96020B25DCE00791331 /* CMTime.swift */; };
@@ -76,6 +77,7 @@
 		4960E43F24B12B1A009A3806 /* RSSFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RSSFeed.swift; sourceTree = "<group>"; };
 		4980A44A284C64A000E74629 /* HistoryItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryItemCell.swift; sourceTree = "<group>"; };
 		49B1AF202772DDB8005F498D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		49E2B30F2888FF0400081673 /* RecentlyPlayedEpisodesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentlyPlayedEpisodesScreen.swift; sourceTree = "<group>"; };
 		846F224420AFDE8400CA2FC9 /* PlayerDetailsView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlayerDetailsView.xib; sourceTree = "<group>"; };
 		846F224620AFE15700CA2FC9 /* PlayerDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailsView.swift; sourceTree = "<group>"; };
 		846FC96020B25DCE00791331 /* CMTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMTime.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 				491941562874C60C0034254A /* EpisodesScreen.swift */,
 				492EC3DA2876433700F381FC /* FavoritesScreen.swift */,
 				49B1AF202772DDB8005F498D /* SettingsView.swift */,
+				49E2B30F2888FF0400081673 /* RecentlyPlayedEpisodesScreen.swift */,
 			);
 			path = Screens;
 			sourceTree = "<group>";
@@ -478,6 +481,7 @@
 				846FC96120B25DCE00791331 /* CMTime.swift in Sources */,
 				493A41A3287401560030D12D /* PodcastsInteractor.swift in Sources */,
 				D429ED7A20AB8C66008C66DD /* Podcast.swift in Sources */,
+				49E2B3102888FF0400081673 /* RecentlyPlayedEpisodesScreen.swift in Sources */,
 				493A419C287400BE0030D12D /* PodcastsController.swift in Sources */,
 				492EC3DB2876433700F381FC /* FavoritesScreen.swift in Sources */,
 				84A432A320AF5CC6004F32AD /* DateExtensions.swift in Sources */,
