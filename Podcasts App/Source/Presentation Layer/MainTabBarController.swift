@@ -16,7 +16,79 @@ class MainTabBarController : UITabBarController {
         playerDetailsView.isHidden = true
     }
     
+    
+    // MARK:- Setup methods
+    
+    
+    fileprivate func setupViewController() {
+        
+        let searchPodcastScreen = PodcastsScreen(maximizePlayerView: maximizePlayerDetails)
+        let searchNavController = setupTabBarNavigationController(title: "Search",
+                                                                  image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
+                                                                  viewController: UIHostingController(rootView: searchPodcastScreen))
+        let favoritesScreen = UIHostingController(rootView: FavoritesScreen(maximizePlayerView: maximizePlayerDetails))
+        let favoritesViewNavController = setupTabBarNavigationController(title: "Favorites",
+                                                                         image: UIImage(systemName: "heart.fill") ?? UIImage(),
+                                                                         viewController: favoritesScreen)
+        let recentlyPlayedEpisodesScreen = UIHostingController(rootView: RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerDetails))
+        let recentlyPlayedEpisodesNavController = setupTabBarNavigationController(title: "Recently Played",
+                                                                                  image: UIImage(systemName: "music.mic") ?? UIImage(),
+                                                                                  viewController: recentlyPlayedEpisodesScreen)
+        
+        let settingsScreen = UIHostingController(rootView: SettingsView())
+        let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
+                                                                        image: UIImage(systemName: "gear") ?? UIImage(),
+                                                                        viewController: settingsScreen)
+        
+        viewControllers = [
+            searchNavController,
+            favoritesViewNavController,
+            recentlyPlayedEpisodesNavController
+        ]
+        
+        #if DEBUG
+        viewControllers?.append(settingsViewNavController)
+        #endif
+    }
+    
+    
+    fileprivate func setupTabBarNavigationController(title: String, image: UIImage, viewController: UIViewController) -> UINavigationController {
+        
+        viewController.navigationItem.title = title
+        viewController.tabBarItem.title = title
+        viewController.tabBarItem.image = image
+        let navController = UINavigationController(rootViewController: viewController)
+        return navController
+    }
+    
+    fileprivate func setupTabBarController() {
+        
+        view.backgroundColor = Theme.Color.systemBackgroundColor
+    }
+    
+    
+    fileprivate func setupPlayerDetailsView() {
+        
+        view.insertSubview(playerDetailsView, belowSubview: tabBar)
+        playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
+        playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        playerDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        
+        maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height)
+        maximizeTopAnchorConstraint.isActive = true
+        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
+        
+        let swipeDownGesture = UIPanGestureRecognizer(target: self, action: #selector(panPiece))
+        playerDetailsView.addGestureRecognizer(swipeDownGesture)
+        playerDetailsView.minimizePlayerDetails = minimizePlayerDetails
+        playerDetailsView.maximizePlayer = maximizePlayerDetails
+    }
+    
+    
     // MARK: Handlers
+    
+    
     @objc func minimizePlayerDetails() {
         
         maximizeTopAnchorConstraint.isActive = false
@@ -30,6 +102,7 @@ class MainTabBarController : UITabBarController {
             self.playerDetailsView.minimizedStackView.alpha = 1.0
         }, completion: nil)
     }
+    
     
     func maximizePlayerDetails(episode: EpisodeViewModel?, playListEpisodes: [EpisodeViewModel]?) {
         
@@ -54,69 +127,6 @@ class MainTabBarController : UITabBarController {
         }, completion: nil)
     }
     
-    // MARK:- Setup methods
-    fileprivate func setupTabBarNavigationController(title: String, image: UIImage, viewController: UIViewController) -> UINavigationController {
-        
-        viewController.navigationItem.title = title
-        viewController.tabBarItem.title = title
-        viewController.tabBarItem.image = image
-        let navController = UINavigationController(rootViewController: viewController)
-        return navController
-    }
-    
-    fileprivate func setupTabBarController() {
-        
-        view.backgroundColor = Theme.Color.systemBackgroundColor
-    }
-    
-    fileprivate func setupViewController() {
-
-        let searchPodcastScreen = PodcastsScreen(maximizePlayerView: maximizePlayerDetails)
-        let searchNavController = setupTabBarNavigationController(title: "Search",
-                                                                  image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
-                                                                  viewController: UIHostingController(rootView: searchPodcastScreen))
-        let favoritesScreen = UIHostingController(rootView: FavoritesScreen(maximizePlayerView: maximizePlayerDetails))
-        let favoritesViewNavController = setupTabBarNavigationController(title: "Favorites",
-                                                                        image: UIImage(systemName: "heart.fill") ?? UIImage(),
-                                                                        viewController: favoritesScreen)
-        let recentlyPlayedEpisodesScreen = UIHostingController(rootView: RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerDetails))
-        let recentlyPlayedEpisodesNavController = setupTabBarNavigationController(title: "Recently Played",
-                                                                        image: UIImage(systemName: "music.mic") ?? UIImage(),
-                                                                        viewController: recentlyPlayedEpisodesScreen)
-        
-        let settingsScreen = UIHostingController(rootView: SettingsView())
-        let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
-                                                                        image: UIImage(systemName: "gear") ?? UIImage(),
-                                                                        viewController: settingsScreen)
-
-        viewControllers = [
-            searchNavController,
-            favoritesViewNavController,
-            recentlyPlayedEpisodesNavController
-        ]
-
-        #if DEBUG
-        viewControllers?.append(settingsViewNavController)
-        #endif
-    }
-    
-    fileprivate func setupPlayerDetailsView() {
-        
-        view.insertSubview(playerDetailsView, belowSubview: tabBar)
-        playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
-        playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        playerDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        
-        maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height)
-        maximizeTopAnchorConstraint.isActive = true
-        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
-        
-        let swipeDownGesture = UIPanGestureRecognizer(target: self, action: #selector(panPiece))
-        playerDetailsView.addGestureRecognizer(swipeDownGesture)
-        playerDetailsView.minimizePlayerDetails = minimizePlayerDetails
-        playerDetailsView.maximizePlayer = maximizePlayerDetails
-    }
     
     @objc func panPiece(_ gestureRecognizer : UIPanGestureRecognizer) {
         
