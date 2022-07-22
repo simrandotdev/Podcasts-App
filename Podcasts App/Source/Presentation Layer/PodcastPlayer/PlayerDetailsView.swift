@@ -139,6 +139,14 @@ class PlayerDetailsView : UIView {
         minimizePlayerDetails?()
     }
     
+    @IBAction func closePlayer(_ sender: UIButton) {
+        
+        UIView.animate(withDuration: 5) {
+            self.isHidden = true
+            self.player.pause()
+        }
+    }
+    
     @IBAction func handleCurrentTimeSliderChange(_ sender: Any) {
         
         guard let duration = player.currentItem?.duration else { return }
@@ -441,11 +449,22 @@ class PlayerDetailsView : UIView {
     
     func setupUI() {
         
-        backgroundColor = Theme.Color.systemBackgroundColor
+        backgroundColor = .clear
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        insertSubview(blurView, at: 0)
+        
+        NSLayoutConstraint.activate([
+            blurView.topAnchor.constraint(equalTo: topAnchor),
+            blurView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            blurView.heightAnchor.constraint(equalTo: heightAnchor),
+            blurView.widthAnchor.constraint(equalTo: widthAnchor)
+        ])
         
         currentTimeSlider.tintColor = .systemGray6
         
-        blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = Theme.Color.systemBackgroundColor }
+        blankViewBetweenMediaPlayerControls.forEach { $0.backgroundColor = .clear }
         
         episodeImageView.layer.cornerRadius = 20
         episodeImageView.layer.masksToBounds = true

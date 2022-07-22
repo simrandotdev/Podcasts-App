@@ -660,7 +660,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.boring-casts";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.hello-podcasts";
 				PRODUCT_NAME = "Podcasts Bin";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -689,7 +689,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.boring-casts";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.hello-podcasts";
 				PRODUCT_NAME = "Podcasts Bin";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";

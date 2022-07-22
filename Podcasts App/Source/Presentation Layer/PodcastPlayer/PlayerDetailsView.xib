@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina3_5" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -19,7 +19,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="sPO-kE-Ii8">
-                            <rect key="frame" x="0.0" y="0.0" width="320" height="64"/>
+                            <rect key="frame" x="8" y="0.0" width="304" height="64"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="appicon" translatesAutoresizingMaskIntoConstraints="NO" id="rWc-gs-irc">
                                     <rect key="frame" x="0.0" y="0.0" width="48" height="64"/>
@@ -28,24 +28,25 @@
                                     </constraints>
                                 </imageView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Episode title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z7t-uV-GF2">
-                                    <rect key="frame" x="56" y="0.0" width="152" height="64"/>
+                                    <rect key="frame" x="56" y="0.0" width="84" height="64"/>
                                     <fontDescription key="fontDescription" name="ArialRoundedMTBold" family="Arial Rounded MT Bold" pointSize="15"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MLW-96-g4f">
-                                    <rect key="frame" x="216" y="0.0" width="48" height="64"/>
+                                    <rect key="frame" x="148" y="0.0" width="48" height="64"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="48" id="UHE-AW-fVV"/>
                                     </constraints>
-                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="28"/>
                                     <color key="tintColor" systemColor="labelColor"/>
-                                    <state key="normal" image="pause" catalog="system">
+                                    <state key="normal">
                                         <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <imageReference key="image" image="pause.circle" catalog="system" symbolScale="large" renderingMode="template"/>
                                     </state>
                                 </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0CD-CU-3VV">
-                                    <rect key="frame" x="272" y="0.0" width="48" height="64"/>
+                                    <rect key="frame" x="204" y="0.0" width="48" height="64"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="48" id="dSG-sf-54W"/>
                                     </constraints>
@@ -57,6 +58,25 @@
                                         <action selector="handleForward:" destination="iN0-l3-epB" eventType="touchUpInside" id="Hw0-Pa-Jrx"/>
                                     </connections>
                                 </button>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ivV-LZ-OtS">
+                                    <rect key="frame" x="260" y="0.0" width="44" height="64"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="44" id="bjY-dd-kgZ"/>
+                                    </constraints>
+                                    <state key="normal">
+                                        <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="calibratedWhite"/>
+                                        <imageReference key="image" image="xmark.circle" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                            <hierarchicalColors>
+                                                <color systemColor="labelColor"/>
+                                                <color systemColor="labelColor"/>
+                                                <color systemColor="tertiaryLabelColor"/>
+                                            </hierarchicalColors>
+                                        </imageReference>
+                                    </state>
+                                    <connections>
+                                        <action selector="closePlayer:" destination="iN0-l3-epB" eventType="touchUpInside" id="IXz-VD-c4r"/>
+                                    </connections>
+                                </button>
                             </subviews>
                         </stackView>
                     </subviews>
@@ -64,21 +84,27 @@
                         <constraint firstItem="sPO-kE-Ii8" firstAttribute="top" secondItem="DUW-6s-xcK" secondAttribute="top" id="Kcd-5t-SuU"/>
                         <constraint firstAttribute="bottom" secondItem="sPO-kE-Ii8" secondAttribute="bottom" id="Rjs-jy-nvB"/>
                         <constraint firstAttribute="height" constant="64" id="k3E-RB-2bY"/>
-                        <constraint firstAttribute="trailing" secondItem="sPO-kE-Ii8" secondAttribute="trailing" id="qAA-Jp-DgX"/>
-                        <constraint firstItem="sPO-kE-Ii8" firstAttribute="leading" secondItem="DUW-6s-xcK" secondAttribute="leading" id="qLL-7z-4e4"/>
+                        <constraint firstAttribute="trailing" secondItem="sPO-kE-Ii8" secondAttribute="trailing" constant="8" id="qAA-Jp-DgX"/>
+                        <constraint firstItem="sPO-kE-Ii8" firstAttribute="leading" secondItem="DUW-6s-xcK" secondAttribute="leading" constant="8" id="qLL-7z-4e4"/>
                     </constraints>
                 </view>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ZNC-aD-8PS">
                     <rect key="frame" x="24" y="8" width="272" height="448"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9rs-KH-DsQ">
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9rs-KH-DsQ">
                             <rect key="frame" x="0.0" y="0.0" width="272" height="44"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="44" id="mLy-Cr-Zkp"/>
                             </constraints>
-                            <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                            <state key="normal" title="X">
+                            <state key="normal">
                                 <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="calibratedWhite"/>
+                                <imageReference key="image" image="xmark.circle" catalog="system" symbolScale="large" renderingMode="hierarchical">
+                                    <hierarchicalColors>
+                                        <color systemColor="labelColor"/>
+                                        <color systemColor="labelColor"/>
+                                        <color systemColor="tertiaryLabelColor"/>
+                                    </hierarchicalColors>
+                                </imageReference>
                             </state>
                             <connections>
                                 <action selector="handleDismiss:" destination="iN0-l3-epB" eventType="touchUpInside" id="IUC-ZJ-bF9"/>
@@ -242,10 +268,14 @@
         <image name="appicon" width="256" height="256"/>
         <image name="gobackward.15" catalog="system" width="121" height="128"/>
         <image name="goforward.15" catalog="system" width="121" height="128"/>
-        <image name="pause" catalog="system" width="88" height="128"/>
+        <image name="pause.circle" catalog="system" width="128" height="121"/>
         <image name="play.fill" catalog="system" width="116" height="128"/>
+        <image name="xmark.circle" catalog="system" width="128" height="121"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="tertiaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
