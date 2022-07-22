@@ -4,10 +4,10 @@ import SwiftUI
 class MainTabBarController : UITabBarController {
     
     let playerDetailsView = PlayerDetailsView.initFromNib()
-    var maximizeTopAnchorConstraint: NSLayoutConstraint!
-    var minimizeTopAnchorConstraint: NSLayoutConstraint!
-    var minimizeBottomAnchorConstraint: NSLayoutConstraint!
-    var maximizeBottomAnchorConstraint: NSLayoutConstraint!
+    var playerDetailTopAnchorInExpandedState: NSLayoutConstraint!
+    var         playerDetailTopAnchorInCollapsedState: NSLayoutConstraint!
+    var         playerDetailBottomAnchorInCollapsedState: NSLayoutConstraint!
+    var playerDetailBottomAnchorInExpandedState: NSLayoutConstraint!
     
     var iPad: Bool {
         return UIDevice.current.userInterfaceIdiom == .pad
@@ -41,7 +41,6 @@ class MainTabBarController : UITabBarController {
         view.backgroundColor = Theme.Color.systemBackgroundColor
         self.tabBar.isHidden = true
         
-        
         tabHostController.view.frame = view.bounds
         view.insertSubview(tabHostController.view, aboveSubview: view)
     }
@@ -54,16 +53,15 @@ class MainTabBarController : UITabBarController {
         playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         playerDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
 
+        playerDetailBottomAnchorInExpandedState = playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        playerDetailBottomAnchorInExpandedState.isActive = true
         
-        maximizeBottomAnchorConstraint = playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        maximizeBottomAnchorConstraint.isActive = true
+                playerDetailBottomAnchorInCollapsedState = playerDetailsView.bottomAnchor.constraint(equalTo: iPad ? self.view.bottomAnchor : self.tabBar.topAnchor, constant: iPad ? 100 : 0)
         
-        minimizeBottomAnchorConstraint = playerDetailsView.bottomAnchor.constraint(equalTo: iPad ? self.view.bottomAnchor : self.tabBar.topAnchor)
+        playerDetailTopAnchorInExpandedState = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height )
+        playerDetailTopAnchorInExpandedState.isActive = true
         
-        maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height )
-        maximizeTopAnchorConstraint.isActive = true
-        
-        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: iPad ? -12 : -64)
+                playerDetailTopAnchorInCollapsedState = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: iPad ? -12 : -64)
                 
         let swipeDownGesture = UIPanGestureRecognizer(target: self, action: #selector(panPiece))
         playerDetailsView.addGestureRecognizer(swipeDownGesture)
@@ -77,11 +75,11 @@ class MainTabBarController : UITabBarController {
     
     @objc func minimizePlayerDetails() {
         
-        maximizeTopAnchorConstraint.isActive = false
-        maximizeBottomAnchorConstraint.isActive = false
+        playerDetailTopAnchorInExpandedState.isActive = false
+        playerDetailBottomAnchorInExpandedState.isActive = false
         
-        minimizeTopAnchorConstraint.isActive = true
-        minimizeBottomAnchorConstraint.isActive = true
+                playerDetailTopAnchorInCollapsedState.isActive = true
+                playerDetailBottomAnchorInCollapsedState.isActive = true
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.view.layoutIfNeeded()
@@ -94,12 +92,12 @@ class MainTabBarController : UITabBarController {
     
     func maximizePlayerDetails(episode: EpisodeViewModel?, playListEpisodes: [EpisodeViewModel]?) {
         
-        minimizeTopAnchorConstraint.isActive = false
-        minimizeBottomAnchorConstraint.isActive = false
-        maximizeTopAnchorConstraint.constant = 0
+                playerDetailTopAnchorInCollapsedState.isActive = false
+                playerDetailBottomAnchorInCollapsedState.isActive = false
+        playerDetailTopAnchorInExpandedState.constant = 0
         
-        maximizeTopAnchorConstraint.isActive = true
-        maximizeBottomAnchorConstraint.isActive = true
+        playerDetailTopAnchorInExpandedState.isActive = true
+        playerDetailBottomAnchorInExpandedState.isActive = true
         
         if let episode = episode {
             playerDetailsView.episodeViewModel = episode
@@ -143,7 +141,6 @@ class MainTabBarController : UITabBarController {
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
-        tabHostController.view.frame = CGRect(x: 0, y: 0, width: view.bounds.height, height: view.bounds.width)
-
+        tabHostController.view.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
     }
 }
