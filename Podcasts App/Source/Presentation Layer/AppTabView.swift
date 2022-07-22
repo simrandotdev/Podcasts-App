@@ -26,35 +26,39 @@ struct AppTabView: View {
     var body: some View {
         
         if verticalSizeClass == .regular && horizontalSizeClass == .regular {
-            NavigationView {
-                List {
-                    NavigationLink(destination: PodcastsScreen(maximizePlayerView: maximizePlayerView)) {
-                        Label("Home", systemImage: "magnifyingglass")
-                    }
-                    
-                    NavigationLink(destination: FavoritesScreen(maximizePlayerView: maximizePlayerView)) {
-                        Label("Favorites", systemImage: "heart.fill")
-                    }
-                    
-                    NavigationLink(destination: RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerView)) {
-                        Label("Recently Played", systemImage: "music.mic")
-                    }
-                    
-                    #if DEBUG
-                    NavigationLink(destination:  SettingsView()) {
-                        Label("Settings", systemImage: "gear")
-                    }
-                    #endif
-                }
-                .navigationTitle("Menu")
-                
-                PodcastsScreen(maximizePlayerView: maximizePlayerView)
-            }
+            sideBarView
         } else {
             tabView
         }
     }
     
+    
+    private var sideBarView: some View {
+        NavigationView {
+            List {
+                NavigationLink(destination: PodcastsScreen(maximizePlayerView: maximizePlayerView)) {
+                    Label("Home", systemImage: "magnifyingglass")
+                }
+                
+                NavigationLink(destination: FavoritesScreen(maximizePlayerView: maximizePlayerView)) {
+                    Label("Favorites", systemImage: "heart.fill")
+                }
+                
+                NavigationLink(destination: RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerView)) {
+                    Label("Recently Played", systemImage: "music.mic")
+                }
+                
+#if DEBUG
+                NavigationLink(destination:  SettingsView()) {
+                    Label("Settings", systemImage: "gear")
+                }
+#endif
+            }
+            .navigationTitle("Menu")
+            
+            PodcastsScreen(maximizePlayerView: maximizePlayerView)
+        }
+    }
     
     private var tabView: some View {
         TabView {
