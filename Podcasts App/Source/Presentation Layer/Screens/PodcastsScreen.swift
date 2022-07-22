@@ -54,6 +54,7 @@ struct PodcastsScreen: View {
                 
             }
         }
+        .navigationTitle("Hello Podcasts 👋")
         .searchable(text: $controller.searchText)
         .onAppear(perform: onAppear)
         .refreshable(action: fetchPodcasts)

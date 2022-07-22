@@ -23,7 +23,6 @@ struct AppTabView: View {
         TabView {
             NavigationView {
                 PodcastsScreen(maximizePlayerView: maximizePlayerView)
-                    
             }.tabItem {
                 Label("Home", systemImage: "magnifyingglass")
             }
@@ -36,6 +35,23 @@ struct AppTabView: View {
             }
             .tag(1)
             
+            
+            NavigationView {
+                RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerView)
+            } .tabItem {
+                Label("Recently Played", systemImage: "music.mic")
+            }
+            .tag(2)
+            
+            
+            #if DEBUG
+            NavigationView {
+                SettingsView()
+            } .tabItem {
+                Label("Settings", systemImage: "gear")
+            }
+            .tag(3)
+            #endif
         }
     }
 }

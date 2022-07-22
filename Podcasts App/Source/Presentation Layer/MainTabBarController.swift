@@ -6,51 +6,20 @@ class MainTabBarController : UITabBarController {
     let playerDetailsView = PlayerDetailsView.initFromNib()
     var maximizeTopAnchorConstraint: NSLayoutConstraint!
     var minimizeTopAnchorConstraint: NSLayoutConstraint!
+    var minimizeBottomAnchorConstraint: NSLayoutConstraint!
+    var maximizeBottomAnchorConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         setupTabBarController()
-        setupViewController()
         setupPlayerDetailsView()
         playerDetailsView.isHidden = true
     }
     
     
     // MARK:- Setup methods
-    
-    
-    fileprivate func setupViewController() {
-        
-        let searchPodcastScreen = PodcastsScreen(maximizePlayerView: maximizePlayerDetails)
-        let searchNavController = setupTabBarNavigationController(title: "Search",
-                                                                  image: UIImage(systemName: "magnifyingglass") ?? UIImage(),
-                                                                  viewController: UIHostingController(rootView: searchPodcastScreen))
-        let favoritesScreen = UIHostingController(rootView: FavoritesScreen(maximizePlayerView: maximizePlayerDetails))
-        let favoritesViewNavController = setupTabBarNavigationController(title: "Favorites",
-                                                                         image: UIImage(systemName: "heart.fill") ?? UIImage(),
-                                                                         viewController: favoritesScreen)
-        let recentlyPlayedEpisodesScreen = UIHostingController(rootView: RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerDetails))
-        let recentlyPlayedEpisodesNavController = setupTabBarNavigationController(title: "Recently Played",
-                                                                                  image: UIImage(systemName: "music.mic") ?? UIImage(),
-                                                                                  viewController: recentlyPlayedEpisodesScreen)
-        
-        let settingsScreen = UIHostingController(rootView: SettingsView())
-        let settingsViewNavController = setupTabBarNavigationController(title: "Settings",
-                                                                        image: UIImage(systemName: "gear") ?? UIImage(),
-                                                                        viewController: settingsScreen)
-        
-        viewControllers = [
-            searchNavController,
-            favoritesViewNavController,
-            recentlyPlayedEpisodesNavController
-        ]
-        
-        #if DEBUG
-        viewControllers?.append(settingsViewNavController)
-        #endif
-    }
-    
+
     
     fileprivate func setupTabBarNavigationController(title: String, image: UIImage, viewController: UIViewController) -> UINavigationController {
         
@@ -61,24 +30,38 @@ class MainTabBarController : UITabBarController {
         return navController
     }
     
+    
+    private lazy var tabHostController = UIHostingController(rootView: AppTabView(maximizePlayerView: maximizePlayerDetails))
     fileprivate func setupTabBarController() {
         
         view.backgroundColor = Theme.Color.systemBackgroundColor
+        self.tabBar.isHidden = true
+        
+        tabHostController.view.frame = view.bounds
+        
+        view.insertSubview(tabHostController.view, aboveSubview: view)
+                                                    
     }
     
     
     fileprivate func setupPlayerDetailsView() {
         
-        view.insertSubview(playerDetailsView, belowSubview: tabBar)
+        view.insertSubview(playerDetailsView, aboveSubview: tabHostController.view)
         playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
         playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         playerDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+
+        
+        maximizeBottomAnchorConstraint = playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        maximizeBottomAnchorConstraint.isActive = true
+        
+        minimizeBottomAnchorConstraint = playerDetailsView.bottomAnchor.constraint(equalTo: self.tabBar.topAnchor)
         
         maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height)
         maximizeTopAnchorConstraint.isActive = true
-        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
         
+        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
+                
         let swipeDownGesture = UIPanGestureRecognizer(target: self, action: #selector(panPiece))
         playerDetailsView.addGestureRecognizer(swipeDownGesture)
         playerDetailsView.minimizePlayerDetails = minimizePlayerDetails
@@ -92,12 +75,14 @@ class MainTabBarController : UITabBarController {
     @objc func minimizePlayerDetails() {
         
         maximizeTopAnchorConstraint.isActive = false
+        maximizeBottomAnchorConstraint.isActive = false
+        
         minimizeTopAnchorConstraint.isActive = true
+        minimizeBottomAnchorConstraint.isActive = true
         
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
             self.view.layoutIfNeeded()
             self.playerDetailsView.isHidden = false
-            self.tabBar.isHidden = false
             self.playerDetailsView.maximizedStackView.alpha = 0.0
             self.playerDetailsView.minimizedStackView.alpha = 1.0
         }, completion: nil)
@@ -107,8 +92,11 @@ class MainTabBarController : UITabBarController {
     func maximizePlayerDetails(episode: EpisodeViewModel?, playListEpisodes: [EpisodeViewModel]?) {
         
         minimizeTopAnchorConstraint.isActive = false
+        minimizeBottomAnchorConstraint.isActive = false
         maximizeTopAnchorConstraint.constant = 0
+        
         maximizeTopAnchorConstraint.isActive = true
+        maximizeBottomAnchorConstraint.isActive = true
         
         if let episode = episode {
             playerDetailsView.episodeViewModel = episode
@@ -118,10 +106,8 @@ class MainTabBarController : UITabBarController {
         UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: { [weak self] in
             
             guard let self = self else { return }
-            
             self.view.layoutIfNeeded()
             self.playerDetailsView.isHidden = false
-            self.tabBar.isHidden = true
             self.playerDetailsView.maximizedStackView.alpha = 1.0
             self.playerDetailsView.minimizedStackView.alpha = 0.0
         }, completion: nil)
