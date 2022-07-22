@@ -10,6 +10,10 @@ import SwiftUI
 
 struct AppTabView: View {
     
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    
     // MARK: - Public properties
     
     
@@ -20,6 +24,39 @@ struct AppTabView: View {
     
     
     var body: some View {
+        
+        if verticalSizeClass == .regular && horizontalSizeClass == .regular {
+            NavigationView {
+                List {
+                    NavigationLink(destination: PodcastsScreen(maximizePlayerView: maximizePlayerView)) {
+                        Label("Home", systemImage: "magnifyingglass")
+                    }
+                    
+                    NavigationLink(destination: FavoritesScreen(maximizePlayerView: maximizePlayerView)) {
+                        Label("Favorites", systemImage: "heart.fill")
+                    }
+                    
+                    NavigationLink(destination: RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerView)) {
+                        Label("Recently Played", systemImage: "music.mic")
+                    }
+                    
+                    #if DEBUG
+                    NavigationLink(destination:  SettingsView()) {
+                        Label("Settings", systemImage: "gear")
+                    }
+                    #endif
+                }
+                .navigationTitle("Menu")
+                
+                PodcastsScreen(maximizePlayerView: maximizePlayerView)
+            }
+        } else {
+            tabView
+        }
+    }
+    
+    
+    private var tabView: some View {
         TabView {
             NavigationView {
                 PodcastsScreen(maximizePlayerView: maximizePlayerView)
@@ -44,14 +81,14 @@ struct AppTabView: View {
             .tag(2)
             
             
-            #if DEBUG
+#if DEBUG
             NavigationView {
                 SettingsView()
             } .tabItem {
                 Label("Settings", systemImage: "gear")
             }
             .tag(3)
-            #endif
+#endif
         }
     }
 }

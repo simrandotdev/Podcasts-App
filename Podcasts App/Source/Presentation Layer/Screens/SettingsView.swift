@@ -20,6 +20,7 @@ struct SettingsView: View {
             Toggle("Is User subscriber", isOn: $settingsViewModel.isUserSubscriber)
             #endif
         }
+        .navigationTitle("Settings ⚙️")
     }
 }
 

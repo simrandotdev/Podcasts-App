@@ -9,6 +9,10 @@ class MainTabBarController : UITabBarController {
     var minimizeBottomAnchorConstraint: NSLayoutConstraint!
     var maximizeBottomAnchorConstraint: NSLayoutConstraint!
     
+    var iPad: Bool {
+        return UIDevice.current.userInterfaceIdiom == .pad
+    }
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -37,10 +41,9 @@ class MainTabBarController : UITabBarController {
         view.backgroundColor = Theme.Color.systemBackgroundColor
         self.tabBar.isHidden = true
         
-        tabHostController.view.frame = view.bounds
         
+        tabHostController.view.frame = view.bounds
         view.insertSubview(tabHostController.view, aboveSubview: view)
-                                                    
     }
     
     
@@ -55,12 +58,12 @@ class MainTabBarController : UITabBarController {
         maximizeBottomAnchorConstraint = playerDetailsView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         maximizeBottomAnchorConstraint.isActive = true
         
-        minimizeBottomAnchorConstraint = playerDetailsView.bottomAnchor.constraint(equalTo: self.tabBar.topAnchor)
+        minimizeBottomAnchorConstraint = playerDetailsView.bottomAnchor.constraint(equalTo: iPad ? self.view.bottomAnchor : self.tabBar.topAnchor)
         
-        maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height)
+        maximizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: view.topAnchor, constant: view.frame.height )
         maximizeTopAnchorConstraint.isActive = true
         
-        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
+        minimizeTopAnchorConstraint = playerDetailsView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: iPad ? -12 : -64)
                 
         let swipeDownGesture = UIPanGestureRecognizer(target: self, action: #selector(panPiece))
         playerDetailsView.addGestureRecognizer(swipeDownGesture)
@@ -127,5 +130,20 @@ class MainTabBarController : UITabBarController {
         if translation.y < -170 {
             maximizePlayerDetails(episode: nil, playListEpisodes: nil)
         }
+    }
+
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        tabHostController.view.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
+    }
+    
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        tabHostController.view.frame = CGRect(x: 0, y: 0, width: view.bounds.height, height: view.bounds.width)
+
     }
 }

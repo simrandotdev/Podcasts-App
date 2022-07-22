@@ -69,6 +69,7 @@ struct FavoritesScreen: View {
             )
             .padding()
         }
+        .navigationTitle("Favorites ❤️")
         .onAppear(perform: onAppear)
         .refreshable(action: fetchFavorites)
     }

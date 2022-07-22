@@ -48,7 +48,7 @@ struct RecentlyPlayedEpisodesScreen: View {
                 .listStyle(.plain)
             }
         }
-        .navigationTitle("Recently Played")
+        .navigationTitle("Recently Played 🎙")
         .onAppear(perform: onAppear)
         .refreshable(action: fetchEpisodesFromHistory)
     }
