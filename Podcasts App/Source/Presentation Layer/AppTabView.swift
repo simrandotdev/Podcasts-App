@@ -47,12 +47,6 @@ struct AppTabView: View {
                 NavigationLink(destination: RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerView)) {
                     Label("Recently Played", systemImage: "music.mic")
                 }
-                
-#if DEBUG
-                NavigationLink(destination:  SettingsView()) {
-                    Label("Settings", systemImage: "gear")
-                }
-#endif
             }
             .navigationTitle("Menu")
             
@@ -83,16 +77,6 @@ struct AppTabView: View {
                 Label("Recently Played", systemImage: "music.mic")
             }
             .tag(2)
-            
-            
-#if DEBUG
-            NavigationView {
-                SettingsView()
-            } .tabItem {
-                Label("Settings", systemImage: "gear")
-            }
-            .tag(3)
-#endif
         }
     }
 }
