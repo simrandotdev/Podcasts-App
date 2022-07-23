@@ -14,7 +14,7 @@ struct RecentlyPlayedEpisodesScreen: View {
     // MARK: - States
     
     
-    @StateObject private var episodesController = EpisodesController()
+    @EnvironmentObject private var episodesController: EpisodesController
     
     // MARK: - Public properties
     

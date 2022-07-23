@@ -13,7 +13,7 @@ struct FavoritesScreen: View {
     // MARK: - States
     
     
-    @StateObject var controller = PodcastsController()
+    @EnvironmentObject var controller: PodcastsController
     @State var selectedPodcastViewModel: PodcastViewModel? = nil
     @State var showPodcastDetailsView: Bool = false
     

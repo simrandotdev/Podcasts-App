@@ -38,40 +38,35 @@ struct AppTabView: View {
     private var sideBarView: some View {
         NavigationView {
             List {
-                NavigationLink(destination:
-                                PodcastsScreen(maximizePlayerView: maximizePlayerView)
-                    .environmentObject(podcastsController)
-                ) {
+                NavigationLink(destination:podcastsScreen) {
                     Label("Home", systemImage: "magnifyingglass")
                 }
                 
-                NavigationLink(destination: FavoritesScreen(maximizePlayerView: maximizePlayerView)) {
+                NavigationLink(destination: favoritesScreen) {
                     Label("Favorites", systemImage: "heart.fill")
                 }
                 
-                NavigationLink(destination: RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerView)) {
+                NavigationLink(destination: recentlyPlayedScreen) {
                     Label("Recently Played", systemImage: "music.mic")
                 }
             }
             .navigationTitle("Menu")
             
-            PodcastsScreen(maximizePlayerView: maximizePlayerView)
-                .environmentObject(podcastsController)
+            podcastsScreen
         }
     }
     
     private var tabView: some View {
         TabView {
             NavigationView {
-                PodcastsScreen(maximizePlayerView: maximizePlayerView)
-                    .environmentObject(podcastsController)
+                podcastsScreen
             }.tabItem {
                 Label("Home", systemImage: "magnifyingglass")
             }
             .tag(0)
             
             NavigationView {
-                FavoritesScreen(maximizePlayerView: maximizePlayerView)
+                favoritesScreen
             } .tabItem {
                 Label("Favorites", systemImage: "heart.fill")
             }
@@ -79,12 +74,28 @@ struct AppTabView: View {
             
             
             NavigationView {
-                RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerView)
+                recentlyPlayedScreen
             } .tabItem {
                 Label("Recently Played", systemImage: "music.mic")
             }
             .tag(2)
         }
+    }
+    
+    
+    private var podcastsScreen: some View {
+        PodcastsScreen(maximizePlayerView: maximizePlayerView)
+            .environmentObject(podcastsController)
+    }
+    
+    private var favoritesScreen: some View {
+        FavoritesScreen(maximizePlayerView: maximizePlayerView)
+            .environmentObject(podcastsController)
+    }
+    
+    private var recentlyPlayedScreen: some View {
+        RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerView)
+            .environmentObject(episodesController)
     }
 }
 
