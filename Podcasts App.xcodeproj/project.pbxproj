@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4916CDC1288BC21E00A55A48 /* PodcastsControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4916CDC0288BC21E00A55A48 /* PodcastsControllerTests.swift */; };
 		491941512874B7D50034254A /* EpisodesInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491941502874B7D50034254A /* EpisodesInteractor.swift */; };
 		491941532874B8020034254A /* EpisodesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491941522874B8020034254A /* EpisodesRepository.swift */; };
 		491941552874B9D80034254A /* EpisodesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 491941542874B9D80034254A /* EpisodesController.swift */; };
@@ -51,9 +52,21 @@
 		D4397CE820ADBEE300FF7839 /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4397CE720ADBEE300FF7839 /* Episode.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		4916CDBB288BC17800A55A48 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D429ED3320AB81FA008C66DD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D429ED3A20AB81FA008C66DD;
+			remoteInfo = "Podcasts App";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		21FCD732BD88CD0562B0A1C1 /* Pods-Podcasts App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Podcasts App.debug.xcconfig"; path = "Target Support Files/Pods-Podcasts App/Pods-Podcasts App.debug.xcconfig"; sourceTree = "<group>"; };
 		2636EEA62AD5E74280931919 /* Pods_Podcasts_App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Podcasts_App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4916CDB7288BC17800A55A48 /* Podcasts App Unit Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Podcasts App Unit Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4916CDC0288BC21E00A55A48 /* PodcastsControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastsControllerTests.swift; sourceTree = "<group>"; };
 		491941502874B7D50034254A /* EpisodesInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesInteractor.swift; sourceTree = "<group>"; };
 		491941522874B8020034254A /* EpisodesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesRepository.swift; sourceTree = "<group>"; };
 		491941542874B9D80034254A /* EpisodesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodesController.swift; sourceTree = "<group>"; };
@@ -100,6 +113,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4916CDB4288BC17800A55A48 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D429ED3820AB81FA008C66DD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +135,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4916CDB8288BC17800A55A48 /* Podcasts App Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				4916CDC0288BC21E00A55A48 /* PodcastsControllerTests.swift */,
+			);
+			path = "Podcasts App Unit Tests";
+			sourceTree = "<group>";
+		};
 		492EC3D628760C2600F381FC /* ListViews */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,7 +344,9 @@
 				D429ED3D20AB81FA008C66DD /* Podcasts App */,
 				F859B12925275F5A0051B984 /* Podcasts Bin.app */,
 				BA46427BE3E90A066A6A70AA /* Pods */,
+				4916CDB8288BC17800A55A48 /* Podcasts App Unit Tests */,
 				A623A5FDC3B137F8F996ED98 /* Frameworks */,
+				4916CDB7288BC17800A55A48 /* Podcasts App Unit Tests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -345,6 +375,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4916CDB6288BC17800A55A48 /* Podcasts App Unit Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4916CDBF288BC17800A55A48 /* Build configuration list for PBXNativeTarget "Podcasts App Unit Tests" */;
+			buildPhases = (
+				4916CDB3288BC17800A55A48 /* Sources */,
+				4916CDB4288BC17800A55A48 /* Frameworks */,
+				4916CDB5288BC17800A55A48 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4916CDBC288BC17800A55A48 /* PBXTargetDependency */,
+			);
+			name = "Podcasts App Unit Tests";
+			productName = "Podcasts App Unit Tests";
+			productReference = 4916CDB7288BC17800A55A48 /* Podcasts App Unit Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		D429ED3A20AB81FA008C66DD /* Podcasts App */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D429ED6320AB81FC008C66DD /* Build configuration list for PBXNativeTarget "Podcasts App" */;
@@ -379,6 +427,10 @@
 				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Simran App";
 				TargetAttributes = {
+					4916CDB6288BC17800A55A48 = {
+						CreatedOnToolsVersion = 13.3.1;
+						TestTargetID = D429ED3A20AB81FA008C66DD;
+					};
 					D429ED3A20AB81FA008C66DD = {
 						CreatedOnToolsVersion = 9.3.1;
 						LastSwiftMigration = 1000;
@@ -409,11 +461,19 @@
 			projectRoot = "";
 			targets = (
 				D429ED3A20AB81FA008C66DD /* Podcasts App */,
+				4916CDB6288BC17800A55A48 /* Podcasts App Unit Tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4916CDB5288BC17800A55A48 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D429ED3920AB81FA008C66DD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -469,6 +529,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4916CDB3288BC17800A55A48 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4916CDC1288BC21E00A55A48 /* PodcastsControllerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		D429ED3720AB81FA008C66DD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -512,6 +580,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		4916CDBC288BC17800A55A48 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D429ED3A20AB81FA008C66DD /* Podcasts App */;
+			targetProxy = 4916CDBB288BC17800A55A48 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		D429ED4720AB81FC008C66DD /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -524,6 +600,49 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4916CDBD288BC17800A55A48 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WC362J72KA;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "apps.bytesizedsoftware.Podcasts-App-Unit-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Podcasts Bin.app/Podcasts Bin";
+			};
+			name = Debug;
+		};
+		4916CDBE288BC17800A55A48 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WC362J72KA;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "apps.bytesizedsoftware.Podcasts-App-Unit-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Podcasts Bin.app/Podcasts Bin";
+			};
+			name = Release;
+		};
 		D429ED6120AB81FC008C66DD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -703,6 +822,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4916CDBF288BC17800A55A48 /* Build configuration list for PBXNativeTarget "Podcasts App Unit Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4916CDBD288BC17800A55A48 /* Debug */,
+				4916CDBE288BC17800A55A48 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		D429ED3620AB81FA008C66DD /* Build configuration list for PBXProject "Podcasts App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

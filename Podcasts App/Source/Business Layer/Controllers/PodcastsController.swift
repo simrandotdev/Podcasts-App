@@ -20,9 +20,15 @@ class PodcastsController: ObservableObject {
     // MARK: - Dependencies
     
     
-    @Injected private var interactor: PodcastsInteractor
-    @Injected private var episodesInteractor: EpisodesInteractor
+    @Injected var podcastsInteractor: PodcastsInteractable
+    @Injected var episodesInteractor: EpisodesInteractable
     
+    
+    init(podcastsInteractor: PodcastsInteractable, episodesInteractor: EpisodesInteractable) {
+        
+        self.podcastsInteractor = podcastsInteractor
+        self.episodesInteractor = episodesInteractor
+    }
     
     
     // MARK: - Publisher Properties
@@ -56,7 +62,7 @@ class PodcastsController: ObservableObject {
     @MainActor func fetchPodcasts() async {
         isLoading = true
         do {
-            try await interactor.fetchPodcasts()
+            try await podcastsInteractor.fetchPodcasts()
         } catch {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)
@@ -70,7 +76,7 @@ class PodcastsController: ObservableObject {
         isLoading = true
         do {
             let podcastModel = Podcast(podcastViewModel: podcast)
-            try await interactor.favorite(podcast: podcastModel)
+            try await podcastsInteractor.favorite(podcast: podcastModel)
         } catch {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)
@@ -84,7 +90,7 @@ class PodcastsController: ObservableObject {
         isLoading = true
         do {
             let podcastModel = Podcast(podcastViewModel: podcast)
-            try await interactor.unfavorite(podcast: podcastModel)
+            try await podcastsInteractor.unfavorite(podcast: podcastModel)
         } catch {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)
@@ -98,7 +104,7 @@ class PodcastsController: ObservableObject {
         
         isLoading = true
         do {
-            try await interactor.fetchFavorites()
+            try await podcastsInteractor.fetchFavorites()
         } catch {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)
@@ -112,7 +118,7 @@ class PodcastsController: ObservableObject {
         isLoading = true
         do {
             let podcastModel = Podcast(podcastViewModel: podcast)
-            return try await interactor.isFavorite(podcast: podcastModel)
+            return try await podcastsInteractor.isFavorite(podcast: podcastModel)
         } catch {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)
@@ -127,22 +133,40 @@ class PodcastsController: ObservableObject {
     
     private func setupSubscriptions() {
         
-        interactor
-            .$podcasts
+        podcastsInteractor
+            .podcasts
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] podcasts in
-                self?.podcasts = podcasts.map { PodcastViewModel(podcast: $0) }
-            }
+            .sink(receiveValue: handleFetchedPodcasts)
+            .store(in: &cancellable)
+            
+
+        podcastsInteractor
+            .favoritePodcasts
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: handleFavoritePodcasts)
             .store(in: &cancellable)
         
-        interactor
-            .$favoritePodcasts
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] podcasts in
-                self?.favoritePodcasts = podcasts.map { PodcastViewModel(podcast: $0) }
-            }
-            .store(in: &cancellable)
+    }
+    
+    private func handleError(_ completion: Subscribers.Completion<Error>) {
+        switch completion {
+            case .finished:
+                print("Finished")
+            case .failure(_):
+                print("Failure")
+        }
+    }
+    
+    
+    private func handleFavoritePodcasts(_ podcasts: [Podcast]) {
         
+        self.favoritePodcasts = podcasts.map { PodcastViewModel(podcast: $0) }
+    }
+    
+    
+    private func handleFetchedPodcasts(_ podcasts: [Podcast]) {
+        
+        self.podcasts = podcasts.map { PodcastViewModel(podcast: $0) }
     }
     
     
@@ -171,7 +195,7 @@ class PodcastsController: ObservableObject {
     
     private func searchPodcasts(forValue value: String) async {
         do {
-            try await interactor.searchPodcasts(forValue: value)
+            try await podcastsInteractor.searchPodcasts(forValue: value)
         } catch {
             // TODO: Handle Error
             err("\(#function)" ,error.localizedDescription)

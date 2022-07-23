@@ -8,14 +8,15 @@
 
 import Foundation
 import Resolver
+import Combine
 
 
 // MARK: - PodcastsInteractable protocol
 
 protocol PodcastsInteractable {
     
-    var podcasts: [Podcast] { get set }
-    var favoritePodcasts: [Podcast] { get set }
+    var podcasts: CurrentValueSubject<[Podcast], Never> { get set }
+    var favoritePodcasts: CurrentValueSubject<[Podcast], Never>{ get set }
     
     func fetchPodcasts() async throws
     func searchPodcasts(forValue value: String) async throws
@@ -41,8 +42,8 @@ class PodcastsInteractor: PodcastsInteractable {
     // MARK: - Published properties
     
     
-    @Published var podcasts: [Podcast] = []
-    @Published var favoritePodcasts: [Podcast] = []
+    var podcasts: CurrentValueSubject<[Podcast], Never> = CurrentValueSubject([])
+    var favoritePodcasts: CurrentValueSubject<[Podcast], Never> = CurrentValueSubject([])
     private var originalPodcasts: [Podcast] = []
     
     
@@ -52,7 +53,7 @@ class PodcastsInteractor: PodcastsInteractable {
     func fetchPodcasts() async throws {
         
         originalPodcasts = originalPodcasts.isEmpty ? try await podcastRepository.fetchAll() : originalPodcasts
-        podcasts = originalPodcasts
+        podcasts.send(originalPodcasts)
     }
     
     
@@ -61,7 +62,8 @@ class PodcastsInteractor: PodcastsInteractable {
         if value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             try await fetchPodcasts()
         } else {
-            podcasts = try await podcastRepository.search(forValue: value)
+            let searchedPodcasts = try await podcastRepository.search(forValue: value)
+            podcasts.send(searchedPodcasts)
         }
     }
     
@@ -87,7 +89,7 @@ class PodcastsInteractor: PodcastsInteractable {
     
     
     func fetchFavorites() async throws {
-        
-        favoritePodcasts = try await podcastRepository.fetchFavoritePodcasts()
+        let fetchedFavoritePodcasts = try await podcastRepository.fetchFavoritePodcasts()
+        favoritePodcasts.send(fetchedFavoritePodcasts)
     }
 }

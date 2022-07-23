@@ -203,12 +203,12 @@ extension Resolver: ResolverRegistering {
         
         
         // Interactors
-        register { PodcastsInteractor() }.implements(PodcastsInteractable.Type.self)
-        register { EpisodesInteractor() }.implements(EpisodesInteractable.Type.self)
+        register { PodcastsInteractor() }.implements(PodcastsInteractable.self)
+        register { EpisodesInteractor() }.implements(EpisodesInteractable.self)
         
         // Repositories
-        register { PodcastsRepository() }.implements(PodcastsRepositoryProtocol.Type.self)
-        register { EpisodesRepository() }.implements(EpisodesRepositoryProtocol.Type.self)
+        register { PodcastsRepository() }.implements(PodcastsRepositoryProtocol.self)
+        register { EpisodesRepository() }.implements(EpisodesRepositoryProtocol.self)
         
         // Managers
         register { PersistanceManager.shared }

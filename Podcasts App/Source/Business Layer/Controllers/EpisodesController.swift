@@ -61,7 +61,7 @@ class EpisodesController: EpisodesControllable, ObservableObject {
     private func setupSubscriptions() {
         
         interactor
-            .$episodes
+            .episodes
             .receive(on: DispatchQueue.main)
             .sink { [weak self] episodes in
                 self?.episodes = episodes.map { EpisodeViewModel(episode: $0) }
@@ -69,7 +69,7 @@ class EpisodesController: EpisodesControllable, ObservableObject {
             .store(in: &cancellable)
         
         interactor
-            .$recentlyPlayedEpisodes
+            .recentlyPlayedEpisodes
             .receive(on: DispatchQueue.main)
             .sink { [weak self] episodes in
                 self?.recentlyPlayedEpisodes = episodes.map { EpisodeViewModel(episode: $0) }

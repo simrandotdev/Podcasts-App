@@ -8,14 +8,14 @@
 
 import Foundation
 import Resolver
-
+import Combine
 
 // MARK: - EpisodesInteractable protocol
 
 protocol EpisodesInteractable {
     
-    var episodes: [Episode] { get set }
-    var recentlyPlayedEpisodes: [Episode] { get set }
+    var episodes: CurrentValueSubject<[Episode], Never> { get set }
+    var recentlyPlayedEpisodes: CurrentValueSubject<[Episode], Never> { get set }
     
     func fetchEpisodes(forPodcast podcast: Podcast) async throws
     func searchEpisodes(forValue value: String) async throws
@@ -39,8 +39,8 @@ class EpisodesInteractor: EpisodesInteractable {
     // MARK: - Published properties
     
     
-    @Published var episodes: [Episode] = []
-    @Published var recentlyPlayedEpisodes: [Episode] = []
+    @Published var episodes: CurrentValueSubject<[Episode], Never> = CurrentValueSubject([])
+    @Published var recentlyPlayedEpisodes: CurrentValueSubject<[Episode], Never> = CurrentValueSubject([])
     
     private var originalEpisodes: [Episode] = []
     
@@ -51,7 +51,7 @@ class EpisodesInteractor: EpisodesInteractable {
     func fetchEpisodes(forPodcast podcast: Podcast) async throws {
         
         originalEpisodes = try await episodesRepository.fetchAllEpisodes(forPodcast: podcast)
-        episodes = originalEpisodes
+        episodes.send(originalEpisodes)
     }
     
     
@@ -68,6 +68,7 @@ class EpisodesInteractor: EpisodesInteractable {
     
     func fetchEpisodesFromHistory() async throws {
         
-        recentlyPlayedEpisodes = try await episodesRepository.getEpisodesFromHistory()
+        let fetchedEpisodesFromHistory = try await episodesRepository.getEpisodesFromHistory()
+        recentlyPlayedEpisodes.send(fetchedEpisodesFromHistory)
     }
 }
