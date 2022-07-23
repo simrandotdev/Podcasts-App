@@ -15,13 +15,14 @@ import Resolver
 protocol PodcastsInteractable {
     
     var podcasts: [Podcast] { get set }
-    
+    var favoritePodcasts: [Podcast] { get set }
     
     func fetchPodcasts() async throws
     func searchPodcasts(forValue value: String) async throws
     func favorite(podcast: Podcast) async throws
     func unfavorite(podcast: Podcast) async throws
     func isFavorite(podcast: Podcast) async throws -> Bool
+    func fetchFavorites() async throws
 }
 
 
@@ -83,6 +84,7 @@ class PodcastsInteractor: PodcastsInteractable {
         
         return try await podcastRepository.isFavorite(podcast: podcast)
     }
+    
     
     func fetchFavorites() async throws {
         

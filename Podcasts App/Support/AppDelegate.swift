@@ -203,7 +203,7 @@ extension Resolver: ResolverRegistering {
         
         
         // Interactors
-        register { PodcastsInteractor() }.implements(PodcastControllable.Type.self)
+        register { PodcastsInteractor() }.implements(PodcastsInteractable.Type.self)
         register { EpisodesInteractor() }.implements(EpisodesInteractable.Type.self)
         
         // Repositories

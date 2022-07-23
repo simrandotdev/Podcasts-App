@@ -35,7 +35,6 @@ protocol PodcastControllable {
 class PodcastsController: PodcastControllable, ObservableObject {
     
     
-    
     // MARK: - Dependencies
     
     
@@ -68,49 +67,6 @@ class PodcastsController: PodcastControllable, ObservableObject {
         setupSearchText()
     }
     
-    private func setupSubscriptions() {
-        
-        interactor
-            .$podcasts
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] podcasts in
-                self?.podcasts = podcasts.map { PodcastViewModel(podcast: $0) }
-            }
-            .store(in: &cancellable)
-        
-        interactor
-            .$favoritePodcasts
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] podcasts in
-                self?.favoritePodcasts = podcasts.map { PodcastViewModel(podcast: $0) }
-            }
-            .store(in: &cancellable)
-        
-    }
-    
-    
-    private func setupSearchText() {
-        
-        $searchText
-            .filter{ $0.count > 2 }
-            .debounce(for: .milliseconds(1000), scheduler: DispatchQueue.main)
-            .sink { [searchPodcasts] value in
-                Task {
-                    await searchPodcasts(value)
-                }
-            }
-            .store(in: &cancellable)
-        
-        $searchText
-            .filter{ $0.count <= 2 }
-            .sink { [fetchPodcasts] value in
-                Task {
-                    await fetchPodcasts()
-                }
-            }
-            .store(in: &cancellable)
-            
-    }
     
     // MARK: - PodcastControllable protocol implementation
     
@@ -183,8 +139,53 @@ class PodcastsController: PodcastControllable, ObservableObject {
         return false
     }
     
+    
     // MARK: - Private methods
     
+    
+    private func setupSubscriptions() {
+        
+        interactor
+            .$podcasts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] podcasts in
+                self?.podcasts = podcasts.map { PodcastViewModel(podcast: $0) }
+            }
+            .store(in: &cancellable)
+        
+        interactor
+            .$favoritePodcasts
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] podcasts in
+                self?.favoritePodcasts = podcasts.map { PodcastViewModel(podcast: $0) }
+            }
+            .store(in: &cancellable)
+        
+    }
+    
+    
+    private func setupSearchText() {
+        
+        $searchText
+            .filter{ $0.count > 2 }
+            .debounce(for: .milliseconds(1000), scheduler: DispatchQueue.main)
+            .sink { [searchPodcasts] value in
+                Task {
+                    await searchPodcasts(value)
+                }
+            }
+            .store(in: &cancellable)
+        
+        $searchText
+            .filter{ $0.count <= 2 }
+            .sink { [fetchPodcasts] value in
+                Task {
+                    await fetchPodcasts()
+                }
+            }
+            .store(in: &cancellable)
+        
+    }
     
     private func searchPodcasts(forValue value: String) async {
         do {

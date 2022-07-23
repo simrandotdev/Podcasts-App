@@ -19,6 +19,8 @@ protocol EpisodesControllable {
     var episodes: [EpisodeViewModel] { get set }
     
     func fetchEpisodes(forPodcast podcast: PodcastViewModel) async
+    func saveInHistory(episode: Episode)  async
+    func fetchEpisodesFromHistory() async
 }
 
 
@@ -95,7 +97,7 @@ class EpisodesController: EpisodesControllable, ObservableObject {
     }
     
     
-    func saveInHistory(episode: Episode)  async {
+    @MainActor func saveInHistory(episode: Episode)  async {
         
         do {
             try await interactor.saveInHistory(episode: episode)
@@ -107,7 +109,7 @@ class EpisodesController: EpisodesControllable, ObservableObject {
     }
     
     
-    func fetchEpisodesFromHistory() async {
+    @MainActor func fetchEpisodesFromHistory() async {
         
         do {
             try await interactor.fetchEpisodesFromHistory()

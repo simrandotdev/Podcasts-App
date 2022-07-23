@@ -15,10 +15,12 @@ import Resolver
 protocol EpisodesInteractable {
     
     var episodes: [Episode] { get set }
-    
+    var recentlyPlayedEpisodes: [Episode] { get set }
     
     func fetchEpisodes(forPodcast podcast: Podcast) async throws
     func searchEpisodes(forValue value: String) async throws
+    func saveInHistory(episode: Episode)  async throws
+    func fetchEpisodesFromHistory() async throws
 }
 
 
