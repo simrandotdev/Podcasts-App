@@ -14,7 +14,7 @@ struct EpisodesScreen: View {
     // MARK: - States
     
     
-    @StateObject private var controller = EpisodesController()
+    @StateObject private var episodesController = EpisodesController()
     @StateObject private var podcastsController = PodcastsController()
     @State private var isFavorite = false
     
@@ -30,11 +30,11 @@ struct EpisodesScreen: View {
     
     var body: some View {
         Group {
-            if controller.isLoading {
+            if episodesController.isLoading {
                 ProgressView()
             } else {
                 List {
-                    ForEach(controller.episodes, id: \.streamUrl) { episode in
+                    ForEach(episodesController.episodes, id: \.streamUrl) { episode in
                         StandardListItemView(title: episode.title,
                                              subtitle: episode.formattedDateString,
                                              moreInfo: episode.shortDescription,
@@ -42,7 +42,7 @@ struct EpisodesScreen: View {
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(10)
                         .onTapGesture {
-                            maximizePlayerView(episode, controller.episodes)
+                            maximizePlayerView(episode, episodesController.episodes)
                         }
                         
                     }
@@ -69,14 +69,14 @@ struct EpisodesScreen: View {
     
     private func onAppear() {
         
-        if controller.episodes.count == 0 {
+        if episodesController.episodes.count == 0 {
             fetchEpisodes()
         }
     }
     
     @Sendable private func fetchEpisodes() {
         Task {
-            await controller.fetchEpisodes(forPodcast: podcast)
+            await episodesController.fetchEpisodes(forPodcast: podcast)
             isFavorite = await podcastsController.isfavorite(podcast: podcast)
         }
     }

@@ -11,28 +11,10 @@ import Resolver
 import Combine
 
 
-// MARK: - PodcastControllable protocol
-
-
-protocol PodcastControllable {
-    
-    var podcasts: [PodcastViewModel] { get set }
-    var searchText: String { get set }
-    
-    var favoritePodcasts: [PodcastViewModel] { get set }
-    
-    func fetchPodcasts() async
-    func favorite(podcast: PodcastViewModel) async
-    func unfavorite(podcast: PodcastViewModel) async
-    func isfavorite(podcast: PodcastViewModel) async -> Bool
-    func fetchFavorites() async
-}
-
-
 // MARK: - PodcastControllable implementation
 
 
-class PodcastsController: PodcastControllable, ObservableObject {
+class PodcastsController: ObservableObject {
     
     
     // MARK: - Dependencies

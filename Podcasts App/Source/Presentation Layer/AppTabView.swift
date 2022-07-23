@@ -13,6 +13,8 @@ struct AppTabView: View {
     @Environment(\.verticalSizeClass) var verticalSizeClass
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
+    @StateObject var podcastsController = PodcastsController()
+    @StateObject var episodesController = EpisodesController()
     
     // MARK: - Public properties
     
@@ -36,7 +38,10 @@ struct AppTabView: View {
     private var sideBarView: some View {
         NavigationView {
             List {
-                NavigationLink(destination: PodcastsScreen(maximizePlayerView: maximizePlayerView)) {
+                NavigationLink(destination:
+                                PodcastsScreen(maximizePlayerView: maximizePlayerView)
+                    .environmentObject(podcastsController)
+                ) {
                     Label("Home", systemImage: "magnifyingglass")
                 }
                 
@@ -51,6 +56,7 @@ struct AppTabView: View {
             .navigationTitle("Menu")
             
             PodcastsScreen(maximizePlayerView: maximizePlayerView)
+                .environmentObject(podcastsController)
         }
     }
     
@@ -58,6 +64,7 @@ struct AppTabView: View {
         TabView {
             NavigationView {
                 PodcastsScreen(maximizePlayerView: maximizePlayerView)
+                    .environmentObject(podcastsController)
             }.tabItem {
                 Label("Home", systemImage: "magnifyingglass")
             }

@@ -14,7 +14,7 @@ struct PodcastsScreen: View {
     // MARK: - States
     
     
-    @StateObject var controller = PodcastsController()
+    @EnvironmentObject var controller: PodcastsController
     
     
     // MARK: - Public properties
