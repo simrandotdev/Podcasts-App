@@ -8,8 +8,7 @@
 
 import Foundation
 
-class PodcastViewModel {
-    
+class PodcastViewModel: Equatable {
     
     // MARK: - Public properties
     
@@ -22,6 +21,7 @@ class PodcastViewModel {
     var numberOfEpisodes: String
     var rssFeedUrl: String
     
+    private var podcast: Podcast?
     
     // MARK: - Initializers
     
@@ -37,6 +37,7 @@ class PodcastViewModel {
     }
     
     init(podcast: Podcast) {
+        self.podcast = podcast
         self.recordId = podcast.recordId ?? ""
         self.title = podcast.title ?? ""
         self.author = podcast.author ?? ""
@@ -44,5 +45,9 @@ class PodcastViewModel {
         self.totalEpisodes = podcast.totalEpisodes ?? 0
         self.numberOfEpisodes = "\(podcast.totalEpisodes ?? 0) episodes" 
         self.rssFeedUrl = podcast.rssFeedUrl ?? ""
+    }
+    
+    static func == (lhs: PodcastViewModel, rhs: PodcastViewModel) -> Bool {
+        return lhs.recordId == rhs.recordId
     }
 }

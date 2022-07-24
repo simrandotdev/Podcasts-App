@@ -31,7 +31,7 @@ struct EpisodesScreen: View {
     var body: some View {
         Group {
             if episodesController.isLoading {
-                ProgressView()
+                StandardListLoadingView()
             } else {
                 List {
                     ForEach(episodesController.episodes, id: \.streamUrl) { episode in

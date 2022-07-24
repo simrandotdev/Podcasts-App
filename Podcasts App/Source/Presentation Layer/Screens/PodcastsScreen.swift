@@ -30,23 +30,24 @@ struct PodcastsScreen: View {
         
         Group {
             if controller.isLoading {
-                ProgressView()
+                StandardListLoadingView()
             } else {
                 List {
                     ForEach(controller.podcasts, id: \.rssFeedUrl) { podcast in
                         NavigationLink {
                             EpisodesScreen(podcast: podcast,
                                            maximizePlayerView: maximizePlayerView)
+                            
                         } label: {
                             StandardListItemView(title: podcast.title,
                                                  subtitle: podcast.author,
                                                  moreInfo: podcast.numberOfEpisodes,
                                                  imageUrlString: podcast.image)
+                            
                         }
                         .padding(.trailing)
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(10)
-                        
                     }
                     .listRowSeparator(.hidden)
                 }
@@ -77,7 +78,6 @@ struct PodcastsScreen: View {
             await controller.fetchPodcasts()
         }
     }
-    
 }
 
 

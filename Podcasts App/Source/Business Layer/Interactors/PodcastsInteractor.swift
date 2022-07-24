@@ -15,15 +15,12 @@ import Combine
 
 protocol PodcastsInteractable {
     
-    var podcasts: CurrentValueSubject<[Podcast], Never> { get set }
-    var favoritePodcasts: CurrentValueSubject<[Podcast], Never>{ get set }
-    
-    func fetchPodcasts() async throws
-    func searchPodcasts(forValue value: String) async throws
-    func favorite(podcast: Podcast) async throws
-    func unfavorite(podcast: Podcast) async throws
+    func fetchPodcasts() async throws -> [Podcast]
+    func searchPodcasts(forValue value: String) async throws  -> [Podcast]
+    func favorite(podcast: Podcast) async throws  -> [Podcast]
+    func unfavorite(podcast: Podcast) async throws  -> [Podcast]
     func isFavorite(podcast: Podcast) async throws -> Bool
-    func fetchFavorites() async throws
+    func fetchFavorites() async throws -> [Podcast]
 }
 
 
@@ -39,46 +36,40 @@ class PodcastsInteractor: PodcastsInteractable {
     @Injected private var podcastRepository: PodcastsRepository
     
     
-    // MARK: - Published properties
     
-    
-    var podcasts: CurrentValueSubject<[Podcast], Never> = CurrentValueSubject([])
-    var favoritePodcasts: CurrentValueSubject<[Podcast], Never> = CurrentValueSubject([])
     private var originalPodcasts: [Podcast] = []
     
     
     // MARK: Public methods
     
     
-    func fetchPodcasts() async throws {
+    func fetchPodcasts() async throws  -> [Podcast] {
         
-        originalPodcasts = originalPodcasts.isEmpty ? try await podcastRepository.fetchAll() : originalPodcasts
-        podcasts.send(originalPodcasts)
+        return originalPodcasts.isEmpty ? try await podcastRepository.fetchAll() : originalPodcasts
     }
     
     
-    func searchPodcasts(forValue value: String) async throws {
+    func searchPodcasts(forValue value: String) async throws -> [Podcast] {
         
         if value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            try await fetchPodcasts()
+            return try await fetchPodcasts()
         } else {
-            let searchedPodcasts = try await podcastRepository.search(forValue: value)
-            podcasts.send(searchedPodcasts)
+            return try await podcastRepository.search(forValue: value)
         }
     }
     
     
-    func favorite(podcast: Podcast) async throws {
+    func favorite(podcast: Podcast) async throws -> [Podcast] {
         
         try await podcastRepository.favorite(podcast: podcast)
-        try await fetchPodcasts()
+        return try await fetchPodcasts()
     }
     
     
-    func unfavorite(podcast: Podcast) async throws {
+    func unfavorite(podcast: Podcast) async throws -> [Podcast] {
         
         try await podcastRepository.unfavorite(podcast: podcast)
-        try await fetchPodcasts()
+        return try await fetchPodcasts()
     }
     
     
@@ -88,8 +79,8 @@ class PodcastsInteractor: PodcastsInteractable {
     }
     
     
-    func fetchFavorites() async throws {
-        let fetchedFavoritePodcasts = try await podcastRepository.fetchFavoritePodcasts()
-        favoritePodcasts.send(fetchedFavoritePodcasts)
+    func fetchFavorites() async throws -> [Podcast] {
+        
+        return try await podcastRepository.fetchFavoritePodcasts()
     }
 }

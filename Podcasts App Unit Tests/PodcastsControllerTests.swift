@@ -19,7 +19,32 @@ class PodcastsControllerTests: XCTestCase {
         sut = PodcastsController(podcastsInteractor: MockPodcastsInteractor(),
                                  episodesInteractor: MockEpisodesInteractor())
     }
+    
+    
+    func test_podcastsController_hasBeenSetup() {
+        
+        XCTAssertNotNil(sut)
+    }
 
+    
+    func tests_podcastsProperty_hasZeroPodcasts_whenFetchPodcastsIsnotCalled() async throws {
+        
+        // Assert
+        XCTAssert(sut.podcasts.count == 0)
+    }
+    
+    
+    func test_fetchPodcasts_setsPodcastsProperty_withGreaterThenZeroPodcasts() async throws {
+        
+        // Act
+        await sut.fetchPodcasts()
+        
+        // Assert
+        XCTAssert(sut.podcasts.count > 0)
+    }
+    
+    
+    
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
@@ -27,29 +52,36 @@ class PodcastsControllerTests: XCTestCase {
 
 
 class MockPodcastsInteractor: PodcastsInteractable {
-    
-    var podcasts: CurrentValueSubject<[Podcast], Never> = CurrentValueSubject([])
-    var favoritePodcasts: CurrentValueSubject<[Podcast], Never> = CurrentValueSubject([])
-    
-    func fetchPodcasts() async throws {
-        
-    }
-    
-    func searchPodcasts(forValue value: String) async throws {
-        
-    }
-    
-    func favorite(podcast: Podcast) async throws {
-        
-    }
-    
-    func unfavorite(podcast: Podcast) async throws {
-        
-    }
-    
     func isFavorite(podcast: Podcast) async throws -> Bool {
-        
         return false
+    }
+    
+    func favorite(podcast: Podcast) async throws -> [Podcast] {
+        return []
+    }
+    
+    func unfavorite(podcast: Podcast) async throws -> [Podcast] {
+        return []
+    }
+    
+    func fetchFavorites() async throws -> [Podcast] {
+        return []
+    }
+    
+    
+    func fetchPodcasts() async throws -> [Podcast] {
+        
+        let dummyPodcast = Podcast(recordId: "1",
+                                   title: "Podcast title",
+                                   author: "Podcast author",
+                                   image: "Podcast url",
+                                   totalEpisodes: 1,
+                                   rssFeedUrl: "Podcast rss feed")
+        return [dummyPodcast]
+    }
+    
+    func searchPodcasts(forValue value: String) async throws -> [Podcast] {
+        return []
     }
     
     func fetchFavorites() async throws {

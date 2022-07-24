@@ -54,4 +54,5 @@ class Podcast : NSObject, Codable, NSCoding, FetchableRecord, PersistableRecord 
             pod?.rssFeedUrl ?? "" == self.rssFeedUrl
         
     }
+    
 }
