@@ -9,6 +9,9 @@ class MainTabBarController : UITabBarController {
     var playerDetailBottomAnchorInCollapsedState: NSLayoutConstraint!
     var playerDetailBottomAnchorInExpandedState: NSLayoutConstraint!
     
+    var playerDetailLeadingAnchorConstraint: NSLayoutConstraint!
+    var playerDetailWidthConstraint: NSLayoutConstraint!
+    
     var iPad: Bool {
         return traitCollection.horizontalSizeClass == .regular && traitCollection.verticalSizeClass == .regular
     }
@@ -50,7 +53,17 @@ class MainTabBarController : UITabBarController {
         
         view.insertSubview(playerDetailsView, aboveSubview: tabHostController.view)
         playerDetailsView.translatesAutoresizingMaskIntoConstraints = false
-        playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        playerDetailLeadingAnchorConstraint = playerDetailsView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+        playerDetailWidthConstraint = playerDetailsView.widthAnchor.constraint(equalToConstant: 440)
+        
+        if iPad {
+            playerDetailWidthConstraint.isActive = true
+            playerDetailLeadingAnchorConstraint.isActive = false
+        } else {
+            playerDetailWidthConstraint.isActive = false
+            playerDetailLeadingAnchorConstraint.isActive = true
+        }
+        
         playerDetailsView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
     
         
@@ -135,6 +148,14 @@ class MainTabBarController : UITabBarController {
         super.traitCollectionDidChange(previousTraitCollection)
         
         tabHostController.view.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height )
+        
+        if iPad {
+            playerDetailWidthConstraint.isActive = true
+            playerDetailLeadingAnchorConstraint.isActive = false
+        } else {
+            playerDetailWidthConstraint.isActive = false
+            playerDetailLeadingAnchorConstraint.isActive = true
+        }
     }
     
     
