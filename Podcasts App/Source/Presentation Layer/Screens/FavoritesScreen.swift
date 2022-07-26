@@ -53,6 +53,7 @@ struct FavoritesScreen: View {
                 ForEach(controller.favoritePodcasts, id: \.rssFeedUrl) { podcast in
                     PodcastThumbnailCell(podcast: podcast)
                         .onTapGesture(perform: {
+                            showPodcastDetailsView = false
                             segeu(podcastViewModel: podcast)
                         })
                         .padding(4)
@@ -60,9 +61,7 @@ struct FavoritesScreen: View {
             }
             .background(
                 NavigationLink(isActive: $showPodcastDetailsView, destination: {
-                    if let selectedPodcastViewModel = selectedPodcastViewModel {
-                        EpisodesScreen(podcast: selectedPodcastViewModel, maximizePlayerView: maximizePlayerView)
-                    }
+                    EpisodesScreen(podcast: selectedPodcastViewModel, maximizePlayerView: maximizePlayerView)
                 }, label: {
                     Text("")
                 })
@@ -80,6 +79,7 @@ struct FavoritesScreen: View {
     
     private func onAppear() {
         
+        selectedPodcastViewModel = nil
         fetchFavorites()
     }
     

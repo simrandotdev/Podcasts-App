@@ -21,7 +21,7 @@ struct EpisodesScreen: View {
     // MARK: - Public properties
     
     
-    var podcast: PodcastViewModel
+    var podcast: PodcastViewModel?
     var maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     
     
@@ -60,7 +60,7 @@ struct EpisodesScreen: View {
                 }
             }
         })
-        .navigationTitle(podcast.title)
+        .navigationTitle(podcast?.title ?? "--")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear(perform: onAppear)
         .refreshable(action: fetchEpisodes)
@@ -76,14 +76,21 @@ struct EpisodesScreen: View {
     
     @Sendable private func fetchEpisodes() {
         Task {
-            await episodesController.fetchEpisodes(forPodcast: podcast)
-            isFavorite = await podcastsController.isfavorite(podcast: podcast)
+            if let podcast = podcast {
+                await episodesController.fetchEpisodes(forPodcast: podcast)
+                isFavorite = await podcastsController.isfavorite(podcast: podcast)
+            }
         }
     }
     
     private func onFavoriteButtonTap() {
         
         Task {
+            
+            guard let podcast = podcast else {
+                return
+            }
+            
             if isFavorite {
                 await podcastsController.unfavorite(podcast: podcast)
                 isFavorite = await podcastsController.isfavorite(podcast: podcast)

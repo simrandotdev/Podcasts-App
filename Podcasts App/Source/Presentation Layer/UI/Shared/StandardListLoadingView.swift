@@ -11,14 +11,14 @@ import SwiftUI
 struct StandardListLoadingView: View {
     var body: some View {
         List {
-            ForEach(1..<10) { _ in
+            ForEach(1..<30) { _ in
                 StandardListItemView(title: "Podcast title",
                                      subtitle: "Author",
                                      moreInfo: "101",
                                      imageUrlString: "")
                 .redacted(reason: .placeholder)
             }
-        }
+        }.disabled(true)
     }
 }
 

@@ -132,6 +132,7 @@ class PodcastsController: ObservableObject {
     
     // MARK: - Private methods
     
+    
     private func handleError(_ completion: Subscribers.Completion<Error>) {
         switch completion {
             case .finished:

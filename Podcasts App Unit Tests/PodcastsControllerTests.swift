@@ -52,6 +52,7 @@ class PodcastsControllerTests: XCTestCase {
 
 
 class MockPodcastsInteractor: PodcastsInteractable {
+    
     func isFavorite(podcast: Podcast) async throws -> Bool {
         return false
     }
