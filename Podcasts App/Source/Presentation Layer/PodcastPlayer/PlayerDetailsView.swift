@@ -37,7 +37,7 @@ struct PlayerDetailsView: View {
                         .overlay {
                             // Same red "on air" ring as the station tiles on the Podcasts screen.
                             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .strokeBorder(Color.red, lineWidth: player.isPlaying ? 4 : 0)
+                                .strokeBorder(Color.accentColor, lineWidth: player.isPlaying ? 4 : 0)
                         }
                         .scaleEffect(player.isPlaying || reduceMotion ? 1 : 0.88)
                         .animation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.75),
@@ -55,7 +55,7 @@ struct PlayerDetailsView: View {
                             isScrubbing = editing
                             if !editing { player.seek(to: scrubTime) }
                         })
-                        .tint(.red)
+                        .tint(Color.accentColor)
                         .disabled(player.duration <= 0)
                         .accessibilityLabel("Playback position")
                         .accessibilityValue(timeString(isScrubbing ? scrubTime : player.currentTime))
@@ -78,7 +78,7 @@ struct PlayerDetailsView: View {
                                 .font(.title)
                                 .foregroundStyle(.white)
                                 .frame(width: 72, height: 72)
-                                .background(Color.red, in: Circle())
+                                .background(Color.accentColor, in: Circle())
                         }
                         Spacer(minLength: 0)
                         Button { player.skip(by: 15) } label: {
@@ -100,7 +100,7 @@ struct PlayerDetailsView: View {
                                     .frame(width: 44, height: 44)
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("UP NEXT").font(.caption2.weight(.heavy)).foregroundStyle(.red)
+                                    Text("UP NEXT").font(.caption2.weight(.heavy)).foregroundStyle(Color.accentColor)
                                     Text(upNext.title).font(.subheadline).lineLimit(1)
                                 }
                                 Spacer(minLength: 0)
@@ -128,7 +128,7 @@ struct PlayerDetailsView: View {
 
     @ViewBuilder private var statusBadge: some View {
         if player.isBuffering {
-            OnAirBadge(text: "TUNING IN…", color: .orange)
+            OnAirBadge(text: "TUNING IN…", color: .gray)
         } else if player.isPlaying {
             OnAirBadge()
         } else {
@@ -142,7 +142,7 @@ struct PlayerDetailsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(player.episode?.author.uppercased() ?? "")
                     .font(.caption.weight(.bold).monospaced())
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.accentColor)
                     .lineLimit(1)
                 Text(player.episode?.title ?? "")
                     .font(.headline)
@@ -186,7 +186,7 @@ struct PlayerDetailsView: View {
         VStack(alignment: alignment, spacing: 2) {
             Text(label)
                 .font(.caption2.weight(.heavy))
-                .foregroundStyle(.red)
+                .foregroundStyle(Color.accentColor)
             Text(value)
                 .font(.subheadline.monospacedDigit().weight(.semibold))
                 .foregroundStyle(.primary)
@@ -216,7 +216,7 @@ struct MiniPlayerView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .overlay {
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .strokeBorder(Color.red, lineWidth: player.isPlaying ? 2 : 0)
+                                .strokeBorder(Color.accentColor, lineWidth: player.isPlaying ? 2 : 0)
                         }
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 4) {
@@ -245,7 +245,7 @@ struct MiniPlayerView: View {
                       systemImage: player.isPlaying ? "pause.fill" : "play.fill")
                     .foregroundStyle(.white)
                     .frame(width: 40, height: 40)
-                    .background(Color.red, in: Circle())
+                    .background(Color.accentColor, in: Circle())
             }
             Button { player.skip(by: 15) } label: {
                 Label("Forward 15 seconds", systemImage: "goforward.15")
@@ -270,7 +270,7 @@ struct MiniPlayerView: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 Rectangle().fill(Color.secondary.opacity(0.2))
-                Rectangle().fill(Color.red)
+                Rectangle().fill(Color.accentColor)
                     .frame(width: proxy.size.width * fraction)
             }
         }
@@ -295,8 +295,8 @@ struct MiniPlayerView: View {
     }
 
     private var statusColor: Color {
-        if player.isBuffering { return .orange }
-        return player.isPlaying ? .red : .secondary
+        if player.isBuffering { return .secondary }
+        return player.isPlaying ? Color.accentColor : .secondary
     }
 }
 
@@ -310,7 +310,7 @@ private struct LevelMeter: View {
             HStack(alignment: .bottom, spacing: 3) {
                 ForEach(0..<barCount, id: \.self) { bar in
                     Capsule()
-                        .fill(Color.red)
+                        .fill(Color.accentColor)
                         .frame(height: barHeight(bar, date: context.date))
                 }
             }

@@ -60,7 +60,7 @@ struct EpisodesScreen: View {
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .overlay {
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
-                            .strokeBorder(Color.red, lineWidth: isStationOnAir ? 3 : 0)
+                            .strokeBorder(Color.accentColor, lineWidth: isStationOnAir ? 3 : 0)
                     }
 
                 VStack(alignment: .leading, spacing: 6) {
@@ -71,7 +71,7 @@ struct EpisodesScreen: View {
                     if !podcast.author.isEmpty {
                         Text(podcast.author.uppercased())
                             .font(.caption.weight(.heavy).monospaced())
-                            .foregroundStyle(.red)
+                            .foregroundStyle(Color.accentColor)
                             .lineLimit(2)
                     }
                     Text(podcast.numberOfEpisodes)
@@ -92,7 +92,7 @@ struct EpisodesScreen: View {
     @ViewBuilder private var headerButtons: some View {
         Button { tuneIn() } label: {
             Label("Tune In", systemImage: "play.fill")
-                .headerButtonLabel(foreground: .white, background: .red)
+                .headerButtonLabel(foreground: .white, background: Color.accentColor)
         }
         .disabled(episodesController.episodes.isEmpty)
         .accessibilityHint("Plays the latest episode")
@@ -100,7 +100,7 @@ struct EpisodesScreen: View {
         Button { Task { await toggleFavorite() } } label: {
             Label(isFavorite ? "Saved Preset" : "Save Preset",
                   systemImage: isFavorite ? "star.fill" : "star")
-                .headerButtonLabel(foreground: .red, background: .red.opacity(0.12))
+                .headerButtonLabel(foreground: Color.accentColor, background: Color.accentColor.opacity(0.12))
         }
         .disabled(isUpdatingFavorite)
         .accessibilityLabel(isFavorite ? "Remove from favorites" : "Add to favorites")
@@ -175,7 +175,7 @@ private struct ScheduleRow: View {
             VStack(spacing: 0) {
                 Text(date.formatted(.dateTime.month(.abbreviated)).uppercased())
                     .font(.caption2.weight(.heavy))
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.accentColor)
                 Text(date.formatted(.dateTime.day()))
                     .font(.title2.bold().monospacedDigit())
                 Text(date.formatted(.dateTime.year()))
@@ -204,7 +204,7 @@ private struct ScheduleRow: View {
                 }
                 if let progress {
                     HStack(spacing: 8) {
-                        ProgressView(value: progress).tint(.red)
+                        ProgressView(value: progress).tint(Color.accentColor)
                         Text(status(progress))
                             .font(.caption2.monospacedDigit())
                             .foregroundStyle(.secondary)
@@ -218,7 +218,7 @@ private struct ScheduleRow: View {
         .background(Color.gray.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(Color.red, lineWidth: isOnAir ? 2 : 0)
+                .strokeBorder(Color.accentColor, lineWidth: isOnAir ? 2 : 0)
         }
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
