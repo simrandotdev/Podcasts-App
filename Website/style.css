@@ -1,46 +1,56 @@
+/* Themed after the On Air app: the icon's navy as the base, its orange as the accent. */
 :root {
-    --primary: #e5252a;
-    --primary-hover: #f04a4e;
-    --bg: #f5f5f7;
-    --text: #1d1d1f;
-    --text-secondary: #6e6e73;
+    --primary: #c45500;
+    --primary-hover: #d9640a;
+    --on-primary: #ffffff;
+    --bg: #f3f4f8;
+    --text: #0b1530;
+    --text-secondary: #535b73;
     --card-bg: #ffffff;
-    --card-bg-alt: #f0f0f3;
-    --border: transparent;
+    --card-bg-alt: #eceef5;
+    --border: rgba(11,21,48,0.06);
     --nav-bg: rgba(255,255,255,0.85);
-    --btn-bg: #1d1d1f;
-    --btn-text: #ffffff;
+    --btn-bg: var(--primary);
+    --btn-text: var(--on-primary);
     --phone-bg: #e8e8ed;
-    --phone-frame: #1d1d1f;
-    --phone-notch: #1d1d1f;
-    --icon-bg: #e8e8ed;
-    --icon-color: #6e6e73;
-    --badge-bg: #f0f0f3;
-    --shadow: rgba(0,0,0,0.04);
-    --shadow-hover: rgba(0,0,0,0.08);
+    --phone-frame: #0b1530;
+    --phone-notch: #0b1530;
+    --icon-bg: #eceef5;
+    --icon-color: #535b73;
+    --badge-bg: #eceef5;
+    --shadow: rgba(11,21,48,0.05);
+    --shadow-hover: rgba(11,21,48,0.12);
+    /* The "station display": always navy, like the player's display panel and the app icon. */
+    --display-bg: #021333;
+    --display-glow: rgba(248,128,8,0.28);
+    --display-text: #f4f6fb;
+    --display-muted: #a9b2cc;
+    --display-accent: #f89a1c;
+    --tick: rgba(11,21,48,0.25);
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --primary: #ff453a;
-        --primary-hover: #ff6961;
-        --bg: #000000;
-        --text: #f5f5f7;
-        --text-secondary: #a1a1a6;
-        --card-bg: #1c1c1e;
-        --card-bg-alt: #2c2c2e;
-        --border: transparent;
-        --nav-bg: rgba(28,28,30,0.85);
-        --btn-bg: #f5f5f7;
-        --btn-text: #1d1d1f;
-        --phone-bg: #2c2c2e;
-        --phone-frame: #f5f5f7;
-        --phone-notch: #f5f5f7;
-        --icon-bg: #2c2c2e;
-        --icon-color: #a1a1a6;
-        --badge-bg: #2c2c2e;
-        --shadow: rgba(0,0,0,0.2);
-        --shadow-hover: rgba(0,0,0,0.4);
+        --primary: #e8710e;
+        --primary-hover: #f58a2e;
+        --on-primary: #021333;
+        --bg: #010a1f;
+        --text: #f2f4fa;
+        --text-secondary: #9aa3bd;
+        --card-bg: #0a1733;
+        --card-bg-alt: #11214a;
+        --border: rgba(255,255,255,0.06);
+        --nav-bg: rgba(1,10,31,0.85);
+        --phone-bg: #11214a;
+        --phone-frame: #000000;
+        --phone-notch: #000000;
+        --icon-bg: #11214a;
+        --icon-color: #9aa3bd;
+        --badge-bg: #11214a;
+        --shadow: rgba(0,0,0,0.3);
+        --shadow-hover: rgba(0,0,0,0.5);
+        --display-bg: #020f2b;
+        --tick: rgba(255,255,255,0.22);
     }
 }
 
@@ -55,6 +65,8 @@ body {
 }
 
 /* ── Navigation ── */
+.logo-icon img { width: 100%; height: 100%; display: block; }
+
 nav {
     background: var(--nav-bg);
     backdrop-filter: blur(20px);
@@ -88,6 +100,7 @@ nav {
     width: 32px;
     height: 32px;
     background: var(--primary);
+    overflow: hidden;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -329,7 +342,7 @@ nav {
     align-items: center;
     gap: 0.35rem;
     background: var(--primary);
-    color: #fff;
+    color: var(--on-primary);
     padding: 0.2rem 0.55rem;
     border-radius: 999px;
     font-size: 0.62rem;
@@ -341,8 +354,10 @@ nav {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #fff;
+    background: currentColor;
 }
+/* Mockup screens are drawn in the app's light appearance. */
+.screen .on-air { background: #c45500; color: #fff; }
 
 .app-store-btn.soon { cursor: default; }
 .app-store-btn.soon:hover { opacity: 1; }
@@ -364,7 +379,7 @@ nav {
 }
 .screen .s-title { font-size: 15px; font-weight: 800; letter-spacing: -0.02em; }
 .screen .s-head { font-size: 11px; font-weight: 800; margin-top: 2px; }
-.screen .s-caps { color: #e5252a; font-weight: 800; font-size: 7px; letter-spacing: 0.06em; text-transform: uppercase; }
+.screen .s-caps { color: #c45500; font-weight: 800; font-size: 7px; letter-spacing: 0.06em; text-transform: uppercase; }
 .screen .s-muted { color: #6e6e73; }
 .screen .s-search { background: #eeeef0; border-radius: 8px; padding: 5px 8px; color: #8e8e93; }
 
@@ -389,7 +404,7 @@ nav {
     padding: 4px 5px; font-weight: 700; font-size: 8px;
 }
 .tile .band span { display: block; font-weight: 400; opacity: 0.8; font-size: 7px; }
-.tile.live { box-shadow: inset 0 0 0 2px #e5252a; }
+.tile.live { box-shadow: inset 0 0 0 2px #c45500; }
 .tile .on-air, .tile .preset { position: absolute; top: 5px; transform: scale(0.75); }
 .tile .on-air { right: 2px; transform-origin: top right; }
 .tile .preset {
@@ -402,21 +417,21 @@ nav {
 .recent-row .card { width: 30%; flex-shrink: 0; }
 .recent-row .card .art { margin-bottom: 3px; }
 .bar { height: 3px; border-radius: 3px; background: #e5e5ea; overflow: hidden; margin: 3px 0; }
-.bar i { display: block; height: 100%; background: #e5252a; }
+.bar i { display: block; height: 100%; background: #c45500; }
 
 .log-row, .sched-row {
     display: flex; gap: 7px; align-items: flex-start;
     background: #f2f2f5; border-radius: 10px; padding: 6px;
 }
 .log-row .art { width: 38px; }
-.log-row.live, .sched-row.live { box-shadow: inset 0 0 0 1.5px #e5252a; }
+.log-row.live, .sched-row.live { box-shadow: inset 0 0 0 1.5px #c45500; }
 .log-row .meta, .sched-row .meta { flex: 1; min-width: 0; }
 .log-row b, .sched-row b { display: block; font-size: 8.5px; margin: 1px 0; }
 .date-slot {
     width: 28px; text-align: center; background: #e8e8ed;
     border-radius: 7px; padding: 3px 0; flex-shrink: 0;
 }
-.date-slot .m { color: #e5252a; font-weight: 800; font-size: 6.5px; }
+.date-slot .m { color: #c45500; font-weight: 800; font-size: 6.5px; }
 .date-slot .d { font-weight: 800; font-size: 12px; line-height: 1.1; }
 
 .station-header { display: flex; gap: 8px; }
@@ -424,11 +439,11 @@ nav {
 .pill-row { display: flex; gap: 5px; }
 .pill {
     flex: 1; text-align: center; border-radius: 999px; padding: 5px 0;
-    font-weight: 700; background: rgba(229,37,42,0.12); color: #e5252a;
+    font-weight: 700; background: rgba(196,85,0,0.12); color: #c45500;
 }
-.pill.solid { background: #e5252a; color: #fff; }
+.pill.solid { background: #c45500; color: #fff; }
 
-.player .art.big { width: 78%; margin: 4px auto 2px; border-radius: 12px; box-shadow: 0 0 0 2.5px #e5252a; }
+.player .art.big { width: 78%; margin: 4px auto 2px; border-radius: 12px; box-shadow: 0 0 0 2.5px #c45500; }
 .lcd {
     background: #111; color: #fff; border-radius: 10px; padding: 7px 8px;
     display: flex; align-items: center; gap: 6px;
@@ -436,7 +451,7 @@ nav {
 .lcd .meta { flex: 1; }
 .lcd b { display: block; font-size: 9px; }
 .meter { display: flex; align-items: flex-end; gap: 2px; height: 16px; }
-.meter i { width: 3px; background: #e5252a; border-radius: 2px; }
+.meter i { width: 3px; background: #c45500; border-radius: 2px; }
 .ticks {
     height: 5px;
     background: repeating-linear-gradient(90deg, #b0b0b5 0 1px, transparent 1px 6px);
@@ -444,19 +459,19 @@ nav {
 .readout { display: flex; justify-content: space-between; font-weight: 700; font-variant-numeric: tabular-nums; }
 .readout div:nth-child(2) { text-align: center; }
 .readout div:last-child { text-align: right; }
-.readout small { display: block; color: #e5252a; font-size: 6px; font-weight: 800; }
+.readout small { display: block; color: #c45500; font-size: 6px; font-weight: 800; }
 .controls { display: flex; justify-content: space-around; align-items: center; font-size: 13px; color: #1d1d1f; }
 .controls .play {
-    width: 34px; height: 34px; border-radius: 50%; background: #e5252a; color: #fff;
+    width: 34px; height: 34px; border-radius: 50%; background: #c45500; color: #fff;
     display: flex; align-items: center; justify-content: center; font-size: 12px;
 }
 .mini {
     margin-top: auto; display: flex; align-items: center; gap: 6px;
-    background: #f2f2f5; border-radius: 10px; padding: 5px; border-top: 2px solid #e5252a;
+    background: #f2f2f5; border-radius: 10px; padding: 5px; border-top: 2px solid #c45500;
 }
 .mini .art { width: 24px; border-radius: 5px; }
 .mini .meta { flex: 1; min-width: 0; }
-.mini .play { width: 20px; height: 20px; border-radius: 50%; background: #e5252a; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 7px; }
+.mini .play { width: 20px; height: 20px; border-radius: 50%; background: #c45500; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 7px; }
 
 .feature-list {
     list-style: none;
@@ -467,6 +482,158 @@ nav {
     color: var(--text-secondary);
 }
 .feature-list li::before { content: "● "; color: var(--primary); font-size: 0.7rem; }
+
+/* ══ App theme ══ */
+
+.mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+
+/* Orange monospaced capitals, like the show names on the app's station display. */
+.eyebrow {
+    display: inline-block;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 0.6rem;
+}
+
+nav { border-bottom: 1px solid var(--border); }
+nav::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary) 0 38%, transparent 38%);
+    opacity: 0.9;
+}
+.logo-icon { border-radius: 9px; box-shadow: 0 0 0 1px var(--border); }
+
+.bento-card, .hero-card { border: 1px solid var(--border); }
+.bento-card { transition: box-shadow 0.2s, border-color 0.2s; }
+.bento-card:hover { border-color: color-mix(in srgb, var(--primary) 45%, transparent); }
+
+/* Hero as the station display */
+.hero-card.display {
+    background:
+        radial-gradient(120% 90% at 85% 40%, var(--display-glow), transparent 60%),
+        linear-gradient(160deg, #04205a 0%, var(--display-bg) 55%);
+    color: var(--display-text);
+    position: relative;
+    padding-bottom: 5.5rem;
+}
+.hero-card.display .hero-text p { color: var(--display-muted); }
+.hero-card.display .badge { background: rgba(255,255,255,0.08); color: var(--display-muted); }
+.hero-card.display .eyebrow { color: var(--display-accent); }
+.hero-card.display .app-store-btn { background: var(--display-accent); color: #021333; }
+.hero-card.display .app-store-btn svg { fill: #021333; }
+.hero-card.display .on-air { background: var(--display-accent); color: #021333; }
+
+.hero-icon {
+    width: 72px; height: 72px; border-radius: 16px;
+    display: block; margin-bottom: 1.25rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.station-line {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+/* Animated level meter, like the one in the player */
+.meter-lg { display: inline-flex; align-items: flex-end; gap: 3px; height: 18px; }
+.meter-lg i {
+    width: 4px; border-radius: 2px; background: var(--display-accent);
+    animation: level 1s ease-in-out infinite alternate;
+}
+.meter-lg i:nth-child(1) { height: 40%; animation-delay: -0.2s; }
+.meter-lg i:nth-child(2) { height: 100%; animation-delay: -0.6s; }
+.meter-lg i:nth-child(3) { height: 60%; animation-delay: -0.1s; }
+.meter-lg i:nth-child(4) { height: 80%; animation-delay: -0.8s; }
+.meter-lg i:nth-child(5) { height: 50%; animation-delay: -0.4s; }
+@keyframes level { from { transform: scaleY(0.3); } to { transform: scaleY(1); } }
+.meter-lg i { transform-origin: bottom; }
+
+.on-air.pulse::before { animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }
+
+/* Tuner dial along the bottom of the hero */
+.dial {
+    position: absolute; left: 3rem; right: 3rem; bottom: 1.5rem;
+    color: var(--display-muted);
+}
+.dial .ticks-lg {
+    height: 12px;
+    background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.55) 0 1px, transparent 1px 10%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.22) 0 1px, transparent 1px 2%);
+    background-size: 100% 12px, 100% 6px;
+    background-repeat: no-repeat;
+}
+.dial .freq {
+    display: flex; justify-content: space-between;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 0.65rem; letter-spacing: 0.08em; margin-top: 0.35rem;
+}
+.dial .needle {
+    position: absolute; top: -10px; left: 62%;
+    width: 2px; height: 30px; background: var(--display-accent);
+    box-shadow: 0 0 10px var(--display-accent);
+    border-radius: 1px;
+}
+
+/* A dark "station display" card */
+.bento-card.display {
+    background: linear-gradient(160deg, #04205a, var(--display-bg));
+    color: var(--display-text);
+}
+.bento-card.display p { color: var(--display-muted); }
+.bento-card.display .eyebrow { color: var(--display-accent); }
+
+.feature-list li::before { content: "▸ "; color: var(--primary); font-size: 0.8rem; }
+
+/* Content pages: title in a station display panel */
+.content-head {
+    background:
+        radial-gradient(100% 120% at 100% 0%, var(--display-glow), transparent 60%),
+        linear-gradient(160deg, #04205a, var(--display-bg));
+    color: var(--display-text);
+    border-radius: 20px;
+    padding: 2rem 2rem 1.6rem;
+    margin-bottom: 2rem;
+}
+.content-head .eyebrow { color: var(--display-accent); }
+.content-head h1 { color: var(--display-text); }
+.content-head .last-updated { color: var(--display-muted); margin-bottom: 0; }
+.content h2 {
+    display: flex; align-items: center; gap: 0.6rem;
+}
+.content h2::before {
+    content: ""; width: 4px; height: 1.05em; border-radius: 2px;
+    background: var(--primary); flex-shrink: 0;
+}
+.content strong { color: var(--text); }
+
+/* Footer dial */
+footer { border-top: 1px solid var(--border); position: relative; }
+footer::before {
+    content: "";
+    position: absolute; left: 0; right: 0; top: -1px; height: 8px;
+    background: repeating-linear-gradient(90deg, var(--tick) 0 1px, transparent 1px 14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .meter-lg i, .on-air.pulse::before { animation: none; }
+}
+
+@media (max-width: 768px) {
+    .hero-card.display { padding-bottom: 5rem; }
+    .hero-icon { margin-left: auto; margin-right: auto; }
+    .station-line { justify-content: center; }
+    .dial { left: 1.5rem; right: 1.5rem; }
+    .content-head { padding: 1.5rem; }
+}
 
 /* ── Footer ── */
 footer {
