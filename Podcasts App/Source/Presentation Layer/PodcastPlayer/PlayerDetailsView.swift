@@ -204,28 +204,48 @@ struct PlayerDetailsView: View {
 
 struct MiniPlayerView: View {
     @EnvironmentObject private var player: PlaybackController
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let expand: () -> Void
 
     var body: some View {
         HStack(spacing: 4) {
             Button(action: expand) {
-                HStack {
+                HStack(spacing: 10) {
                     PodcastArtwork(urlString: player.episode?.imageUrl)
                         .frame(width: 48, height: 48)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                    VStack(alignment: .leading) {
-                        Text(player.episode?.title ?? "").font(.subheadline.weight(.semibold)).lineLimit(1)
-                        Text(player.episode?.author ?? "").font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .strokeBorder(Color.red, lineWidth: player.isPlaying ? 2 : 0)
+                        }
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(spacing: 4) {
+                            Circle().fill(statusColor).frame(width: 6, height: 6)
+                            Text(statusLine)
+                                .font(.caption2.weight(.heavy).monospaced())
+                                .foregroundStyle(statusColor)
+                                .lineLimit(1)
+                        }
+                        Text(player.episode?.title ?? "")
+                            .font(.subheadline.weight(.semibold))
+                            .lineLimit(1)
                     }
                     Spacer(minLength: 0)
+                    LevelMeter(isActive: player.isPlaying && !player.isBuffering && !reduceMotion)
+                        .frame(width: 22, height: 20)
+                        .accessibilityHidden(true)
                 }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Expand player: \(player.episode?.title ?? "")")
+            .accessibilityValue(statusText)
             Button { player.togglePlayback() } label: {
                 Label(player.isPlaying ? "Pause" : "Play",
                       systemImage: player.isPlaying ? "pause.fill" : "play.fill")
+                    .foregroundStyle(.white)
+                    .frame(width: 40, height: 40)
+                    .background(Color.red, in: Circle())
             }
             Button { player.skip(by: 15) } label: {
                 Label("Forward 15 seconds", systemImage: "goforward.15")
@@ -233,15 +253,50 @@ struct MiniPlayerView: View {
             Button { player.close() } label: {
                 Label("Close player", systemImage: "xmark")
             }
+            .foregroundStyle(.secondary)
         }
         .labelStyle(.iconOnly)
         .buttonStyle(PlayerButtonStyle())
         .padding(8)
         .background(.regularMaterial)
-        .overlay(alignment: .top) { Divider() }
+        .overlay(alignment: .top) { tunerLine }
         .simultaneousGesture(DragGesture().onEnded { value in
             if value.translation.height < -50 { expand() }
         })
+    }
+
+    /// Red "needle" across the top edge showing how far into the episode playback is.
+    private var tunerLine: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .leading) {
+                Rectangle().fill(Color.secondary.opacity(0.2))
+                Rectangle().fill(Color.red)
+                    .frame(width: proxy.size.width * fraction)
+            }
+        }
+        .frame(height: 2)
+        .accessibilityHidden(true)
+    }
+
+    private var fraction: CGFloat {
+        guard player.duration > 0 else { return 0 }
+        return CGFloat(min(max(player.currentTime / player.duration, 0), 1))
+    }
+
+    private var statusText: String {
+        if player.isBuffering { return "TUNING IN…" }
+        return player.isPlaying ? "ON AIR" : "PAUSED"
+    }
+
+    /// Status plus the show name, e.g. "ON AIR · THE DAILY".
+    private var statusLine: String {
+        guard let author = player.episode?.author, !author.isEmpty else { return statusText }
+        return "\(statusText) · \(author.uppercased())"
+    }
+
+    private var statusColor: Color {
+        if player.isBuffering { return .orange }
+        return player.isPlaying ? .red : .secondary
     }
 }
 
