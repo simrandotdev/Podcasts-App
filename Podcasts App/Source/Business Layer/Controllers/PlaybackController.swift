@@ -2,7 +2,6 @@ import AVKit
 import Combine
 import MediaPlayer
 import Resolver
-import UIKit
 
 /// Owns playback independently of the currently visible screen or player size.
 @MainActor
