@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
 
 struct PodcastThumbnailCell: View {
     
@@ -16,11 +15,9 @@ struct PodcastThumbnailCell: View {
     var body: some View {
         
             ZStack {
-                WebImage(url: URL(string: podcast.image))
-                    .resizable()
-                    .scaledToFit()
+                PodcastArtwork(urlString: podcast.image)
             }
-            .frame(minWidth: 150, minHeight: 150)
+            .aspectRatio(1, contentMode: .fit)
             .cornerRadius(10)
         
     }

@@ -1,41 +1,15 @@
 {
+  "originHash" : "d77223ea3cadaebd2154378ec5005b6ebefcef3b34a4dafa368b0c4f16c0561c",
   "pins" : [
     {
       "identity" : "grdb.swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift",
       "state" : {
-        "branch" : "master",
-        "revision" : "e02f2c8abacff2799ed14926edcbf6e76fb9f805"
-      }
-    },
-    {
-      "identity" : "progresshud",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/relatedcode/ProgressHUD",
-      "state" : {
-        "revision" : "22c3f83268b4c47b4623fe3a9701af7310fa8d8a",
-        "version" : "13.6.1"
-      }
-    },
-    {
-      "identity" : "sdwebimage",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SDWebImage/SDWebImage.git",
-      "state" : {
-        "revision" : "2e63d0061da449ad0ed130768d05dceb1496de44",
-        "version" : "5.12.5"
-      }
-    },
-    {
-      "identity" : "sdwebimageswiftui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SDWebImage/SDWebImageSwiftUI",
-      "state" : {
-        "branch" : "master",
-        "revision" : "336d3f6d3b53729c1f274bf6b75f4532ada116eb"
+        "revision" : "2cf6c756e1e5ef6901ebae16576a7e4e4b834622",
+        "version" : "6.29.3"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

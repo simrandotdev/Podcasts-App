@@ -1,106 +1,104 @@
-//
-//  AppTabView.swift
-//  Podcasts App
-//
-//  Created by Simran Preet Singh Narang on 2022-07-08.
-//  Copyright © 2022 Simran App. All rights reserved.
-//
-
 import SwiftUI
 
 struct AppTabView: View {
-    
-    @Environment(\.verticalSizeClass) var verticalSizeClass
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
-    @StateObject var podcastsController = PodcastsController()
-    @StateObject var episodesController = EpisodesController()
-    
-    // MARK: - Public properties
-    
-    
-    var maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
-    
-    
-    // MARK: - Body
-    
-    
+    @EnvironmentObject private var player: PlaybackController
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @StateObject private var podcastsController = PodcastsController()
+    @StateObject private var episodesController = EpisodesController()
+    @State private var isPlayerExpanded = false
+    @State private var selection: AppSection? = .home
+
+    private enum AppSection: String, CaseIterable, Identifiable {
+        case home = "Home", favorites = "Favorites", history = "Recently Played"
+        var id: String { rawValue }
+        var symbol: String {
+            switch self {
+            case .home: return "magnifyingglass"
+            case .favorites: return "heart.fill"
+            case .history: return "music.mic"
+            }
+        }
+    }
+
     var body: some View {
-        
-        if verticalSizeClass == .regular && horizontalSizeClass == .regular {
-            sideBarView
-        } else {
-            tabView
+        Group {
+            if horizontalSizeClass == .regular {
+                NavigationSplitView {
+                    List(AppSection.allCases, selection: $selection) { section in
+                        NavigationLink(value: section) {
+                            Label(section.rawValue, systemImage: section.symbol)
+                        }
+                    }
+                    .navigationTitle("Menu")
+                } detail: {
+                    NavigationStack {
+                        screen(selection ?? .home)
+                    }
+                    .safeAreaInset(edge: .bottom, spacing: 0) { miniPlayer }
+                }
+            } else {
+                TabView(selection: $selection) {
+                    ForEach(AppSection.allCases) { section in
+                        NavigationStack {
+                            screen(section)
+                        }
+                        .safeAreaInset(edge: .bottom, spacing: 0) { miniPlayer }
+                        .tabItem { Label(section.rawValue, systemImage: section.symbol) }
+                        .tag(Optional(section))
+                    }
+                }
+            }
+        }
+        .environmentObject(podcastsController)
+        .environmentObject(episodesController)
+        .overlay(alignment: .trailing) {
+            if isPlayerExpanded, player.episode != nil {
+                PlayerDetailsView { isPlayerExpanded = false }
+                    .frame(maxWidth: horizontalSizeClass == .regular ? 440 : .infinity)
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom))
+                    .shadow(radius: horizontalSizeClass == .regular ? 12 : 0)
+            }
+        }
+        .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.9),
+                   value: isPlayerExpanded)
+        .onChange(of: player.episode == nil) { isEmpty in
+            if isEmpty { isPlayerExpanded = false }
+        }
+        .alert("Playback", isPresented: Binding(
+            get: { player.errorMessage != nil },
+            set: { if !$0 { player.errorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { player.errorMessage = nil }
+        } message: {
+            Text(player.errorMessage ?? "")
         }
     }
-    
-    
-    private var sideBarView: some View {
-        NavigationView {
-            List {
-                NavigationLink(destination:podcastsScreen) {
-                    Label("Home", systemImage: "magnifyingglass")
-                }
-                
-                NavigationLink(destination: favoritesScreen) {
-                    Label("Favorites", systemImage: "heart.fill")
-                }
-                
-                NavigationLink(destination: recentlyPlayedScreen) {
-                    Label("Recently Played", systemImage: "music.mic")
-                }
-            }
-            .navigationTitle("Menu")
-            
-            podcastsScreen
+
+    @ViewBuilder
+    private var miniPlayer: some View {
+        if player.episode != nil {
+            MiniPlayerView { isPlayerExpanded = true }
         }
     }
-    
-    private var tabView: some View {
-        TabView {
-            NavigationView {
-                podcastsScreen
-            }.tabItem {
-                Label("Home", systemImage: "magnifyingglass")
-            }
-            .tag(0)
-            
-            NavigationView {
-                favoritesScreen
-            } .tabItem {
-                Label("Favorites", systemImage: "heart.fill")
-            }
-            .tag(1)
-            
-            
-            NavigationView {
-                recentlyPlayedScreen
-            } .tabItem {
-                Label("Recently Played", systemImage: "music.mic")
-            }
-            .tag(2)
+
+    @ViewBuilder
+    private func screen(_ section: AppSection) -> some View {
+        switch section {
+        case .home: PodcastsScreen(maximizePlayerView: play)
+        case .favorites: FavoritesScreen(maximizePlayerView: play)
+        case .history: RecentlyPlayedEpisodesScreen(maximizePlayerView: play)
         }
     }
-    
-    
-    private var podcastsScreen: some View {
-        PodcastsScreen(maximizePlayerView: maximizePlayerView)
-            .environmentObject(podcastsController)
-    }
-    
-    private var favoritesScreen: some View {
-        FavoritesScreen(maximizePlayerView: maximizePlayerView)
-            .environmentObject(podcastsController)
-    }
-    
-    private var recentlyPlayedScreen: some View {
-        RecentlyPlayedEpisodesScreen(maximizePlayerView: maximizePlayerView)
-            .environmentObject(episodesController)
+
+    private func play(_ episode: EpisodeViewModel?, _ queue: [EpisodeViewModel]?) {
+        if let episode { player.load(episode, queue: queue ?? [episode]) }
+        if player.episode != nil { isPlayerExpanded = true }
     }
 }
 
 struct AppTabView_Previews: PreviewProvider {
     static var previews: some View {
-        AppTabView(maximizePlayerView: { _, _ in })
+        AppTabView().environmentObject(PlaybackController(systemPlaybackEnabled: false, saveHistory: { _ in }))
     }
 }

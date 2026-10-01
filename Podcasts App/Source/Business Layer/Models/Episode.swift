@@ -32,5 +32,6 @@ struct Episode : Codable, FetchableRecord, PersistableRecord {
         self.author = episodeViewModel.author
         self.imageUrl = episodeViewModel.imageUrl
         self.subtitle = episodeViewModel.subtitle
+        self.fileUrl = episodeViewModel.fileUrl
     }
 }

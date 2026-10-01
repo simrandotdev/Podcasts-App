@@ -62,14 +62,14 @@ class PodcastsInteractor: PodcastsInteractable {
     func favorite(podcast: Podcast) async throws -> [Podcast] {
         
         try await podcastRepository.favorite(podcast: podcast)
-        return try await fetchPodcasts()
+        return try await fetchFavorites()
     }
     
     
     func unfavorite(podcast: Podcast) async throws -> [Podcast] {
         
         try await podcastRepository.unfavorite(podcast: podcast)
-        return try await fetchPodcasts()
+        return try await fetchFavorites()
     }
     
     

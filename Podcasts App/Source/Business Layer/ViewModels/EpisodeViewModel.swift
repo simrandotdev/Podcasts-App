@@ -32,5 +32,6 @@ class EpisodeViewModel {
         self.author = episode.author
         self.imageUrl = episode.imageUrl
         self.subtitle = episode.subtitle
+        self.fileUrl = episode.fileUrl
     }
 }

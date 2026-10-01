@@ -1,9 +1,10 @@
-import AVKit
+import CoreMedia
+import Foundation
 
 extension CMTime
 {
     func toDisplayString() -> String {
-        if CMTimeGetSeconds(self).isNaN {
+        if !CMTimeGetSeconds(self).isFinite {
             return "--:--"
         }
         

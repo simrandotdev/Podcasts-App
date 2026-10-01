@@ -1,116 +1,99 @@
-//
-//  PodcastsControllerTests.swift
-//  Podcasts App Unit Tests
-//
-//  Created by Simran Preet Singh Narang on 2022-07-22.
-//  Copyright © 2022 Simran App. All rights reserved.
-//
-
 import XCTest
 import Combine
 @testable import Podcasts_Bin
 
-class PodcastsControllerTests: XCTestCase {
-
-    var sut: PodcastsController!
-    
-    override func setUpWithError() throws {
-        
-        sut = PodcastsController(podcastsInteractor: MockPodcastsInteractor(),
-                                 episodesInteractor: MockEpisodesInteractor())
-    }
-    
-    
-    func test_podcastsController_hasBeenSetup() {
-        
-        XCTAssertNotNil(sut)
+@MainActor
+final class PodcastsControllerTests: XCTestCase {
+    private func makeController(_ interactor: MockPodcastsInteractor = MockPodcastsInteractor()) -> PodcastsController {
+        PodcastsController(podcastsInteractor: interactor, episodesInteractor: MockEpisodesInteractor())
     }
 
-    
-    func tests_podcastsProperty_hasZeroPodcasts_whenFetchPodcastsIsnotCalled() async throws {
-        
-        // Assert
-        XCTAssert(sut.podcasts.count == 0)
+    func test_initialState_hasNoPodcasts() {
+        XCTAssertTrue(makeController().podcasts.isEmpty)
     }
-    
-    
-    func test_fetchPodcasts_setsPodcastsProperty_withGreaterThenZeroPodcasts() async throws {
-        
-        // Act
+
+    func test_fetchPodcasts_loadsResultsAndEndsLoading() async {
+        let sut = makeController()
         await sut.fetchPodcasts()
-        
-        // Assert
-        XCTAssert(sut.podcasts.count > 0)
+        XCTAssertEqual(sut.podcasts.count, 1)
+        XCTAssertFalse(sut.isLoading)
     }
-    
-    
-    
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+
+    func test_failedFetch_exposesErrorAndEndsLoading() async {
+        let interactor = MockPodcastsInteractor()
+        interactor.shouldFail = true
+        let sut = makeController(interactor)
+        await sut.fetchPodcasts()
+        XCTAssertNotNil(sut.errorMessage)
+        XCTAssertFalse(sut.isLoading)
+        XCTAssertTrue(sut.podcasts.isEmpty)
+    }
+
+    func test_search_usesQueryAndClearingRestoresHome() async {
+        let interactor = MockPodcastsInteractor()
+        let sut = makeController(interactor)
+        sut.searchText = "science"
+        await sut.fetchPodcasts()
+        XCTAssertEqual(interactor.lastQuery, "science")
+        XCTAssertEqual(sut.podcasts.first?.title, "Search result")
+        sut.searchText = ""
+        await sut.fetchPodcasts()
+        XCTAssertEqual(sut.podcasts.first?.title, "Podcast title")
+    }
+
+    func test_favoriteChanges_refreshOnlyFavorites() async {
+        let interactor = MockPodcastsInteractor()
+        let sut = makeController(interactor)
+        await sut.fetchPodcasts()
+        let podcast = sut.podcasts[0]
+        await sut.favorite(podcast: podcast)
+        XCTAssertEqual(sut.favoritePodcasts.count, 1)
+        let isFavorite = await sut.isfavorite(podcast: podcast)
+        XCTAssertTrue(isFavorite)
+        XCTAssertFalse(sut.isLoading)
+        await sut.unfavorite(podcast: podcast)
+        XCTAssertTrue(sut.favoritePodcasts.isEmpty)
+        XCTAssertEqual(sut.podcasts.count, 1)
     }
 }
 
+final class MockPodcastsInteractor: PodcastsInteractable {
+    var shouldFail = false
+    var lastQuery: String?
+    var favorites: [Podcast] = []
+    private let podcast = Podcast(recordId: "1", title: "Podcast title", author: "Author",
+                                  image: "", totalEpisodes: 1, rssFeedUrl: "https://example.com/feed")
 
-class MockPodcastsInteractor: PodcastsInteractable {
-    
-    func isFavorite(podcast: Podcast) async throws -> Bool {
-        return false
-    }
-    
-    func favorite(podcast: Podcast) async throws -> [Podcast] {
-        return []
-    }
-    
-    func unfavorite(podcast: Podcast) async throws -> [Podcast] {
-        return []
-    }
-    
-    func fetchFavorites() async throws -> [Podcast] {
-        return []
-    }
-    
-    
     func fetchPodcasts() async throws -> [Podcast] {
-        
-        let dummyPodcast = Podcast(recordId: "1",
-                                   title: "Podcast title",
-                                   author: "Podcast author",
-                                   image: "Podcast url",
-                                   totalEpisodes: 1,
-                                   rssFeedUrl: "Podcast rss feed")
-        return [dummyPodcast]
+        if shouldFail { throw URLError(.notConnectedToInternet) }
+        return [podcast]
     }
-    
+
     func searchPodcasts(forValue value: String) async throws -> [Podcast] {
-        return []
+        lastQuery = value
+        return [Podcast(recordId: "2", title: "Search result", author: "Author", image: "",
+                        totalEpisodes: 1, rssFeedUrl: "https://example.com/search")]
     }
-    
-    func fetchFavorites() async throws {
-        
+
+    func favorite(podcast: Podcast) async throws -> [Podcast] {
+        favorites = [podcast]
+        return [self.podcast]
     }
-    
-    
+
+    func unfavorite(podcast: Podcast) async throws -> [Podcast] {
+        favorites = []
+        return [self.podcast]
+    }
+
+    func isFavorite(podcast: Podcast) async throws -> Bool { !favorites.isEmpty }
+    func fetchFavorites() async throws -> [Podcast] { favorites }
 }
 
-
-class MockEpisodesInteractor: EpisodesInteractable {
-    
-    var episodes: CurrentValueSubject<[Episode], Never> = CurrentValueSubject([])
-    var recentlyPlayedEpisodes: CurrentValueSubject<[Episode], Never> = CurrentValueSubject([])
-    
-    func fetchEpisodes(forPodcast podcast: Podcast) async throws {
-        
-    }
-    
-    func searchEpisodes(forValue value: String) async throws {
-        
-    }
-    
-    func saveInHistory(episode: Episode) async throws {
-        
-    }
-    
-    func fetchEpisodesFromHistory() async throws {
-        
-    }
+final class MockEpisodesInteractor: EpisodesInteractable {
+    var episodes = CurrentValueSubject<[Episode], Never>([])
+    var recentlyPlayedEpisodes = CurrentValueSubject<[Episode], Never>([])
+    func fetchEpisodes(forPodcast podcast: Podcast) async throws {}
+    func searchEpisodes(forValue value: String) async throws {}
+    func saveInHistory(episode: Episode) async throws {}
+    func fetchEpisodesFromHistory() async throws {}
 }

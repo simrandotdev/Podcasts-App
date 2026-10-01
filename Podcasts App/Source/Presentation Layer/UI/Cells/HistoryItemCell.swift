@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
 
 struct HistoryItemCell: View {
     
@@ -17,9 +16,7 @@ struct HistoryItemCell: View {
     
     var body: some View {
         HStack {
-            WebImage(url: URL(string: episode.imageUrl ?? ""))
-                .resizable()
-                .scaledToFit()
+            PodcastArtwork(urlString: episode.imageUrl ?? "")
                 .frame(width: 100, height: 100)
                 .background(Color.gray.opacity(0.3))
                 .cornerRadius(10)

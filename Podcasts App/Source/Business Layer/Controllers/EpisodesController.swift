@@ -42,6 +42,7 @@ class EpisodesController: EpisodesControllable, ObservableObject {
     @Published var episodes: [EpisodeViewModel] = []
     @Published var recentlyPlayedEpisodes: [EpisodeViewModel] = []
     @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
     
     
     // MARK: - Private properties
@@ -86,11 +87,13 @@ class EpisodesController: EpisodesControllable, ObservableObject {
     @MainActor func fetchEpisodes(forPodcast podcast: PodcastViewModel) async {
         
         isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
         do {
             let podcastModel = Podcast(podcastViewModel: podcast)
             try await interactor.fetchEpisodes(forPodcast: podcastModel)
         } catch {
-            // TODO: Handle Error
+            errorMessage = "Unable to load episodes. \(error.localizedDescription)"
             err("\(#function)" ,error.localizedDescription)
         }
         isLoading = false
@@ -111,10 +114,11 @@ class EpisodesController: EpisodesControllable, ObservableObject {
     
     @MainActor func fetchEpisodesFromHistory() async {
         
+        errorMessage = nil
         do {
             try await interactor.fetchEpisodesFromHistory()
         } catch {
-            // TODO: Handle Error
+            errorMessage = "Unable to load listening history. \(error.localizedDescription)"
             err("\(#function)" ,error.localizedDescription)
         }
         

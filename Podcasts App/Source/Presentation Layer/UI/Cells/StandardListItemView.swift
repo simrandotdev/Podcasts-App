@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
 
 struct StandardListItemView: View {
     
@@ -25,9 +24,7 @@ struct StandardListItemView: View {
     
     var body: some View {
         HStack(alignment: .top) {
-            WebImage(url: URL(string: imageUrlString))
-                .resizable()
-                .scaledToFit()
+            PodcastArtwork(urlString: imageUrlString)
                 .frame(width: 80, height: 80)
                 .background(Color.gray.opacity(0.3))
                 .cornerRadius(10)
