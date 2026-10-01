@@ -44,7 +44,9 @@ class EpisodesRepository {
     public func saveInHistory(episode: Episode) async throws {
         
         try await db.dbQueue?.write({ db in
-            try episode.save(db)
+            // Re-insert so a replayed episode moves to the end of the table (newest in history).
+            _ = try episode.delete(db)
+            try episode.insert(db)
         })
     }
     
