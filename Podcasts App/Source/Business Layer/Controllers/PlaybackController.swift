@@ -94,6 +94,7 @@ final class PlaybackController: ObservableObject {
                 guard let self, let item, item === self.player.currentItem else { return }
                 if status == .readyToPlay {
                     self.duration = Self.validTime(item.duration.seconds)
+                    if self.duration > 0 { self.defaults.set(self.duration, forKey: Self.durationKey(for: episode)) }
                     // Restore only when loading a new item, never on ordinary play/pause.
                     let saved = Self.validTime(self.defaults.double(forKey: episode.streamUrl))
                     self.seek(to: self.duration > 0 && saved >= self.duration ? 0 : saved)
@@ -200,6 +201,19 @@ final class PlaybackController: ObservableObject {
         defaults.set(max(0, currentTime), forKey: episode.streamUrl)
     }
 
+    /// Fraction of the episode played (0...1), or nil if its length has never been loaded.
+    func progress(for episode: EpisodeViewModel) -> Double? {
+        let isCurrent = episode.streamUrl == self.episode?.streamUrl
+        let total = isCurrent && duration > 0 ? duration : defaults.double(forKey: Self.durationKey(for: episode))
+        guard total > 0 else { return nil }
+        let position = isCurrent ? currentTime : Self.validTime(defaults.double(forKey: episode.streamUrl))
+        return min(max(position / total, 0), 1)
+    }
+
+    private static func durationKey(for episode: EpisodeViewModel) -> String {
+        "duration:" + episode.streamUrl
+    }
+
     static func validTime(_ seconds: Double) -> Double {
         seconds.isFinite ? max(0, seconds) : 0
     }
@@ -225,8 +239,10 @@ final class PlaybackController: ObservableObject {
             .sink { [weak self] notification in
                 guard let self, let item = notification.object as? AVPlayerItem,
                       item === self.player.currentItem else { return }
+                // Keep the position at the end so the episode reads as fully played;
+                // load() and play() restart from zero when the saved position reaches the duration.
+                if self.duration > 0 { self.currentTime = self.duration }
                 self.pause()
-                if let episode = self.episode { self.defaults.set(0, forKey: episode.streamUrl) }
             }.store(in: &subscriptions)
     }
 

@@ -182,6 +182,32 @@ final class PlaybackControllerTests: XCTestCase {
         sut.close()
     }
 
+    func test_progress_isUnknownUntilDurationHasBeenLoaded() throws {
+        let first = try episode("first")
+        withPlayer { sut, defaults in
+            defaults.set(30, forKey: first.streamUrl)
+            XCTAssertNil(sut.progress(for: first))
+        }
+    }
+
+    func test_progress_usesSavedPositionAndDuration() throws {
+        let first = try episode("first")
+        withPlayer { sut, defaults in
+            defaults.set(30, forKey: first.streamUrl)
+            defaults.set(120, forKey: "duration:" + first.streamUrl)
+            XCTAssertEqual(sut.progress(for: first), 0.25)
+        }
+    }
+
+    func test_progress_clampsPositionsBeyondTheDuration() throws {
+        let first = try episode("first")
+        withPlayer { sut, defaults in
+            defaults.set(500, forKey: first.streamUrl)
+            defaults.set(120, forKey: "duration:" + first.streamUrl)
+            XCTAssertEqual(sut.progress(for: first), 1)
+        }
+    }
+
     func test_invalidDuration_isSafeForDisplay() {
         XCTAssertEqual(PlaybackController.validTime(.nan), 0)
         XCTAssertEqual(PlaybackController.validTime(.infinity), 0)
