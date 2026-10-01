@@ -1,7 +1,9 @@
 import SwiftUI
 
+/// A podcast presented as a radio station: a station header, then its episodes as the schedule.
 struct EpisodesScreen: View {
     @EnvironmentObject private var podcastsController: PodcastsController
+    @EnvironmentObject private var player: PlaybackController
     @StateObject private var episodesController = EpisodesController()
     @State private var isFavorite = false
     @State private var isUpdatingFavorite = false
@@ -9,42 +11,125 @@ struct EpisodesScreen: View {
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
 
     var body: some View {
-        List {
-            if episodesController.isLoading && episodesController.episodes.isEmpty {
-                StandardListLoadingView()
-            }
-            if let error = episodesController.errorMessage {
-                Text(error).foregroundStyle(.secondary)
-                Button("Retry") { Task { await fetchEpisodes() } }
-            }
-            ForEach(episodesController.episodes, id: \.streamUrl) { episode in
-                Button {
-                    maximizePlayerView(episode, episodesController.episodes)
-                } label: {
-                    StandardListItemView(title: episode.title, subtitle: episode.formattedDateString,
-                                         moreInfo: episode.shortDescription,
-                                         imageUrlString: episode.imageUrl ?? podcast.image)
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 10) {
+                stationHeader
+                    .padding(.bottom, 14)
+
+                Text("Schedule")
+                    .font(.title2.bold())
+                    .accessibilityAddTraits(.isHeader)
+
+                if let error = episodesController.errorMessage {
+                    Text(error).foregroundStyle(.secondary)
+                    Button("Retry") { Task { await fetchEpisodes() } }
                 }
-                .buttonStyle(.plain)
-                .listRowCard()
-            }
-        }
-        .listStyle(.plain)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    Task { await toggleFavorite() }
-                } label: {
-                    Label(isFavorite ? "Remove from favorites" : "Add to favorites",
-                          systemImage: isFavorite ? "heart.fill" : "heart")
+                if episodesController.isLoading && episodesController.episodes.isEmpty {
+                    ForEach(0..<8, id: \.self) { _ in
+                        ScheduleRow(date: .now, title: "Episode title placeholder",
+                                    summary: "A short description of the episode goes here.",
+                                    isOnAir: false, progress: nil)
+                    }
+                    .redacted(reason: .placeholder)
+                    .accessibilityHidden(true)
                 }
-                .disabled(isUpdatingFavorite)
+                ForEach(episodesController.episodes, id: \.streamUrl) { episode in
+                    Button { play(episode) } label: {
+                        ScheduleRow(date: episode.pubDate, title: episode.title, summary: episode.shortDescription,
+                                    isOnAir: isOnAir(episode), progress: player.progress(for: episode))
+                    }
+                    .buttonStyle(.plain)
+                }
             }
+            .padding()
+            .frame(maxWidth: 700)
+            .frame(maxWidth: .infinity)
         }
         .navigationTitle(podcast.title)
         .navigationBarTitleDisplayMode(.inline)
         .task(id: podcast.rssFeedUrl) { await fetchEpisodes() }
         .refreshable { await fetchEpisodes() }
+    }
+
+    private var stationHeader: some View {
+        HStack(alignment: .top, spacing: 16) {
+            PodcastArtwork(urlString: podcast.image)
+                .frame(width: 128, height: 128)
+                .background(Color.gray.opacity(0.3))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(Color.red, lineWidth: isStationOnAir ? 3 : 0)
+                }
+
+            VStack(alignment: .leading, spacing: 6) {
+                if isStationOnAir { OnAirBadge() }
+                Text(podcast.title)
+                    .font(.title3.bold())
+                    .lineLimit(3)
+                if !podcast.author.isEmpty {
+                    Text(podcast.author.uppercased())
+                        .font(.caption.weight(.heavy).monospaced())
+                        .foregroundStyle(.red)
+                        .lineLimit(2)
+                }
+                Text(podcast.numberOfEpisodes)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                HStack(spacing: 8) {
+                    Button { tuneIn() } label: {
+                        Label("Tune In", systemImage: "play.fill")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(Color.red, in: Capsule())
+                    }
+                    .disabled(episodesController.episodes.isEmpty)
+                    .accessibilityHint("Plays the latest episode")
+
+                    Button { Task { await toggleFavorite() } } label: {
+                        Label(isFavorite ? "Preset" : "Save Preset",
+                              systemImage: isFavorite ? "star.fill" : "star")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(isFavorite ? .white : .red)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(isFavorite ? Color.red : Color.red.opacity(0.12), in: Capsule())
+                    }
+                    .disabled(isUpdatingFavorite)
+                    .accessibilityLabel(isFavorite ? "Remove from favorites" : "Add to favorites")
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 4)
+            }
+        }
+    }
+
+    /// The playing episode belongs to this podcast's schedule.
+    private var isStationOnAir: Bool {
+        guard player.isPlaying, let current = player.episode?.streamUrl else { return false }
+        return episodesController.episodes.contains { $0.streamUrl == current }
+    }
+
+    private func isOnAir(_ episode: EpisodeViewModel) -> Bool {
+        player.isPlaying && player.episode?.streamUrl == episode.streamUrl
+    }
+
+    private func tuneIn() {
+        guard let latest = episodesController.episodes.first else { return }
+        play(latest)
+    }
+
+    private func play(_ episode: EpisodeViewModel) {
+        if player.episode?.streamUrl == episode.streamUrl {
+            // Already loaded: keep the current position rather than reloading the item.
+            player.play()
+            maximizePlayerView(nil, nil)
+        } else {
+            maximizePlayerView(episode, episodesController.episodes)
+        }
     }
 
     private func fetchEpisodes() async {
@@ -61,5 +146,76 @@ struct EpisodesScreen: View {
             await podcastsController.favorite(podcast: podcast)
         }
         isFavorite = await podcastsController.isfavorite(podcast: podcast)
+    }
+}
+
+/// One slot in the station schedule: a date "time slot", the episode, and how much was heard.
+private struct ScheduleRow: View {
+    let date: Date
+    let title: String
+    let summary: String
+    let isOnAir: Bool
+    let progress: Double?
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            VStack(spacing: 0) {
+                Text(date.formatted(.dateTime.month(.abbreviated)).uppercased())
+                    .font(.caption2.weight(.heavy))
+                    .foregroundStyle(.red)
+                Text(date.formatted(.dateTime.day()))
+                    .font(.title2.bold().monospacedDigit())
+                Text(date.formatted(.dateTime.year()))
+                    .font(.caption2.monospacedDigit())
+                    .foregroundStyle(.secondary)
+            }
+            .frame(width: 48)
+            .padding(.vertical, 6)
+            .background(Color.gray.opacity(0.15), in: RoundedRectangle(cornerRadius: 10))
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .top) {
+                    Text(title)
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                    Spacer(minLength: 0)
+                    if isOnAir { OnAirBadge() }
+                }
+                if !summary.isEmpty {
+                    Text(summary)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                }
+                if let progress {
+                    HStack(spacing: 8) {
+                        ProgressView(value: progress).tint(.red)
+                        Text(status(progress))
+                            .font(.caption2.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                            .fixedSize()
+                    }
+                }
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.gray.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(Color.red, lineWidth: isOnAir ? 2 : 0)
+        }
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title), \(date.formatted(date: .long, time: .omitted))")
+        .accessibilityValue([isOnAir ? "On air" : nil, progress.map(status)].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityHint("Plays this episode")
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private func status(_ progress: Double) -> String {
+        progress >= 0.99 ? "Finished" : "\(Int(progress * 100))% played"
     }
 }
