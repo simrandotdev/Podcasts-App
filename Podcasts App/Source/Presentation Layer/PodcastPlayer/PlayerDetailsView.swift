@@ -14,7 +14,7 @@ struct PlayerDetailsView: View {
                     Label("Minimize player", systemImage: "chevron.down")
                 }
                 Spacer()
-                Text("Now Playing").font(.headline)
+                statusBadge
                 Spacer()
                 Button { player.close() } label: {
                     Label("Close player", systemImage: "xmark")
@@ -32,23 +32,21 @@ struct PlayerDetailsView: View {
                 VStack(spacing: 24) {
                     PodcastArtwork(urlString: player.episode?.imageUrl)
                         .aspectRatio(1, contentMode: .fit)
-                        .frame(maxWidth: 340)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .scaleEffect(player.isPlaying || reduceMotion ? 1 : 0.82)
+                        .frame(maxWidth: 300)
+                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                        .overlay {
+                            // Same red "on air" ring as the station tiles on the Podcasts screen.
+                            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                .strokeBorder(Color.red, lineWidth: player.isPlaying ? 4 : 0)
+                        }
+                        .scaleEffect(player.isPlaying || reduceMotion ? 1 : 0.88)
                         .animation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.75),
                                    value: player.isPlaying)
-                        .padding(.vertical)
+                        .padding(.top)
 
-                    VStack(spacing: 8) {
-                        Text(player.episode?.title ?? "")
-                            .font(.title2.bold())
-                            .multilineTextAlignment(.center)
-                        Text(player.episode?.author ?? "")
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
+                    stationDisplay
 
-                    VStack {
+                    VStack(spacing: 4) {
                         Slider(value: Binding(
                             get: { isScrubbing ? scrubTime : min(player.currentTime, max(player.duration, 1)) },
                             set: { scrubTime = $0 }
@@ -57,16 +55,12 @@ struct PlayerDetailsView: View {
                             isScrubbing = editing
                             if !editing { player.seek(to: scrubTime) }
                         })
+                        .tint(.red)
                         .disabled(player.duration <= 0)
                         .accessibilityLabel("Playback position")
                         .accessibilityValue(timeString(isScrubbing ? scrubTime : player.currentTime))
-                        HStack {
-                            Text(timeString(isScrubbing ? scrubTime : player.currentTime))
-                            Spacer()
-                            Text(player.duration > 0 ? timeString(player.duration) : "--:--")
-                        }
-                        .font(.caption.monospacedDigit())
-                        .foregroundStyle(.secondary)
+                        TunerScale()
+                        timeReadout
                     }
 
                     HStack {
@@ -81,7 +75,10 @@ struct PlayerDetailsView: View {
                         Button { player.togglePlayback() } label: {
                             Label(player.isPlaying ? "Pause" : "Play",
                                   systemImage: player.isPlaying ? "pause.fill" : "play.fill")
-                                .font(.largeTitle)
+                                .font(.title)
+                                .foregroundStyle(.white)
+                                .frame(width: 72, height: 72)
+                                .background(Color.red, in: Circle())
                         }
                         Spacer(minLength: 0)
                         Button { player.skip(by: 15) } label: {
@@ -96,8 +93,25 @@ struct PlayerDetailsView: View {
                     .font(.title2)
                     .buttonStyle(PlayerButtonStyle())
 
-                    if player.isBuffering {
-                        ProgressView("Buffering…")
+                    if let upNext {
+                        Button { player.next() } label: {
+                            HStack(spacing: 12) {
+                                PodcastArtwork(urlString: upNext.imageUrl)
+                                    .frame(width: 44, height: 44)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("UP NEXT").font(.caption2.weight(.heavy)).foregroundStyle(.red)
+                                    Text(upNext.title).font(.subheadline).lineLimit(1)
+                                }
+                                Spacer(minLength: 0)
+                            }
+                            .padding(10)
+                            .background(Color.gray.opacity(0.2), in: RoundedRectangle(cornerRadius: 12))
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Up next: \(upNext.title)")
+                        .accessibilityHint("Plays the next episode")
                     }
                 }
                 .padding(.horizontal, 24)
@@ -110,6 +124,76 @@ struct PlayerDetailsView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.regularMaterial)
         .onChange(of: player.episode?.streamUrl) { _ in isScrubbing = false }
+    }
+
+    @ViewBuilder private var statusBadge: some View {
+        if player.isBuffering {
+            OnAirBadge(text: "TUNING IN…", color: .orange)
+        } else if player.isPlaying {
+            OnAirBadge()
+        } else {
+            OnAirBadge(text: "PAUSED", color: .gray)
+        }
+    }
+
+    /// Dark "radio display" panel with the episode title, the show, and a level meter.
+    private var stationDisplay: some View {
+        HStack(alignment: .center, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(player.episode?.author.uppercased() ?? "")
+                    .font(.caption.weight(.bold).monospaced())
+                    .foregroundStyle(.red)
+                    .lineLimit(1)
+                Text(player.episode?.title ?? "")
+                    .font(.headline)
+                    .foregroundStyle(.white)
+                    .lineLimit(3)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            LevelMeter(isActive: player.isPlaying && !player.isBuffering && !reduceMotion)
+                .frame(width: 36, height: 32)
+                .accessibilityHidden(true)
+        }
+        .padding(14)
+        .background(Color.black.opacity(0.85), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .accessibilityElement(children: .combine)
+    }
+
+    private var upNext: EpisodeViewModel? {
+        guard player.canPlayNext, let current = player.episode,
+              let index = player.queue.firstIndex(where: { $0.streamUrl == current.streamUrl }),
+              index + 1 < player.queue.count else { return nil }
+        return player.queue[index + 1]
+    }
+
+    /// Elapsed, total running time, and remaining time, labelled like a radio's display.
+    private var timeReadout: some View {
+        let elapsed = isScrubbing ? scrubTime : player.currentTime
+        let hasDuration = player.duration > 0
+        return HStack(alignment: .top) {
+            timeColumn("ELAPSED", value: timeString(elapsed), alignment: .leading)
+            Spacer()
+            timeColumn("RUNNING TIME", value: hasDuration ? timeString(player.duration) : "--:--:--",
+                       alignment: .center)
+            Spacer()
+            timeColumn("REMAINING", value: hasDuration ? "-" + timeString(player.duration - elapsed) : "--:--:--",
+                       alignment: .trailing)
+        }
+        .padding(.top, 2)
+    }
+
+    private func timeColumn(_ label: String, value: String, alignment: HorizontalAlignment) -> some View {
+        VStack(alignment: alignment, spacing: 2) {
+            Text(label)
+                .font(.caption2.weight(.heavy))
+                .foregroundStyle(.red)
+            Text(value)
+                .font(.subheadline.monospacedDigit().weight(.semibold))
+                .foregroundStyle(.primary)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label.capitalized)
+        .accessibilityValue(value == "--:--:--" ? "Unknown" : value)
     }
 
     private func timeString(_ seconds: Double) -> String {
@@ -158,6 +242,48 @@ struct MiniPlayerView: View {
         .simultaneousGesture(DragGesture().onEnded { value in
             if value.translation.height < -50 { expand() }
         })
+    }
+}
+
+/// Bouncing equalizer bars that sit still while paused.
+private struct LevelMeter: View {
+    let isActive: Bool
+    private let barCount = 4
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 0.15)) { context in
+            HStack(alignment: .bottom, spacing: 3) {
+                ForEach(0..<barCount, id: \.self) { bar in
+                    Capsule()
+                        .fill(Color.red)
+                        .frame(height: barHeight(bar, date: context.date))
+                }
+            }
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            .animation(.easeInOut(duration: 0.15), value: context.date)
+        }
+    }
+
+    private func barHeight(_ bar: Int, date: Date) -> CGFloat {
+        guard isActive else { return 4 }
+        let t = date.timeIntervalSinceReferenceDate * Double(bar + 3)
+        return 6 + 26 * CGFloat(abs(sin(t)))
+    }
+}
+
+/// Tick marks under the scrubber, like the frequency scale on a radio dial.
+private struct TunerScale: View {
+    var body: some View {
+        HStack(alignment: .top, spacing: 0) {
+            ForEach(0..<41, id: \.self) { tick in
+                Rectangle()
+                    .fill(Color.secondary.opacity(tick % 10 == 0 ? 0.8 : 0.4))
+                    .frame(width: 1, height: tick % 10 == 0 ? 8 : tick % 5 == 0 ? 6 : 3)
+                if tick < 40 { Spacer(minLength: 0) }
+            }
+        }
+        .padding(.horizontal, 2)
+        .accessibilityHidden(true)
     }
 }
 
