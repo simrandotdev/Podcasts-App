@@ -52,59 +52,58 @@ struct EpisodesScreen: View {
     }
 
     private var stationHeader: some View {
-        HStack(alignment: .top, spacing: 16) {
-            PodcastArtwork(urlString: podcast.image)
-                .frame(width: 128, height: 128)
-                .background(Color.gray.opacity(0.3))
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .strokeBorder(Color.red, lineWidth: isStationOnAir ? 3 : 0)
-                }
-
-            VStack(alignment: .leading, spacing: 6) {
-                if isStationOnAir { OnAirBadge() }
-                Text(podcast.title)
-                    .font(.title3.bold())
-                    .lineLimit(3)
-                if !podcast.author.isEmpty {
-                    Text(podcast.author.uppercased())
-                        .font(.caption.weight(.heavy).monospaced())
-                        .foregroundStyle(.red)
-                        .lineLimit(2)
-                }
-                Text(podcast.numberOfEpisodes)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                HStack(spacing: 8) {
-                    Button { tuneIn() } label: {
-                        Label("Tune In", systemImage: "play.fill")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                            .background(Color.red, in: Capsule())
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 16) {
+                PodcastArtwork(urlString: podcast.image)
+                    .frame(width: 128, height: 128)
+                    .background(Color.gray.opacity(0.3))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .strokeBorder(Color.red, lineWidth: isStationOnAir ? 3 : 0)
                     }
-                    .disabled(episodesController.episodes.isEmpty)
-                    .accessibilityHint("Plays the latest episode")
 
-                    Button { Task { await toggleFavorite() } } label: {
-                        Label(isFavorite ? "Preset" : "Save Preset",
-                              systemImage: isFavorite ? "star.fill" : "star")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(isFavorite ? .white : .red)
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 8)
-                            .background(isFavorite ? Color.red : Color.red.opacity(0.12), in: Capsule())
+                VStack(alignment: .leading, spacing: 6) {
+                    if isStationOnAir { OnAirBadge() }
+                    Text(podcast.title)
+                        .font(.title3.bold())
+                        .lineLimit(3)
+                    if !podcast.author.isEmpty {
+                        Text(podcast.author.uppercased())
+                            .font(.caption.weight(.heavy).monospaced())
+                            .foregroundStyle(.red)
+                            .lineLimit(2)
                     }
-                    .disabled(isUpdatingFavorite)
-                    .accessibilityLabel(isFavorite ? "Remove from favorites" : "Add to favorites")
+                    Text(podcast.numberOfEpisodes)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .buttonStyle(.plain)
-                .padding(.top, 4)
             }
+
+            // Full-width row so the labels never wrap; stacks vertically at large text sizes.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 10) { headerButtons }
+                VStack(spacing: 10) { headerButtons }
+            }
+            .buttonStyle(.plain)
         }
+    }
+
+    @ViewBuilder private var headerButtons: some View {
+        Button { tuneIn() } label: {
+            Label("Tune In", systemImage: "play.fill")
+                .headerButtonLabel(foreground: .white, background: .red)
+        }
+        .disabled(episodesController.episodes.isEmpty)
+        .accessibilityHint("Plays the latest episode")
+
+        Button { Task { await toggleFavorite() } } label: {
+            Label(isFavorite ? "Saved Preset" : "Save Preset",
+                  systemImage: isFavorite ? "star.fill" : "star")
+                .headerButtonLabel(foreground: .red, background: .red.opacity(0.12))
+        }
+        .disabled(isUpdatingFavorite)
+        .accessibilityLabel(isFavorite ? "Remove from favorites" : "Add to favorites")
     }
 
     /// The playing episode belongs to this podcast's schedule.
@@ -146,6 +145,20 @@ struct EpisodesScreen: View {
             await podcastsController.favorite(podcast: podcast)
         }
         isFavorite = await podcastsController.isfavorite(podcast: podcast)
+    }
+}
+
+private extension View {
+    /// Single-line capsule label that shares the row's width equally with its sibling.
+    func headerButtonLabel(foreground: Color, background: Color) -> some View {
+        font(.subheadline.weight(.semibold))
+            .lineLimit(1)
+            .fixedSize()
+            .foregroundStyle(foreground)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .padding(.horizontal, 14)
+            .background(background, in: Capsule())
+            .contentShape(Capsule())
     }
 }
 
