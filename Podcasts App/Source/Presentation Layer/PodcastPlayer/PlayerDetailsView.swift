@@ -6,27 +6,33 @@ struct PlayerDetailsView: View {
     let minimize: () -> Void
     @State private var scrubTime = 0.0
     @State private var isScrubbing = false
+    /// How far the player has been dragged down from its resting position.
+    @State private var dragOffset: CGFloat = 0
 
     var body: some View {
         VStack {
-            HStack {
-                Button(action: minimize) {
-                    Label("Minimize player", systemImage: "chevron.down")
+            VStack(spacing: 2) {
+                Capsule()
+                    .fill(Color.secondary.opacity(0.5))
+                    .frame(width: 40, height: 5)
+                    .accessibilityHidden(true)
+                HStack {
+                    Button(action: minimize) {
+                        Label("Minimize player", systemImage: "chevron.down")
+                    }
+                    Spacer()
+                    statusBadge
+                    Spacer()
+                    Button { player.close() } label: {
+                        Label("Close player", systemImage: "xmark")
+                    }
                 }
-                Spacer()
-                statusBadge
-                Spacer()
-                Button { player.close() } label: {
-                    Label("Close player", systemImage: "xmark")
-                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(PlayerButtonStyle())
+                .padding(.horizontal)
             }
-            .labelStyle(.iconOnly)
-            .buttonStyle(PlayerButtonStyle())
-            .padding(.horizontal)
             .contentShape(Rectangle())
-            .gesture(DragGesture().onEnded { value in
-                if value.translation.height > 60 { minimize() }
-            })
+            .gesture(dismissDrag)
 
             ScrollView {
                 VStack(spacing: 24) {
@@ -35,13 +41,15 @@ struct PlayerDetailsView: View {
                         .frame(maxWidth: 300)
                         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                         .overlay {
-                            // Same red "on air" ring as the station tiles on the Podcasts screen.
+                            // Same "on air" ring as the station tiles on the Podcasts screen.
                             RoundedRectangle(cornerRadius: 20, style: .continuous)
                                 .strokeBorder(Color.accentColor, lineWidth: player.isPlaying ? 4 : 0)
                         }
                         .scaleEffect(player.isPlaying || reduceMotion ? 1 : 0.88)
                         .animation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.75),
                                    value: player.isPlaying)
+                        // The artwork is the biggest grab target; the rest of the player still scrolls.
+                        .gesture(dismissDrag)
                         .padding(.top)
 
                     stationDisplay
@@ -125,7 +133,30 @@ struct PlayerDetailsView: View {
         .padding(.top, 8)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: dragOffset > 0 ? 24 : 0, style: .continuous))
+        .offset(y: dragOffset)
         .onChange(of: player.episode?.streamUrl) { _ in isScrubbing = false }
+        .accessibilityAction(.escape, minimize)
+    }
+
+    /// The grab handle and top bar follow the finger; the player minimizes when released far or fast enough.
+    private var dismissDrag: some Gesture {
+        // Global coordinates, because the dragged view itself moves under the finger.
+        DragGesture(minimumDistance: 4, coordinateSpace: .global)
+            .onChanged { value in
+                dragOffset = max(0, value.translation.height)
+            }
+            .onEnded { value in
+                let distance = value.translation.height
+                let projected = value.predictedEndTranslation.height
+                if distance > 140 || (distance > 20 && projected > 400) {
+                    minimize()
+                } else {
+                    withAnimation(reduceMotion ? .easeOut(duration: 0.2) : .spring(response: 0.35, dampingFraction: 0.8)) {
+                        dragOffset = 0
+                    }
+                }
+            }
     }
 
     @ViewBuilder private var statusBadge: some View {
