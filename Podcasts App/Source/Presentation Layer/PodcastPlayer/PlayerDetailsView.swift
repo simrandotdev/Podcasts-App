@@ -6,27 +6,36 @@ struct PlayerDetailsView: View {
     let minimize: () -> Void
     @State private var scrubTime = 0.0
     @State private var isScrubbing = false
+    /// How far the player has been dragged down from its resting position.
+    @State private var dragOffset: CGFloat = 0
 
     var body: some View {
         VStack {
-            HStack {
-                Button(action: minimize) {
-                    Label("Minimize player", systemImage: "chevron.down")
+            VStack(spacing: 2) {
+                Capsule()
+                    .fill(Color.secondary.opacity(0.5))
+                    .frame(width: 40, height: 5)
+                    .accessibilityHidden(true)
+                HStack {
+                    Button(action: minimize) {
+                        Label("Minimize player", systemImage: "chevron.down")
+                    }
+                    Spacer()
+                    statusBadge
+                    Spacer()
+                    Button { player.close() } label: {
+                        Label("Close player", systemImage: "xmark")
+                    }
                 }
-                Spacer()
-                statusBadge
-                Spacer()
-                Button { player.close() } label: {
-                    Label("Close player", systemImage: "xmark")
-                }
+                .labelStyle(.iconOnly)
+                .buttonStyle(PlayerButtonStyle())
+                .padding(.horizontal)
             }
-            .labelStyle(.iconOnly)
-            .buttonStyle(PlayerButtonStyle())
-            .padding(.horizontal)
+            // Like a navigation bar, the top bar's chrome stops growing at the largest text sizes
+            // so it always fits the screen.
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .contentShape(Rectangle())
-            .gesture(DragGesture().onEnded { value in
-                if value.translation.height > 60 { minimize() }
-            })
+            .gesture(dismissDrag)
 
             ScrollView {
                 VStack(spacing: 24) {
@@ -35,13 +44,15 @@ struct PlayerDetailsView: View {
                         .frame(maxWidth: 300)
                         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                         .overlay {
-                            // Same red "on air" ring as the station tiles on the Podcasts screen.
+                            // Same "on air" ring as the station tiles on the Podcasts screen.
                             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .strokeBorder(Color.red, lineWidth: player.isPlaying ? 4 : 0)
+                                .strokeBorder(Color.accentColor, lineWidth: player.isPlaying ? 4 : 0)
                         }
                         .scaleEffect(player.isPlaying || reduceMotion ? 1 : 0.88)
                         .animation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.75),
                                    value: player.isPlaying)
+                        // The artwork is the biggest grab target; the rest of the player still scrolls.
+                        .gesture(dismissDrag)
                         .padding(.top)
 
                     stationDisplay
@@ -55,7 +66,7 @@ struct PlayerDetailsView: View {
                             isScrubbing = editing
                             if !editing { player.seek(to: scrubTime) }
                         })
-                        .tint(.red)
+                        .tint(Color.accentColor)
                         .disabled(player.duration <= 0)
                         .accessibilityLabel("Playback position")
                         .accessibilityValue(timeString(isScrubbing ? scrubTime : player.currentTime))
@@ -63,35 +74,37 @@ struct PlayerDetailsView: View {
                         timeReadout
                     }
 
-                    HStack {
-                        Button { player.previous() } label: {
-                            Label("Previous episode", systemImage: "backward.end.fill")
-                        }.disabled(!player.canPlayPrevious)
-                        Spacer(minLength: 0)
-                        Button { player.skip(by: -15) } label: {
-                            Label("Rewind 15 seconds", systemImage: "gobackward.15")
+                    // One row when it fits; at the largest text sizes, play/pause sits above the rest.
+                    ViewThatFits(in: .horizontal) {
+                        HStack {
+                            previousButton
+                            Spacer(minLength: 0)
+                            rewindButton
+                            Spacer(minLength: 0)
+                            playPauseButton
+                            Spacer(minLength: 0)
+                            forwardButton
+                            Spacer(minLength: 0)
+                            nextButton
                         }
-                        Spacer(minLength: 0)
-                        Button { player.togglePlayback() } label: {
-                            Label(player.isPlaying ? "Pause" : "Play",
-                                  systemImage: player.isPlaying ? "pause.fill" : "play.fill")
-                                .font(.title)
-                                .foregroundStyle(.white)
-                                .frame(width: 72, height: 72)
-                                .background(Color.red, in: Circle())
+                        VStack(spacing: 12) {
+                            playPauseButton
+                            HStack {
+                                previousButton
+                                Spacer(minLength: 0)
+                                rewindButton
+                                Spacer(minLength: 0)
+                                forwardButton
+                                Spacer(minLength: 0)
+                                nextButton
+                            }
                         }
-                        Spacer(minLength: 0)
-                        Button { player.skip(by: 15) } label: {
-                            Label("Forward 15 seconds", systemImage: "goforward.15")
-                        }
-                        Spacer(minLength: 0)
-                        Button { player.next() } label: {
-                            Label("Next episode", systemImage: "forward.end.fill")
-                        }.disabled(!player.canPlayNext)
                     }
                     .labelStyle(.iconOnly)
                     .font(.title2)
                     .buttonStyle(PlayerButtonStyle())
+
+                    speedControl
 
                     if let upNext {
                         Button { player.next() } label: {
@@ -100,7 +113,7 @@ struct PlayerDetailsView: View {
                                     .frame(width: 44, height: 44)
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("UP NEXT").font(.caption2.weight(.heavy)).foregroundStyle(.red)
+                                    Text("UP NEXT").font(.caption2.weight(.heavy)).foregroundStyle(Color.accentColor)
                                     Text(upNext.title).font(.subheadline).lineLimit(1)
                                 }
                                 Spacer(minLength: 0)
@@ -123,12 +136,72 @@ struct PlayerDetailsView: View {
         .padding(.top, 8)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.regularMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: dragOffset > 0 ? 24 : 0, style: .continuous))
+        .offset(y: dragOffset)
         .onChange(of: player.episode?.streamUrl) { _ in isScrubbing = false }
+        .accessibilityAction(.escape, minimize)
+    }
+
+    /// The grab handle and top bar follow the finger; the player minimizes when released far or fast enough.
+    private var dismissDrag: some Gesture {
+        // Global coordinates, because the dragged view itself moves under the finger.
+        DragGesture(minimumDistance: 4, coordinateSpace: .global)
+            .onChanged { value in
+                dragOffset = max(0, value.translation.height)
+            }
+            .onEnded { value in
+                let distance = value.translation.height
+                let projected = value.predictedEndTranslation.height
+                if distance > 140 || (distance > 20 && projected > 400) {
+                    minimize()
+                } else {
+                    withAnimation(reduceMotion ? .easeOut(duration: 0.2) : .spring(response: 0.35, dampingFraction: 0.8)) {
+                        dragOffset = 0
+                    }
+                }
+            }
+    }
+
+    private var previousButton: some View {
+        Button { player.previous() } label: {
+            Label("Previous episode", systemImage: "backward.end.fill")
+        }
+        .disabled(!player.canPlayPrevious)
+    }
+
+    private var rewindButton: some View {
+        Button { player.skip(by: -15) } label: {
+            Label("Rewind 15 seconds", systemImage: "gobackward.15")
+        }
+    }
+
+    private var playPauseButton: some View {
+        Button { player.togglePlayback() } label: {
+            Label(player.isPlaying ? "Pause" : "Play",
+                  systemImage: player.isPlaying ? "pause.fill" : "play.fill")
+                .font(.title)
+                .foregroundStyle(.white)
+                .frame(width: 72, height: 72)
+                .background(Color.accentColor, in: Circle())
+        }
+    }
+
+    private var forwardButton: some View {
+        Button { player.skip(by: 15) } label: {
+            Label("Forward 15 seconds", systemImage: "goforward.15")
+        }
+    }
+
+    private var nextButton: some View {
+        Button { player.next() } label: {
+            Label("Next episode", systemImage: "forward.end.fill")
+        }
+        .disabled(!player.canPlayNext)
     }
 
     @ViewBuilder private var statusBadge: some View {
         if player.isBuffering {
-            OnAirBadge(text: "TUNING IN…", color: .orange)
+            OnAirBadge(text: "TUNING IN…", color: .gray)
         } else if player.isPlaying {
             OnAirBadge()
         } else {
@@ -142,7 +215,7 @@ struct PlayerDetailsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(player.episode?.author.uppercased() ?? "")
                     .font(.caption.weight(.bold).monospaced())
-                    .foregroundStyle(.red)
+                    .foregroundStyle(Color.accentColor)
                     .lineLimit(1)
                 Text(player.episode?.title ?? "")
                     .font(.headline)
@@ -167,26 +240,114 @@ struct PlayerDetailsView: View {
     }
 
     /// Elapsed, total running time, and remaining time, labelled like a radio's display.
+    /// Radio-preset style speed buttons; the selected speed is filled with the accent color.
+    /// Falls back to a label above the buttons, then a 2×2 grid, so large text never widens the player.
+    private var speedControl: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 8) {
+                speedLabel
+                speedButtons
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                speedLabel
+                HStack(spacing: 8) { speedButtons }
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                speedLabel
+                Grid(horizontalSpacing: 8, verticalSpacing: 8) {
+                    let rates = PlaybackController.playbackRates
+                    ForEach(Array(stride(from: 0, to: rates.count, by: 2)), id: \.self) { start in
+                        GridRow {
+                            ForEach(rates[start..<min(start + 2, rates.count)], id: \.self) { speedButton($0) }
+                        }
+                    }
+                }
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Playback speed")
+    }
+
+    private var speedLabel: some View {
+        Text("SPEED")
+            .font(.caption2.weight(.heavy).monospaced())
+            .foregroundStyle(Color.accentColor)
+            .fixedSize()
+            .accessibilityHidden(true)
+    }
+
+    @ViewBuilder private var speedButtons: some View {
+        ForEach(PlaybackController.playbackRates, id: \.self) { speedButton($0) }
+    }
+
+    private func speedButton(_ rate: Float) -> some View {
+        let isSelected = player.playbackRate == rate
+        return Button { player.setPlaybackRate(rate) } label: {
+            Text(Self.rateLabel(rate))
+                .font(.subheadline.weight(.semibold).monospacedDigit())
+                .lineLimit(1)
+                // ViewThatFits picks a layout from the full label width; the final grid may shrink it slightly.
+                .minimumScaleFactor(0.7)
+                .padding(.horizontal, 6)
+                .foregroundStyle(isSelected ? Color.white : Color.primary)
+                .frame(maxWidth: .infinity, minHeight: 36)
+                .background(isSelected ? Color.accentColor : Color.gray.opacity(0.15),
+                            in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(Self.rateLabel(rate)) speed")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+
+    /// "1×", "1.25×", "1.5×", "2×".
+    static func rateLabel(_ rate: Float) -> String {
+        rate.formatted(.number.precision(.fractionLength(0...2))) + "×"
+    }
+
     private var timeReadout: some View {
         let elapsed = isScrubbing ? scrubTime : player.currentTime
         let hasDuration = player.duration > 0
-        return HStack(alignment: .top) {
-            timeColumn("ELAPSED", value: timeString(elapsed), alignment: .leading)
-            Spacer()
-            timeColumn("RUNNING TIME", value: hasDuration ? timeString(player.duration) : "--:--:--",
-                       alignment: .center)
-            Spacer()
-            timeColumn("REMAINING", value: hasDuration ? "-" + timeString(player.duration - elapsed) : "--:--:--",
-                       alignment: .trailing)
+        let elapsedText = timeString(elapsed)
+        let runningText = hasDuration ? timeString(player.duration) : "--:--:--"
+        let remainingText = hasDuration ? "-" + timeString(player.duration - elapsed) : "--:--:--"
+        // Three columns when they fit; stacked rows at large text sizes so the player never widens.
+        return ViewThatFits(in: .horizontal) {
+            HStack(alignment: .top) {
+                timeColumn("ELAPSED", value: elapsedText, alignment: .leading)
+                Spacer()
+                timeColumn("RUNNING TIME", value: runningText, alignment: .center)
+                Spacer()
+                timeColumn("REMAINING", value: remainingText, alignment: .trailing)
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                timeRow("ELAPSED", value: elapsedText)
+                timeRow("RUNNING TIME", value: runningText)
+                timeRow("REMAINING", value: remainingText)
+            }
         }
         .padding(.top, 2)
+    }
+
+    private func timeRow(_ label: String, value: String) -> some View {
+        HStack {
+            Text(label)
+                .font(.caption2.weight(.heavy))
+                .foregroundStyle(Color.accentColor)
+            Spacer()
+            Text(value)
+                .font(.subheadline.monospacedDigit().weight(.semibold))
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label.capitalized)
+        .accessibilityValue(value == "--:--:--" ? "Unknown" : value)
     }
 
     private func timeColumn(_ label: String, value: String, alignment: HorizontalAlignment) -> some View {
         VStack(alignment: alignment, spacing: 2) {
             Text(label)
                 .font(.caption2.weight(.heavy))
-                .foregroundStyle(.red)
+                .foregroundStyle(Color.accentColor)
             Text(value)
                 .font(.subheadline.monospacedDigit().weight(.semibold))
                 .foregroundStyle(.primary)
@@ -216,7 +377,7 @@ struct MiniPlayerView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .overlay {
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .strokeBorder(Color.red, lineWidth: player.isPlaying ? 2 : 0)
+                                .strokeBorder(Color.accentColor, lineWidth: player.isPlaying ? 2 : 0)
                         }
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 4) {
@@ -245,7 +406,7 @@ struct MiniPlayerView: View {
                       systemImage: player.isPlaying ? "pause.fill" : "play.fill")
                     .foregroundStyle(.white)
                     .frame(width: 40, height: 40)
-                    .background(Color.red, in: Circle())
+                    .background(Color.accentColor, in: Circle())
             }
             Button { player.skip(by: 15) } label: {
                 Label("Forward 15 seconds", systemImage: "goforward.15")
@@ -270,7 +431,7 @@ struct MiniPlayerView: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 Rectangle().fill(Color.secondary.opacity(0.2))
-                Rectangle().fill(Color.red)
+                Rectangle().fill(Color.accentColor)
                     .frame(width: proxy.size.width * fraction)
             }
         }
@@ -295,8 +456,8 @@ struct MiniPlayerView: View {
     }
 
     private var statusColor: Color {
-        if player.isBuffering { return .orange }
-        return player.isPlaying ? .red : .secondary
+        if player.isBuffering { return .secondary }
+        return player.isPlaying ? Color.accentColor : .secondary
     }
 }
 
@@ -310,7 +471,7 @@ private struct LevelMeter: View {
             HStack(alignment: .bottom, spacing: 3) {
                 ForEach(0..<barCount, id: \.self) { bar in
                     Capsule()
-                        .fill(Color.red)
+                        .fill(Color.accentColor)
                         .frame(height: barHeight(bar, date: context.date))
                 }
             }

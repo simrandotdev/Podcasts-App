@@ -32,7 +32,7 @@ struct PodcastsScreen: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("Hello Podcasts 👋")
+        .navigationTitle("On Air 📻")
         .searchable(text: $controller.searchText)
         .task {
             if controller.podcasts.isEmpty { await controller.fetchPodcasts() }
@@ -130,7 +130,7 @@ struct StationTile: View {
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(Color.red, lineWidth: isOnAir ? 3 : 0)
+                    .strokeBorder(Color.accentColor, lineWidth: isOnAir ? 3 : 0)
             }
             .contentShape(Rectangle())
             .accessibilityElement(children: .ignore)
@@ -147,7 +147,7 @@ struct StationTile: View {
 /// Radio-style status capsule; shared by the station tiles and the player.
 struct OnAirBadge: View {
     var text = "ON AIR"
-    var color = Color.red
+    var color = Color.accentColor
 
     var body: some View {
         HStack(spacing: 4) {
@@ -162,9 +162,10 @@ struct OnAirBadge: View {
 }
 
 extension PlaybackController {
-    /// Episodes don't store their podcast's feed URL, so match the playing episode by author.
+    /// Whether one of this podcast's episodes is playing, matched by the podcast's feed URL.
+    /// History entries saved before feed URLs were recorded never match.
     func isOnAir(_ podcast: PodcastViewModel) -> Bool {
-        guard isPlaying, let author = episode?.author, !author.isEmpty else { return false }
-        return author.caseInsensitiveCompare(podcast.author) == .orderedSame
+        guard isPlaying, let feedUrl = episode?.podcastFeedUrl, !feedUrl.isEmpty else { return false }
+        return feedUrl == podcast.rssFeedUrl
     }
 }

@@ -208,6 +208,116 @@ final class PlaybackControllerTests: XCTestCase {
         }
     }
 
+    func test_playbackRate_defaultsToNormalSpeed() {
+        withPlayer { sut, _ in
+            XCTAssertEqual(sut.playbackRate, 1)
+        }
+    }
+
+    func test_setPlaybackRate_appliesToPlayerAndPersists() {
+        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let player = makePlayer()
+        let sut = PlaybackController(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        defer { sut.close() }
+
+        sut.setPlaybackRate(1.5)
+
+        XCTAssertEqual(sut.playbackRate, 1.5)
+        XCTAssertEqual(player.defaultRate, 1.5)
+        XCTAssertEqual(defaults.float(forKey: "playbackRate"), 1.5)
+    }
+
+    func test_setPlaybackRate_ignoresUnsupportedRates() {
+        withPlayer { sut, defaults in
+            sut.setPlaybackRate(1.25)
+            sut.setPlaybackRate(3)
+            sut.setPlaybackRate(0)
+            XCTAssertEqual(sut.playbackRate, 1.25)
+            XCTAssertEqual(defaults.float(forKey: "playbackRate"), 1.25)
+        }
+    }
+
+    func test_cyclePlaybackRate_stepsThroughRatesAndWraps() {
+        withPlayer { sut, _ in
+            var seen: [Float] = []
+            for _ in 0..<4 {
+                sut.cyclePlaybackRate()
+                seen.append(sut.playbackRate)
+            }
+            XCTAssertEqual(seen, [1.25, 1.5, 2, 1])
+        }
+    }
+
+    func test_init_restoresSavedPlaybackRate() {
+        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(Float(2), forKey: "playbackRate")
+        let player = makePlayer()
+
+        let sut = PlaybackController(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        defer { sut.close() }
+
+        XCTAssertEqual(sut.playbackRate, 2)
+        XCTAssertEqual(player.defaultRate, 2)
+    }
+
+    func test_init_ignoresUnsupportedSavedPlaybackRate() {
+        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(Float(7), forKey: "playbackRate")
+
+        let sut = PlaybackController(player: makePlayer(), defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        defer { sut.close() }
+
+        XCTAssertEqual(sut.playbackRate, 1)
+    }
+
+    func test_rateLabel_formatsSpeeds() {
+        XCTAssertEqual(PlaybackController.playbackRates.map(PlayerDetailsView.rateLabel),
+                       ["1×", "1.25×", "1.5×", "2×"])
+    }
+
+    private func episode(feed: String?, author: String) throws -> EpisodeViewModel {
+        var fields: [String: Any] = ["title": "Episode", "subtitle": "", "pubDate": 0, "description": "",
+                                     "author": author, "streamUrl": "file:///private/tmp/podcast-test-on-air.wav"]
+        fields["podcastFeedUrl"] = feed
+        let data = try JSONSerialization.data(withJSONObject: fields)
+        return EpisodeViewModel(episode: try JSONDecoder().decode(Episode.self, from: data))
+    }
+
+    private func podcast(feed: String, author: String) -> PodcastViewModel {
+        PodcastViewModel(title: "Show", author: author, image: "", totalEpisodes: 1, rssFeedUrl: feed)
+    }
+
+    func test_isOnAir_matchesThePlayingPodcastByFeedUrlNotAuthor() throws {
+        let playing = try episode(feed: "https://example.com/a", author: "Shared Network")
+        withPlayer { sut, _ in
+            sut.load(playing, queue: [playing])
+            XCTAssertTrue(sut.isOnAir(podcast(feed: "https://example.com/a", author: "Someone Else")))
+            XCTAssertFalse(sut.isOnAir(podcast(feed: "https://example.com/b", author: "Shared Network")))
+        }
+    }
+
+    func test_isOnAir_isFalseWhenPaused() throws {
+        let playing = try episode(feed: "https://example.com/a", author: "Author")
+        withPlayer { sut, _ in
+            sut.load(playing, queue: [playing], autoplay: false)
+            XCTAssertFalse(sut.isOnAir(podcast(feed: "https://example.com/a", author: "Author")))
+        }
+    }
+
+    func test_isOnAir_isFalseForLegacyEpisodesWithoutFeedUrl() throws {
+        let legacy = try episode(feed: nil, author: "Author")
+        withPlayer { sut, _ in
+            sut.load(legacy, queue: [legacy])
+            XCTAssertFalse(sut.isOnAir(podcast(feed: "https://example.com/a", author: "Author")))
+        }
+    }
+
     func test_invalidDuration_isSafeForDisplay() {
         XCTAssertEqual(PlaybackController.validTime(.nan), 0)
         XCTAssertEqual(PlaybackController.validTime(.infinity), 0)

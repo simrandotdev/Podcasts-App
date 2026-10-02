@@ -5,6 +5,7 @@ struct RecentlyPlayedEpisodesScreen: View {
     @EnvironmentObject private var episodesController: EpisodesController
     @EnvironmentObject private var player: PlaybackController
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
+    @State private var detailsEpisode: EpisodeViewModel?
 
     var body: some View {
         ScrollView {
@@ -19,18 +20,20 @@ struct RecentlyPlayedEpisodesScreen: View {
                         .font(.title2.bold())
                         .accessibilityAddTraits(.isHeader)
                     ForEach(episodesController.recentlyPlayedEpisodes, id: \.streamUrl) { episode in
-                        Button { resume(episode) } label: {
-                            LogEntryRow(episode: episode,
-                                        isOnAir: player.isPlaying && player.episode?.streamUrl == episode.streamUrl,
-                                        progress: player.progress(for: episode))
-                        }
-                        .buttonStyle(.plain)
+                        LogEntryRow(episode: episode,
+                                    isOnAir: player.isPlaying && player.episode?.streamUrl == episode.streamUrl,
+                                    progress: player.progress(for: episode))
+                            .episodeRowActions(play: { resume(episode) }, showDetails: { detailsEpisode = episode })
                     }
                 }
             }
             .padding()
         }
         .navigationTitle("Recently Played 🎙")
+        .sheet(item: $detailsEpisode) { episode in
+            EpisodeDetailsSheet(episode: episode) { resume(episode) }
+                .environmentObject(player)
+        }
         .task { await episodesController.fetchEpisodesFromHistory() }
         .refreshable { await episodesController.fetchEpisodesFromHistory() }
         .onReceive(NotificationCenter.default.publisher(for: .playbackHistoryChanged)) { _ in
@@ -52,7 +55,7 @@ struct RecentlyPlayedEpisodesScreen: View {
         VStack(spacing: 12) {
             Image(systemName: "dot.radiowaves.left.and.right")
                 .font(.system(size: 48))
-                .foregroundStyle(.red)
+                .foregroundStyle(Color.accentColor)
                 .accessibilityHidden(true)
             Text("Nothing on the log yet")
                 .font(.headline)
@@ -82,7 +85,7 @@ private struct LogEntryRow: View {
                     if !episode.author.isEmpty {
                         Text(episode.author.uppercased())
                             .font(.caption2.weight(.heavy).monospaced())
-                            .foregroundStyle(.red)
+                            .foregroundStyle(Color.accentColor)
                             .lineLimit(1)
                     }
                     Spacer(minLength: 0)
@@ -94,7 +97,7 @@ private struct LogEntryRow: View {
                     .multilineTextAlignment(.leading)
                 HStack(spacing: 8) {
                     ProgressView(value: progress ?? 0)
-                        .tint(.red)
+                        .tint(Color.accentColor)
                     Text(status)
                         .font(.caption2.monospacedDigit())
                         .foregroundStyle(.secondary)
@@ -109,7 +112,7 @@ private struct LogEntryRow: View {
         .background(Color.gray.opacity(0.15), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(Color.red, lineWidth: isOnAir ? 2 : 0)
+                .strokeBorder(Color.accentColor, lineWidth: isOnAir ? 2 : 0)
         }
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
