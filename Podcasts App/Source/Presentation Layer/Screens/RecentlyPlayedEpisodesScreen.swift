@@ -33,6 +33,7 @@ struct RecentlyPlayedEpisodesScreen: View {
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode) { resume(episode) }
                 .environmentObject(player)
+                .environmentObject(DownloadManager.shared)
         }
         .task { await episodesController.fetchEpisodesFromHistory() }
         .refreshable { await episodesController.fetchEpisodesFromHistory() }
@@ -69,6 +70,7 @@ struct RecentlyPlayedEpisodesScreen: View {
 }
 
 private struct LogEntryRow: View {
+    @EnvironmentObject private var downloads: DownloadManager
     let episode: EpisodeViewModel
     let isOnAir: Bool
     let progress: Double?
@@ -107,6 +109,9 @@ private struct LogEntryRow: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }
+
+            DownloadButton(episode: episode)
+                .padding(.vertical, -6)
         }
         .padding(10)
         .background(Color.gray.opacity(0.15), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
@@ -117,9 +122,11 @@ private struct LogEntryRow: View {
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(episode.title), \(episode.author)")
-        .accessibilityValue(isOnAir ? "On air, \(status)" : status)
+        .accessibilityValue([isOnAir ? "On air" : nil, status, downloads.state(for: episode.streamUrl).statusDescription]
+            .compactMap { $0 }.joined(separator: ", "))
         .accessibilityHint("Resumes playback")
         .accessibilityAddTraits(.isButton)
+        .downloadAccessibilityActions(episode, downloads: downloads)
     }
 
     private var status: String {

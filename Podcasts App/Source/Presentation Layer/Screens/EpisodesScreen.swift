@@ -4,6 +4,7 @@ import SwiftUI
 struct EpisodesScreen: View {
     @EnvironmentObject private var podcastsController: PodcastsController
     @EnvironmentObject private var player: PlaybackController
+    @EnvironmentObject private var downloads: DownloadManager
     @StateObject private var episodesController = EpisodesController()
     @State private var isFavorite = false
     @State private var isUpdatingFavorite = false
@@ -36,7 +37,8 @@ struct EpisodesScreen: View {
                 }
                 ForEach(episodesController.episodes, id: \.streamUrl) { episode in
                     ScheduleRow(date: episode.pubDate, title: episode.title, summary: episode.shortDescription,
-                                isOnAir: isOnAir(episode), progress: player.progress(for: episode))
+                                isOnAir: isOnAir(episode), progress: player.progress(for: episode),
+                                episode: episode)
                         .episodeRowActions(play: { play(episode) }, showDetails: { detailsEpisode = episode })
                 }
             }
@@ -48,9 +50,12 @@ struct EpisodesScreen: View {
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode, fallbackImageUrl: podcast.image) { play(episode) }
                 .environmentObject(player)
+                .environmentObject(DownloadManager.shared)
         }
         .navigationBarTitleDisplayMode(.inline)
         .task(id: podcast.rssFeedUrl) { await fetchEpisodes() }
+        // A podcast's episode list can identify downloads saved before episode details were recorded.
+        .onReceive(episodesController.$episodes) { downloads.identifyDownloads(from: $0) }
         .refreshable { await fetchEpisodes() }
     }
 
@@ -168,11 +173,14 @@ private extension View {
 
 /// One slot in the station schedule: a date "time slot", the episode, and how much was heard.
 private struct ScheduleRow: View {
+    @EnvironmentObject private var downloads: DownloadManager
     let date: Date
     let title: String
     let summary: String
     let isOnAir: Bool
     let progress: Double?
+    /// Shows the download control when set; nil for loading placeholders.
+    var episode: EpisodeViewModel?
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -216,6 +224,11 @@ private struct ScheduleRow: View {
                     }
                 }
             }
+
+            if let episode {
+                DownloadButton(episode: episode)
+                    .padding(.vertical, -6)
+            }
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -227,12 +240,32 @@ private struct ScheduleRow: View {
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(title), \(date.formatted(date: .long, time: .omitted))")
-        .accessibilityValue([isOnAir ? "On air" : nil, progress.map(status)].compactMap { $0 }.joined(separator: ", "))
+        .accessibilityValue(accessibilityStatus)
         .accessibilityHint("Plays this episode")
         .accessibilityAddTraits(.isButton)
+        .modifier(DownloadActions(episode: episode, downloads: downloads))
+    }
+
+    private var accessibilityStatus: String {
+        let download = episode.flatMap { downloads.state(for: $0.streamUrl).statusDescription }
+        return [isOnAir ? "On air" : nil, progress.map(status), download].compactMap { $0 }.joined(separator: ", ")
     }
 
     private func status(_ progress: Double) -> String {
         progress >= 0.99 ? "Finished" : "\(Int(progress * 100))% played"
+    }
+}
+
+/// Adds download VoiceOver actions only for rows that have an episode.
+private struct DownloadActions: ViewModifier {
+    let episode: EpisodeViewModel?
+    let downloads: DownloadManager
+
+    func body(content: Content) -> some View {
+        if let episode {
+            content.downloadAccessibilityActions(episode, downloads: downloads)
+        } else {
+            content
+        }
     }
 }

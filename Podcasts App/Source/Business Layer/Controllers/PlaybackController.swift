@@ -18,6 +18,8 @@ final class PlaybackController: ObservableObject {
     private let player: AVPlayer
     private let defaults: UserDefaults
     private let saveHistory: (Episode) async throws -> Void
+    /// The downloaded copy of an episode, by stream URL, to play instead of streaming.
+    private let localFile: (String) -> URL?
     private let systemPlaybackEnabled: Bool
     private var session: MPNowPlayingSession?
     private var timeObserver: Any?
@@ -35,6 +37,7 @@ final class PlaybackController: ObservableObject {
 
     init(player: AVPlayer = AVPlayer(), defaults: UserDefaults = .standard,
          systemPlaybackEnabled: Bool = true,
+         localFile: @escaping (String) -> URL? = { DownloadStore.standard.existingFile(for: $0) },
          saveHistory: @escaping (Episode) async throws -> Void = { episode in
              let repository: EpisodesRepository = Resolver.resolve()
              try await repository.saveInHistory(episode: episode)
@@ -43,6 +46,7 @@ final class PlaybackController: ObservableObject {
         self.defaults = defaults
         self.systemPlaybackEnabled = systemPlaybackEnabled
         self.saveHistory = saveHistory
+        self.localFile = localFile
         player.automaticallyWaitsToMinimizeStalling = true
         let savedRate = defaults.float(forKey: Self.playbackRateKey)
         playbackRate = Self.playbackRates.contains(savedRate) ? savedRate : 1
@@ -76,7 +80,8 @@ final class PlaybackController: ObservableObject {
     }
 
     func load(_ episode: EpisodeViewModel, queue: [EpisodeViewModel], autoplay: Bool = true) {
-        guard let url = URL(string: episode.fileUrl ?? episode.streamUrl),
+        // Prefer a downloaded copy so the episode plays offline.
+        guard let url = localFile(episode.streamUrl) ?? URL(string: episode.fileUrl ?? episode.streamUrl),
               ["http", "https", "file"].contains(url.scheme?.lowercased() ?? "") else {
             errorMessage = "This episode does not have a valid audio URL."
             return
