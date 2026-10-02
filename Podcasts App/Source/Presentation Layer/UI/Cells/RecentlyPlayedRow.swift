@@ -1,23 +1,27 @@
 import SwiftUI
 
 /// Horizontally scrolling cards for the most recently played episodes, each showing how much
-/// has been listened to. Tapping a card resumes the episode from its saved position.
+/// has been listened to. Tapping a card resumes the episode from its saved position; long-pressing
+/// shows its show notes.
 struct RecentlyPlayedRow: View {
     @EnvironmentObject private var player: PlaybackController
     let episodes: [EpisodeViewModel]
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
+    @State private var detailsEpisode: EpisodeViewModel?
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(alignment: .top, spacing: 12) {
                 ForEach(episodes, id: \.streamUrl) { episode in
-                    Button { resume(episode) } label: {
-                        RecentEpisodeCard(episode: episode, progress: player.progress(for: episode))
-                    }
-                    .buttonStyle(.plain)
+                    RecentEpisodeCard(episode: episode, progress: player.progress(for: episode))
+                        .episodeRowActions(play: { resume(episode) }, showDetails: { detailsEpisode = episode })
                 }
             }
             .padding(.horizontal)
+        }
+        .sheet(item: $detailsEpisode) { episode in
+            EpisodeDetailsSheet(episode: episode) { resume(episode) }
+                .environmentObject(player)
         }
     }
 

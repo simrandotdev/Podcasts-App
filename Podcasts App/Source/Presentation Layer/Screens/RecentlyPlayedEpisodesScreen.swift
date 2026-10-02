@@ -5,6 +5,7 @@ struct RecentlyPlayedEpisodesScreen: View {
     @EnvironmentObject private var episodesController: EpisodesController
     @EnvironmentObject private var player: PlaybackController
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
+    @State private var detailsEpisode: EpisodeViewModel?
 
     var body: some View {
         ScrollView {
@@ -19,18 +20,20 @@ struct RecentlyPlayedEpisodesScreen: View {
                         .font(.title2.bold())
                         .accessibilityAddTraits(.isHeader)
                     ForEach(episodesController.recentlyPlayedEpisodes, id: \.streamUrl) { episode in
-                        Button { resume(episode) } label: {
-                            LogEntryRow(episode: episode,
-                                        isOnAir: player.isPlaying && player.episode?.streamUrl == episode.streamUrl,
-                                        progress: player.progress(for: episode))
-                        }
-                        .buttonStyle(.plain)
+                        LogEntryRow(episode: episode,
+                                    isOnAir: player.isPlaying && player.episode?.streamUrl == episode.streamUrl,
+                                    progress: player.progress(for: episode))
+                            .episodeRowActions(play: { resume(episode) }, showDetails: { detailsEpisode = episode })
                     }
                 }
             }
             .padding()
         }
         .navigationTitle("Recently Played 🎙")
+        .sheet(item: $detailsEpisode) { episode in
+            EpisodeDetailsSheet(episode: episode) { resume(episode) }
+                .environmentObject(player)
+        }
         .task { await episodesController.fetchEpisodesFromHistory() }
         .refreshable { await episodesController.fetchEpisodesFromHistory() }
         .onReceive(NotificationCenter.default.publisher(for: .playbackHistoryChanged)) { _ in

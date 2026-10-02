@@ -12,8 +12,11 @@ struct Episode : Codable, FetchableRecord, PersistableRecord {
     let streamUrl: String
     var fileUrl: String?
     var imageUrl: String?
+    /// RSS feed URL of the podcast this episode belongs to (the `podcast` table's key).
+    /// Nil for history rows saved before it was recorded.
+    var podcastFeedUrl: String?
     
-    init(feedItem: RSSFeedItem) {
+    init(feedItem: RSSFeedItem, podcastFeedUrl: String? = nil) {
         self.streamUrl = feedItem.enclosure?.attributes?.url ?? ""
         self.title = feedItem.title ?? ""
         self.pubDate = feedItem.pubDate ?? Date()
@@ -21,7 +24,7 @@ struct Episode : Codable, FetchableRecord, PersistableRecord {
         self.author = feedItem.iTunes?.iTunesAuthor ?? ""
         self.imageUrl = feedItem.iTunes?.iTunesImage?.attributes?.href
         self.subtitle = feedItem.iTunes?.iTunesSubtitle ?? ""
-        
+        self.podcastFeedUrl = podcastFeedUrl
     }
     
     init(episodeViewModel: EpisodeViewModel) {
@@ -33,5 +36,6 @@ struct Episode : Codable, FetchableRecord, PersistableRecord {
         self.imageUrl = episodeViewModel.imageUrl
         self.subtitle = episodeViewModel.subtitle
         self.fileUrl = episodeViewModel.fileUrl
+        self.podcastFeedUrl = episodeViewModel.podcastFeedUrl
     }
 }

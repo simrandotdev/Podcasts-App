@@ -7,6 +7,7 @@ struct EpisodesScreen: View {
     @StateObject private var episodesController = EpisodesController()
     @State private var isFavorite = false
     @State private var isUpdatingFavorite = false
+    @State private var detailsEpisode: EpisodeViewModel?
     let podcast: PodcastViewModel
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
 
@@ -34,11 +35,9 @@ struct EpisodesScreen: View {
                     .accessibilityHidden(true)
                 }
                 ForEach(episodesController.episodes, id: \.streamUrl) { episode in
-                    Button { play(episode) } label: {
-                        ScheduleRow(date: episode.pubDate, title: episode.title, summary: episode.shortDescription,
-                                    isOnAir: isOnAir(episode), progress: player.progress(for: episode))
-                    }
-                    .buttonStyle(.plain)
+                    ScheduleRow(date: episode.pubDate, title: episode.title, summary: episode.shortDescription,
+                                isOnAir: isOnAir(episode), progress: player.progress(for: episode))
+                        .episodeRowActions(play: { play(episode) }, showDetails: { detailsEpisode = episode })
                 }
             }
             .padding()
@@ -46,6 +45,10 @@ struct EpisodesScreen: View {
             .frame(maxWidth: .infinity)
         }
         .navigationTitle(podcast.title)
+        .sheet(item: $detailsEpisode) { episode in
+            EpisodeDetailsSheet(episode: episode, fallbackImageUrl: podcast.image) { play(episode) }
+                .environmentObject(player)
+        }
         .navigationBarTitleDisplayMode(.inline)
         .task(id: podcast.rssFeedUrl) { await fetchEpisodes() }
         .refreshable { await fetchEpisodes() }
@@ -109,7 +112,8 @@ struct EpisodesScreen: View {
     /// The playing episode belongs to this podcast's schedule.
     private var isStationOnAir: Bool {
         guard player.isPlaying, let current = player.episode?.streamUrl else { return false }
-        return episodesController.episodes.contains { $0.streamUrl == current }
+        // The stream-URL check also covers history entries saved before feed URLs were recorded.
+        return player.isOnAir(podcast) || episodesController.episodes.contains { $0.streamUrl == current }
     }
 
     private func isOnAir(_ episode: EpisodeViewModel) -> Bool {

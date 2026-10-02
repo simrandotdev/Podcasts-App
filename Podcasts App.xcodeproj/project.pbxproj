@@ -43,6 +43,10 @@
 		84A432A320AF5CC6004F32AD /* DateExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A4329C20AF5CC6004F32AD /* DateExtensions.swift */; };
 		A10000000000000000000002 /* PlaybackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* PlaybackController.swift */; };
 		A10000000000000000000004 /* PodcastArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000003 /* PodcastArtwork.swift */; };
+		A1000000000000000000000E /* EpisodeDetailsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000D /* EpisodeDetailsSheet.swift */; };
+		A10000000000000000000010 /* StringExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000F /* StringExtensionTests.swift */; };
+		A10000000000000000000012 /* PlayerDetailsViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* PlayerDetailsViewTests.swift */; };
+		A10000000000000000000014 /* PersistanceManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000013 /* PersistanceManagerTests.swift */; };
 		A10000000000000000000006 /* PlaybackControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000005 /* PlaybackControllerTests.swift */; };
 		A10000000000000000000008 /* APIServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000007 /* APIServiceTests.swift */; };
 		CD9597F290653D9B81AFEF84 /* Pods_Podcasts_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2636EEA62AD5E74280931919 /* Pods_Podcasts_App.framework */; };
@@ -107,6 +111,10 @@
 		84A4329C20AF5CC6004F32AD /* DateExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
 		A10000000000000000000001 /* PlaybackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackController.swift; sourceTree = "<group>"; };
 		A10000000000000000000003 /* PodcastArtwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastArtwork.swift; sourceTree = "<group>"; };
+		A1000000000000000000000D /* EpisodeDetailsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeDetailsSheet.swift; sourceTree = "<group>"; };
+		A1000000000000000000000F /* StringExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000011 /* PlayerDetailsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailsViewTests.swift; sourceTree = "<group>"; };
+		A10000000000000000000013 /* PersistanceManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistanceManagerTests.swift; sourceTree = "<group>"; };
 		A10000000000000000000005 /* PlaybackControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackControllerTests.swift; sourceTree = "<group>"; };
 		A10000000000000000000007 /* APIServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIServiceTests.swift; sourceTree = "<group>"; };
 		D414F0D020ACD1E400D92DA8 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
@@ -148,6 +156,9 @@
 				4916CDC0288BC21E00A55A48 /* PodcastsControllerTests.swift */,
 				A10000000000000000000007 /* APIServiceTests.swift */,
 				A10000000000000000000005 /* PlaybackControllerTests.swift */,
+				A1000000000000000000000F /* StringExtensionTests.swift */,
+				A10000000000000000000011 /* PlayerDetailsViewTests.swift */,
+				A10000000000000000000013 /* PersistanceManagerTests.swift */,
 			);
 			path = "Podcasts App Unit Tests";
 			sourceTree = "<group>";
@@ -156,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				4916CDC3288CEEDF00A55A48 /* StandardListLoadingView.swift */,
+				A1000000000000000000000D /* EpisodeDetailsSheet.swift */,
 				A10000000000000000000003 /* PodcastArtwork.swift */,
 			);
 			path = Shared;
@@ -570,6 +582,9 @@
 				4916CDC1288BC21E00A55A48 /* PodcastsControllerTests.swift in Sources */,
 				A10000000000000000000008 /* APIServiceTests.swift in Sources */,
 				A10000000000000000000006 /* PlaybackControllerTests.swift in Sources */,
+				A10000000000000000000010 /* StringExtensionTests.swift in Sources */,
+				A10000000000000000000012 /* PlayerDetailsViewTests.swift in Sources */,
+				A10000000000000000000014 /* PersistanceManagerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -579,6 +594,7 @@
 			files = (
 				4916CDC4288CEEDF00A55A48 /* StandardListLoadingView.swift in Sources */,
 				A10000000000000000000004 /* PodcastArtwork.swift in Sources */,
+				A1000000000000000000000E /* EpisodeDetailsSheet.swift in Sources */,
 				846F224720AFE15700CA2FC9 /* PlayerDetailsView.swift in Sources */,
 				A1000000000000000000000C /* RecentlyPlayedRow.swift in Sources */,
 				493A41AD2874091E0030D12D /* StandardListItemView.swift in Sources */,

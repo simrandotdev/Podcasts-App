@@ -162,9 +162,10 @@ struct OnAirBadge: View {
 }
 
 extension PlaybackController {
-    /// Episodes don't store their podcast's feed URL, so match the playing episode by author.
+    /// Whether one of this podcast's episodes is playing, matched by the podcast's feed URL.
+    /// History entries saved before feed URLs were recorded never match.
     func isOnAir(_ podcast: PodcastViewModel) -> Bool {
-        guard isPlaying, let author = episode?.author, !author.isEmpty else { return false }
-        return author.caseInsensitiveCompare(podcast.author) == .orderedSame
+        guard isPlaying, let feedUrl = episode?.podcastFeedUrl, !feedUrl.isEmpty else { return false }
+        return feedUrl == podcast.rssFeedUrl
     }
 }

@@ -31,6 +31,9 @@ struct PlayerDetailsView: View {
                 .buttonStyle(PlayerButtonStyle())
                 .padding(.horizontal)
             }
+            // Like a navigation bar, the top bar's chrome stops growing at the largest text sizes
+            // so it always fits the screen.
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
             .contentShape(Rectangle())
             .gesture(dismissDrag)
 
@@ -71,31 +74,31 @@ struct PlayerDetailsView: View {
                         timeReadout
                     }
 
-                    HStack {
-                        Button { player.previous() } label: {
-                            Label("Previous episode", systemImage: "backward.end.fill")
-                        }.disabled(!player.canPlayPrevious)
-                        Spacer(minLength: 0)
-                        Button { player.skip(by: -15) } label: {
-                            Label("Rewind 15 seconds", systemImage: "gobackward.15")
+                    // One row when it fits; at the largest text sizes, play/pause sits above the rest.
+                    ViewThatFits(in: .horizontal) {
+                        HStack {
+                            previousButton
+                            Spacer(minLength: 0)
+                            rewindButton
+                            Spacer(minLength: 0)
+                            playPauseButton
+                            Spacer(minLength: 0)
+                            forwardButton
+                            Spacer(minLength: 0)
+                            nextButton
                         }
-                        Spacer(minLength: 0)
-                        Button { player.togglePlayback() } label: {
-                            Label(player.isPlaying ? "Pause" : "Play",
-                                  systemImage: player.isPlaying ? "pause.fill" : "play.fill")
-                                .font(.title)
-                                .foregroundStyle(.white)
-                                .frame(width: 72, height: 72)
-                                .background(Color.accentColor, in: Circle())
+                        VStack(spacing: 12) {
+                            playPauseButton
+                            HStack {
+                                previousButton
+                                Spacer(minLength: 0)
+                                rewindButton
+                                Spacer(minLength: 0)
+                                forwardButton
+                                Spacer(minLength: 0)
+                                nextButton
+                            }
                         }
-                        Spacer(minLength: 0)
-                        Button { player.skip(by: 15) } label: {
-                            Label("Forward 15 seconds", systemImage: "goforward.15")
-                        }
-                        Spacer(minLength: 0)
-                        Button { player.next() } label: {
-                            Label("Next episode", systemImage: "forward.end.fill")
-                        }.disabled(!player.canPlayNext)
                     }
                     .labelStyle(.iconOnly)
                     .font(.title2)
@@ -159,6 +162,43 @@ struct PlayerDetailsView: View {
             }
     }
 
+    private var previousButton: some View {
+        Button { player.previous() } label: {
+            Label("Previous episode", systemImage: "backward.end.fill")
+        }
+        .disabled(!player.canPlayPrevious)
+    }
+
+    private var rewindButton: some View {
+        Button { player.skip(by: -15) } label: {
+            Label("Rewind 15 seconds", systemImage: "gobackward.15")
+        }
+    }
+
+    private var playPauseButton: some View {
+        Button { player.togglePlayback() } label: {
+            Label(player.isPlaying ? "Pause" : "Play",
+                  systemImage: player.isPlaying ? "pause.fill" : "play.fill")
+                .font(.title)
+                .foregroundStyle(.white)
+                .frame(width: 72, height: 72)
+                .background(Color.accentColor, in: Circle())
+        }
+    }
+
+    private var forwardButton: some View {
+        Button { player.skip(by: 15) } label: {
+            Label("Forward 15 seconds", systemImage: "goforward.15")
+        }
+    }
+
+    private var nextButton: some View {
+        Button { player.next() } label: {
+            Label("Next episode", systemImage: "forward.end.fill")
+        }
+        .disabled(!player.canPlayNext)
+    }
+
     @ViewBuilder private var statusBadge: some View {
         if player.isBuffering {
             OnAirBadge(text: "TUNING IN…", color: .gray)
@@ -201,32 +241,63 @@ struct PlayerDetailsView: View {
 
     /// Elapsed, total running time, and remaining time, labelled like a radio's display.
     /// Radio-preset style speed buttons; the selected speed is filled with the accent color.
+    /// Falls back to a label above the buttons, then a 2×2 grid, so large text never widens the player.
     private var speedControl: some View {
-        HStack(spacing: 8) {
-            Text("SPEED")
-                .font(.caption2.weight(.heavy).monospaced())
-                .foregroundStyle(Color.accentColor)
-                .accessibilityHidden(true)
-            ForEach(PlaybackController.playbackRates, id: \.self) { rate in
-                let isSelected = player.playbackRate == rate
-                Button { player.setPlaybackRate(rate) } label: {
-                    Text(Self.rateLabel(rate))
-                        .font(.subheadline.weight(.semibold).monospacedDigit())
-                        .lineLimit(1)
-                        .fixedSize()
-                        .foregroundStyle(isSelected ? Color.white : Color.primary)
-                        .frame(maxWidth: .infinity, minHeight: 36)
-                        .background(isSelected ? Color.accentColor : Color.gray.opacity(0.15),
-                                    in: RoundedRectangle(cornerRadius: 9, style: .continuous))
-                        .contentShape(Rectangle())
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 8) {
+                speedLabel
+                speedButtons
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                speedLabel
+                HStack(spacing: 8) { speedButtons }
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                speedLabel
+                Grid(horizontalSpacing: 8, verticalSpacing: 8) {
+                    let rates = PlaybackController.playbackRates
+                    ForEach(Array(stride(from: 0, to: rates.count, by: 2)), id: \.self) { start in
+                        GridRow {
+                            ForEach(rates[start..<min(start + 2, rates.count)], id: \.self) { speedButton($0) }
+                        }
+                    }
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("\(Self.rateLabel(rate)) speed")
-                .accessibilityAddTraits(isSelected ? .isSelected : [])
             }
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Playback speed")
+    }
+
+    private var speedLabel: some View {
+        Text("SPEED")
+            .font(.caption2.weight(.heavy).monospaced())
+            .foregroundStyle(Color.accentColor)
+            .fixedSize()
+            .accessibilityHidden(true)
+    }
+
+    @ViewBuilder private var speedButtons: some View {
+        ForEach(PlaybackController.playbackRates, id: \.self) { speedButton($0) }
+    }
+
+    private func speedButton(_ rate: Float) -> some View {
+        let isSelected = player.playbackRate == rate
+        return Button { player.setPlaybackRate(rate) } label: {
+            Text(Self.rateLabel(rate))
+                .font(.subheadline.weight(.semibold).monospacedDigit())
+                .lineLimit(1)
+                // ViewThatFits picks a layout from the full label width; the final grid may shrink it slightly.
+                .minimumScaleFactor(0.7)
+                .padding(.horizontal, 6)
+                .foregroundStyle(isSelected ? Color.white : Color.primary)
+                .frame(maxWidth: .infinity, minHeight: 36)
+                .background(isSelected ? Color.accentColor : Color.gray.opacity(0.15),
+                            in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(Self.rateLabel(rate)) speed")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
     /// "1×", "1.25×", "1.5×", "2×".
@@ -237,16 +308,39 @@ struct PlayerDetailsView: View {
     private var timeReadout: some View {
         let elapsed = isScrubbing ? scrubTime : player.currentTime
         let hasDuration = player.duration > 0
-        return HStack(alignment: .top) {
-            timeColumn("ELAPSED", value: timeString(elapsed), alignment: .leading)
-            Spacer()
-            timeColumn("RUNNING TIME", value: hasDuration ? timeString(player.duration) : "--:--:--",
-                       alignment: .center)
-            Spacer()
-            timeColumn("REMAINING", value: hasDuration ? "-" + timeString(player.duration - elapsed) : "--:--:--",
-                       alignment: .trailing)
+        let elapsedText = timeString(elapsed)
+        let runningText = hasDuration ? timeString(player.duration) : "--:--:--"
+        let remainingText = hasDuration ? "-" + timeString(player.duration - elapsed) : "--:--:--"
+        // Three columns when they fit; stacked rows at large text sizes so the player never widens.
+        return ViewThatFits(in: .horizontal) {
+            HStack(alignment: .top) {
+                timeColumn("ELAPSED", value: elapsedText, alignment: .leading)
+                Spacer()
+                timeColumn("RUNNING TIME", value: runningText, alignment: .center)
+                Spacer()
+                timeColumn("REMAINING", value: remainingText, alignment: .trailing)
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                timeRow("ELAPSED", value: elapsedText)
+                timeRow("RUNNING TIME", value: runningText)
+                timeRow("REMAINING", value: remainingText)
+            }
         }
         .padding(.top, 2)
+    }
+
+    private func timeRow(_ label: String, value: String) -> some View {
+        HStack {
+            Text(label)
+                .font(.caption2.weight(.heavy))
+                .foregroundStyle(Color.accentColor)
+            Spacer()
+            Text(value)
+                .font(.subheadline.monospacedDigit().weight(.semibold))
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label.capitalized)
+        .accessibilityValue(value == "--:--:--" ? "Unknown" : value)
     }
 
     private func timeColumn(_ label: String, value: String, alignment: HorizontalAlignment) -> some View {

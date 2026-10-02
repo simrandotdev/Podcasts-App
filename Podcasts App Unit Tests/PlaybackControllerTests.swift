@@ -281,6 +281,43 @@ final class PlaybackControllerTests: XCTestCase {
                        ["1×", "1.25×", "1.5×", "2×"])
     }
 
+    private func episode(feed: String?, author: String) throws -> EpisodeViewModel {
+        var fields: [String: Any] = ["title": "Episode", "subtitle": "", "pubDate": 0, "description": "",
+                                     "author": author, "streamUrl": "file:///private/tmp/podcast-test-on-air.wav"]
+        fields["podcastFeedUrl"] = feed
+        let data = try JSONSerialization.data(withJSONObject: fields)
+        return EpisodeViewModel(episode: try JSONDecoder().decode(Episode.self, from: data))
+    }
+
+    private func podcast(feed: String, author: String) -> PodcastViewModel {
+        PodcastViewModel(title: "Show", author: author, image: "", totalEpisodes: 1, rssFeedUrl: feed)
+    }
+
+    func test_isOnAir_matchesThePlayingPodcastByFeedUrlNotAuthor() throws {
+        let playing = try episode(feed: "https://example.com/a", author: "Shared Network")
+        withPlayer { sut, _ in
+            sut.load(playing, queue: [playing])
+            XCTAssertTrue(sut.isOnAir(podcast(feed: "https://example.com/a", author: "Someone Else")))
+            XCTAssertFalse(sut.isOnAir(podcast(feed: "https://example.com/b", author: "Shared Network")))
+        }
+    }
+
+    func test_isOnAir_isFalseWhenPaused() throws {
+        let playing = try episode(feed: "https://example.com/a", author: "Author")
+        withPlayer { sut, _ in
+            sut.load(playing, queue: [playing], autoplay: false)
+            XCTAssertFalse(sut.isOnAir(podcast(feed: "https://example.com/a", author: "Author")))
+        }
+    }
+
+    func test_isOnAir_isFalseForLegacyEpisodesWithoutFeedUrl() throws {
+        let legacy = try episode(feed: nil, author: "Author")
+        withPlayer { sut, _ in
+            sut.load(legacy, queue: [legacy])
+            XCTAssertFalse(sut.isOnAir(podcast(feed: "https://example.com/a", author: "Author")))
+        }
+    }
+
     func test_invalidDuration_isSafeForDisplay() {
         XCTAssertEqual(PlaybackController.validTime(.nan), 0)
         XCTAssertEqual(PlaybackController.validTime(.infinity), 0)

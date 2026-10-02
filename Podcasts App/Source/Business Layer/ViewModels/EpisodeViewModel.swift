@@ -9,6 +9,7 @@ class EpisodeViewModel {
     let streamUrl: String
     var fileUrl: String?
     var imageUrl: String?
+    let podcastFeedUrl: String?
     
     // TODO: Remove HTML tags.
     var shortDescription: String {
@@ -33,5 +34,6 @@ class EpisodeViewModel {
         self.imageUrl = episode.imageUrl
         self.subtitle = episode.subtitle
         self.fileUrl = episode.fileUrl
+        self.podcastFeedUrl = episode.podcastFeedUrl
     }
 }

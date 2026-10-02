@@ -41,7 +41,7 @@ final class APIService {
         // for unsupported feeds instead of leaving a checked continuation suspended.
         let feed = try FeedParser(data: data).parse().get()
         guard let rss = feed.rssFeed else { throw APIError.failedToParseRss }
-        return rss.toEpisodes()
+        return rss.toEpisodes(podcastFeedUrl: rssUrl)
     }
 
     private func fetchData(from url: URL) async throws -> Data {

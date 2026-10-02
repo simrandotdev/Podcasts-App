@@ -71,6 +71,7 @@ final class APIServiceTests: XCTestCase {
         XCTAssertEqual(episodes.first?.streamUrl, "https://example.com/audio.mp3")
         XCTAssertEqual(episodes.first?.imageUrl, "https://example.com/art.jpg")
         XCTAssertEqual(episodes.first?.author, "Author")
+        XCTAssertEqual(episodes.first?.podcastFeedUrl, "https://example.com/feed")
     }
 
     func test_nonRSSFeed_returnsFailureInsteadOfHanging() async {
