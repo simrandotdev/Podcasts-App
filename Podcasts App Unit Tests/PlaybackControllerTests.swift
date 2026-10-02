@@ -208,6 +208,79 @@ final class PlaybackControllerTests: XCTestCase {
         }
     }
 
+    func test_playbackRate_defaultsToNormalSpeed() {
+        withPlayer { sut, _ in
+            XCTAssertEqual(sut.playbackRate, 1)
+        }
+    }
+
+    func test_setPlaybackRate_appliesToPlayerAndPersists() {
+        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let player = makePlayer()
+        let sut = PlaybackController(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        defer { sut.close() }
+
+        sut.setPlaybackRate(1.5)
+
+        XCTAssertEqual(sut.playbackRate, 1.5)
+        XCTAssertEqual(player.defaultRate, 1.5)
+        XCTAssertEqual(defaults.float(forKey: "playbackRate"), 1.5)
+    }
+
+    func test_setPlaybackRate_ignoresUnsupportedRates() {
+        withPlayer { sut, defaults in
+            sut.setPlaybackRate(1.25)
+            sut.setPlaybackRate(3)
+            sut.setPlaybackRate(0)
+            XCTAssertEqual(sut.playbackRate, 1.25)
+            XCTAssertEqual(defaults.float(forKey: "playbackRate"), 1.25)
+        }
+    }
+
+    func test_cyclePlaybackRate_stepsThroughRatesAndWraps() {
+        withPlayer { sut, _ in
+            var seen: [Float] = []
+            for _ in 0..<4 {
+                sut.cyclePlaybackRate()
+                seen.append(sut.playbackRate)
+            }
+            XCTAssertEqual(seen, [1.25, 1.5, 2, 1])
+        }
+    }
+
+    func test_init_restoresSavedPlaybackRate() {
+        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(Float(2), forKey: "playbackRate")
+        let player = makePlayer()
+
+        let sut = PlaybackController(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        defer { sut.close() }
+
+        XCTAssertEqual(sut.playbackRate, 2)
+        XCTAssertEqual(player.defaultRate, 2)
+    }
+
+    func test_init_ignoresUnsupportedSavedPlaybackRate() {
+        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(Float(7), forKey: "playbackRate")
+
+        let sut = PlaybackController(player: makePlayer(), defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        defer { sut.close() }
+
+        XCTAssertEqual(sut.playbackRate, 1)
+    }
+
+    func test_rateLabel_formatsSpeeds() {
+        XCTAssertEqual(PlaybackController.playbackRates.map(PlayerDetailsView.rateLabel),
+                       ["1×", "1.25×", "1.5×", "2×"])
+    }
+
     func test_invalidDuration_isSafeForDisplay() {
         XCTAssertEqual(PlaybackController.validTime(.nan), 0)
         XCTAssertEqual(PlaybackController.validTime(.infinity), 0)

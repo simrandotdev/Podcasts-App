@@ -12,6 +12,7 @@ final class PlaybackController: ObservableObject {
     @Published private(set) var isBuffering = false
     @Published private(set) var currentTime: Double = 0
     @Published private(set) var duration: Double = 0
+    @Published private(set) var playbackRate: Float = 1
     @Published var errorMessage: String?
 
     private let player: AVPlayer
@@ -29,6 +30,9 @@ final class PlaybackController: ObservableObject {
     private var isSeeking = false
     private var seekGeneration = 0
 
+    static let playbackRates: [Float] = [1, 1.25, 1.5, 2]
+    private static let playbackRateKey = "playbackRate"
+
     init(player: AVPlayer = AVPlayer(), defaults: UserDefaults = .standard,
          systemPlaybackEnabled: Bool = true,
          saveHistory: @escaping (Episode) async throws -> Void = { episode in
@@ -40,6 +44,10 @@ final class PlaybackController: ObservableObject {
         self.systemPlaybackEnabled = systemPlaybackEnabled
         self.saveHistory = saveHistory
         player.automaticallyWaitsToMinimizeStalling = true
+        let savedRate = defaults.float(forKey: Self.playbackRateKey)
+        playbackRate = Self.playbackRates.contains(savedRate) ? savedRate : 1
+        // play() starts at defaultRate, so the chosen speed survives pause/resume and new episodes.
+        player.defaultRate = playbackRate
         observePlayer()
         if systemPlaybackEnabled {
             let session = MPNowPlayingSession(players: [player])
@@ -87,6 +95,8 @@ final class PlaybackController: ObservableObject {
         currentTime = Self.validTime(defaults.double(forKey: episode.streamUrl))
 
         let item = AVPlayerItem(url: url)
+        // Keep voices at their natural pitch when playing faster.
+        item.audioTimePitchAlgorithm = .timeDomain
         item.nowPlayingInfo = Self.nowPlayingInfo(for: episode)
         player.replaceCurrentItem(with: item)
         itemSubscription = item.publisher(for: \.status).receive(on: DispatchQueue.main)
@@ -148,6 +158,21 @@ final class PlaybackController: ObservableObject {
     }
 
     func togglePlayback() { isPlaying ? pause() : play() }
+
+    /// Sets the playback speed for this and future episodes. Unsupported rates are ignored.
+    func setPlaybackRate(_ rate: Float) {
+        guard Self.playbackRates.contains(rate) else { return }
+        playbackRate = rate
+        defaults.set(rate, forKey: Self.playbackRateKey)
+        player.defaultRate = rate
+        if isPlaying { player.rate = rate }
+    }
+
+    /// Steps to the next speed, wrapping from the fastest back to 1×.
+    func cyclePlaybackRate() {
+        let index = Self.playbackRates.firstIndex(of: playbackRate) ?? 0
+        setPlaybackRate(Self.playbackRates[(index + 1) % Self.playbackRates.count])
+    }
 
     func seek(to seconds: Double) {
         guard episode != nil, seconds.isFinite else { return }

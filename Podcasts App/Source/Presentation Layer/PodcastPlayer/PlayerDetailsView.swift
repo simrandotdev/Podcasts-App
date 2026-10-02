@@ -93,6 +93,8 @@ struct PlayerDetailsView: View {
                     .font(.title2)
                     .buttonStyle(PlayerButtonStyle())
 
+                    speedControl
+
                     if let upNext {
                         Button { player.next() } label: {
                             HStack(spacing: 12) {
@@ -167,6 +169,40 @@ struct PlayerDetailsView: View {
     }
 
     /// Elapsed, total running time, and remaining time, labelled like a radio's display.
+    /// Radio-preset style speed buttons; the selected speed is filled with the accent color.
+    private var speedControl: some View {
+        HStack(spacing: 8) {
+            Text("SPEED")
+                .font(.caption2.weight(.heavy).monospaced())
+                .foregroundStyle(Color.accentColor)
+                .accessibilityHidden(true)
+            ForEach(PlaybackController.playbackRates, id: \.self) { rate in
+                let isSelected = player.playbackRate == rate
+                Button { player.setPlaybackRate(rate) } label: {
+                    Text(Self.rateLabel(rate))
+                        .font(.subheadline.weight(.semibold).monospacedDigit())
+                        .lineLimit(1)
+                        .fixedSize()
+                        .foregroundStyle(isSelected ? Color.white : Color.primary)
+                        .frame(maxWidth: .infinity, minHeight: 36)
+                        .background(isSelected ? Color.accentColor : Color.gray.opacity(0.15),
+                                    in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("\(Self.rateLabel(rate)) speed")
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
+            }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Playback speed")
+    }
+
+    /// "1×", "1.25×", "1.5×", "2×".
+    static func rateLabel(_ rate: Float) -> String {
+        rate.formatted(.number.precision(.fractionLength(0...2))) + "×"
+    }
+
     private var timeReadout: some View {
         let elapsed = isScrubbing ? scrubTime : player.currentTime
         let hasDuration = player.duration > 0
