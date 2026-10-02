@@ -31,6 +31,10 @@ final class PlaybackController: ObservableObject {
     private var resumeAfterInterruption = false
     private var isSeeking = false
     private var seekGeneration = 0
+    /// Total and per-day listening time, for the Settings screen.
+    let listeningStats: ListeningStats
+    /// When listening time was last counted; nil whenever audio isn't advancing normally.
+    private var lastListeningTick: Date?
 
     static let playbackRates: [Float] = [1, 1.25, 1.5, 2]
     private static let playbackRateKey = "playbackRate"
@@ -44,6 +48,7 @@ final class PlaybackController: ObservableObject {
          }) {
         self.player = player
         self.defaults = defaults
+        self.listeningStats = ListeningStats(defaults: defaults)
         self.systemPlaybackEnabled = systemPlaybackEnabled
         self.saveHistory = saveHistory
         self.localFile = localFile
@@ -87,6 +92,7 @@ final class PlaybackController: ObservableObject {
             return
         }
         saveProgress()
+        lastListeningTick = nil
         artworkTask?.cancel()
         seekGeneration += 1
         isSeeking = false
@@ -156,6 +162,7 @@ final class PlaybackController: ObservableObject {
     }
 
     func pause() {
+        lastListeningTick = nil
         isPlaying = false
         isBuffering = false
         player.pause()
@@ -183,6 +190,7 @@ final class PlaybackController: ObservableObject {
         guard episode != nil, seconds.isFinite else { return }
         let target = max(0, duration > 0 ? min(seconds, duration) : seconds)
         currentTime = target
+        lastListeningTick = nil
         isSeeking = true
         seekGeneration += 1
         let generation = seekGeneration
@@ -231,6 +239,20 @@ final class PlaybackController: ObservableObject {
         defaults.set(max(0, currentTime), forKey: episode.streamUrl)
     }
 
+    /// Counts real (wall-clock) time between playback ticks as listening, so 30 minutes at 2× counts
+    /// as 15. Buffering, seeking and pauses reset the tick, and long gaps are ignored.
+    func noteListeningTick(at now: Date = Date()) {
+        guard isPlaying, !isBuffering, !isSeeking else {
+            lastListeningTick = nil
+            return
+        }
+        if let last = lastListeningTick {
+            let elapsed = now.timeIntervalSince(last)
+            if elapsed > 0 && elapsed < 5 { listeningStats.record(elapsed, at: now) }
+        }
+        lastListeningTick = now
+    }
+
     /// Fraction of the episode played (0...1), or nil if its length has never been loaded.
     func progress(for episode: EpisodeViewModel) -> Double? {
         let isCurrent = episode.streamUrl == self.episode?.streamUrl
@@ -257,6 +279,7 @@ final class PlaybackController: ObservableObject {
                 self.currentTime = Self.validTime(time.seconds)
                 self.duration = Self.validTime(self.player.currentItem?.duration.seconds ?? 0)
                 self.saveProgress()
+                self.noteListeningTick()
             }
         }
         player.publisher(for: \.timeControlStatus).receive(on: DispatchQueue.main)
