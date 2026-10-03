@@ -15,17 +15,16 @@ Keep UI behavior in presentation components, orchestration in controllers/intera
 
 ## Build, Test, and Development Commands
 
-Run commands from the repository root. Install Xcode and CocoaPods first.
+Run commands from `OnAir-iOS/`. Xcode fetches the Swift packages on the first build.
 
 ```sh
-pod install
 open "Podcasts App.xcworkspace"
 xcodebuild -workspace "Podcasts App.xcworkspace" -scheme "Podcasts App" -destination 'generic/platform=iOS Simulator' build
 xcodebuild -workspace "Podcasts App.xcworkspace" -scheme "Podcasts App" -showdestinations
 xcodebuild -workspace "Podcasts App.xcworkspace" -scheme "Podcasts App" -destination 'platform=iOS Simulator,id=<SIMULATOR_UUID>' test
 ```
 
-These commands install locked dependencies, open the workspace, build, list destinations, and run tests. Replace the simulator placeholder with an available ID. To run locally, select the app scheme and a simulator in Xcode, then press Command-R. Use the workspace for CocoaPods integration.
+These commands open the workspace, build, list destinations, and run tests. Replace the simulator placeholder with an available ID. To run locally, select the app scheme and a simulator in Xcode, then press Command-R. Use the workspace, because the package versions are pinned in its `Package.resolved`.
 
 ## Coding Style & Naming Conventions
 
@@ -37,4 +36,4 @@ Use XCTest with injected mock interactors, following `PodcastsControllerTests.sw
 
 ## Commit & Pull Request Guidelines
 
-History uses short descriptive messages without a mandatory prefix, such as “correct the favourites selection.” Keep commits focused and describe the resulting change. PRs should explain the purpose, list validation performed, link relevant issues, and include screenshots for UI changes, including iPad when affected. Commit `Podfile.lock` when dependencies change.
+History uses short descriptive messages without a mandatory prefix, such as “correct the favourites selection.” Keep commits focused and describe the resulting change. PRs should explain the purpose, list validation performed, link relevant issues, and include screenshots for UI changes, including iPad when affected. Commit the workspace's `Package.resolved` when dependencies change.
