@@ -18,6 +18,8 @@ protocol PodcastsManaging {
     var favoritesDidChange: AnyPublisher<Void, Never> { get }
 
     func fetchPodcasts() async throws -> [Podcast]
+    /// The Home list from the last successful `fetchPodcasts()`, to show before the latest one loads.
+    func cachedPodcasts() async -> [Podcast]
     func searchPodcasts(forValue value: String) async throws -> [Podcast]
     func favorite(podcast: Podcast) async throws
     func unfavorite(podcast: Podcast) async throws
@@ -52,6 +54,12 @@ final class PodcastsManager: PodcastsManaging {
     func fetchPodcasts() async throws -> [Podcast] {
 
         try await repository.fetchTrendingPodcasts()
+    }
+
+
+    func cachedPodcasts() async -> [Podcast] {
+
+        await repository.cachedTrendingPodcasts()
     }
 
 

@@ -25,8 +25,16 @@ struct PodcastsScreen: View {
                     }
                 }
                 VStack(alignment: .leading, spacing: 8) {
-                    // While searching, the grid shows search results rather than the popular chart.
+                    // While searching, the grid shows search results rather than the trending stations.
                     sectionHeader(viewModel.isSearching ? "Results" : "Stations")
+                    if viewModel.isShowingSavedStations && !viewModel.isSearching {
+                        Label(viewModel.isLoading ? "Showing saved stations while the latest ones load"
+                                                  : "Showing saved stations from your last visit",
+                              systemImage: "clock.arrow.circlepath")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal)
+                    }
                     if let error = viewModel.errorMessage {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(error).foregroundStyle(.secondary)

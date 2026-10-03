@@ -38,7 +38,7 @@ When the value is empty, `APIService` falls back to the iTunes Search API. The O
 
 ### Load Trending Podcasts
 
-`fetchTrendingPodcastsAsync()` supplies the Home tab's station list. It requests `/v1/podcasts/trending?limit=50` from the On Air API. Without the API, it searches iTunes for `APIService.iTunesHomeSearchTerm`, which is "podcasts".
+`fetchTrendingPodcastsAsync()` supplies the Home tab's station list. It requests `/v1/podcasts/trending?limit=50` from the On Air API. Without the API, it searches iTunes for `APIService.iTunesHomeSearchTerm`, which is "podcasts". `PodcastsRepository` saves every non-empty result, so the Home tab can show it on the next launch while the API wakes up. See <doc:Discovering-Podcasts>.
 
 ### Decode the Results
 

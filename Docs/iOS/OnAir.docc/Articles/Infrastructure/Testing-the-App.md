@@ -54,6 +54,7 @@ final class FavoritesViewModelTests: XCTestCase {
 | `PlaybackManager` | Pass `systemPlaybackEnabled: false` and a stub `saveHistory` closure, plus private `UserDefaults` |
 | `DownloadManager` | Pass a temporary `DownloadStore`, an ephemeral configuration stubbed with a `URLProtocol`, and `monitorsNetwork: false` |
 | `NewEpisodesManager` | Inject `loadFavorites`, `fetchEpisodes`, a `NewEpisodeNotifying` notifier, and `now` |
+| `StationsCache` | Pass a file URL in a temporary directory, as `StationsCacheTests` does |
 | `ListeningStats` and `ListeningHeatmap` | Pass private `UserDefaults`, a fixed calendar, and fixed dates |
 
 > Tip: With `systemPlaybackEnabled: false`, `PlaybackManager` leaves the audio session, Now Playing, and remote commands alone, so a test can't change the simulator's audio state.

@@ -28,6 +28,16 @@ The grid is an adaptive `LazyVGrid` with columns at least 150 points wide, so it
 
 Tapping a tile opens the podcast's page. See <doc:Viewing-a-Podcast>.
 
+### Show Saved Stations
+
+The On Air API runs on Render's free plan, which stops it after 15 minutes without traffic, and it can take about a minute to start again. So the Home tab doesn't wait for it:
+
+1. Each time trending podcasts load, `PodcastsRepository` saves them with `StationsCache`.
+2. On the next launch, `HomeViewModel.loadIfNeeded()` shows the saved stations at once, under a note that they're from the last visit, and loads the latest ones.
+3. If the load fails, the saved stations stay on screen with the error and a Retry button. The view model tries again after 5 seconds and then after 15, so the latest stations replace the saved ones once the API is awake.
+
+Leaving the Home tab stops the retries. If saved stations are still showing when the user comes back, the tab loads again. A search, or the latest stations loading, replaces the saved ones.
+
 ### Search for Podcasts
 
 The search field comes from `.searchable(text:)`, bound to `HomeViewModel.searchText`. The view model waits until typing pauses for 333 ms and cancels any search still running. It searches once the trimmed text is longer than 2 characters. Shorter text, including an empty field, brings back the trending stations.

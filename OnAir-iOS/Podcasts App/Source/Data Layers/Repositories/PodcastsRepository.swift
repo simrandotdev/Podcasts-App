@@ -16,6 +16,8 @@ protocol PodcastsRepositoryProtocol {
 
     func search(forValue value: String) async throws -> [Podcast]
     func fetchTrendingPodcasts() async throws -> [Podcast]
+    /// The trending podcasts from the last successful `fetchTrendingPodcasts()`, or none.
+    func cachedTrendingPodcasts() async -> [Podcast]
     func fetchFavoritePodcasts() async throws -> [Podcast]
     func isFavorite(podcast: Podcast) async throws -> Bool
     func favorite(podcast: Podcast) async throws
@@ -34,11 +36,14 @@ final class PodcastsRepository: PodcastsRepositoryProtocol {
 
     private let api: APIService
     private let store: CoreDataStack
+    private let stationsCache: StationsCache
     private let now: () -> Date
 
-    init(api: APIService, store: CoreDataStack, now: @escaping () -> Date = Date.init) {
+    init(api: APIService, store: CoreDataStack, stationsCache: StationsCache = .standard,
+         now: @escaping () -> Date = Date.init) {
         self.api = api
         self.store = store
+        self.stationsCache = stationsCache
         self.now = now
     }
 
@@ -51,8 +56,17 @@ final class PodcastsRepository: PodcastsRepositoryProtocol {
     }
 
 
+    /// Trending podcasts, saved for the next launch so the Home tab can show them while the On Air API wakes up.
     func fetchTrendingPodcasts() async throws -> [Podcast] {
-        try await api.fetchTrendingPodcastsAsync()
+        let podcasts = try await api.fetchTrendingPodcastsAsync()
+        // An empty response never replaces stations that were saved earlier.
+        if !podcasts.isEmpty { stationsCache.save(podcasts) }
+        return podcasts
+    }
+
+
+    func cachedTrendingPodcasts() async -> [Podcast] {
+        stationsCache.load()
     }
 
 

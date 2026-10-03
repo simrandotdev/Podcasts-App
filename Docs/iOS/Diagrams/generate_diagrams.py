@@ -528,9 +528,9 @@ def storage_map():
             ("downloadsWiFiOnly", ["Download on Wi-Fi Only"], False),
             ("newEpisodeNotificationsEnabled", ["New Episode Alerts"], False),
         ]),
-        (640, "URLCache.shared", "Artwork and other responses", "blue", [
-            ("Memory", ["Up to 50 MB"], False),
-            ("Disk", ["Up to 200 MB; Clear Cache", "in Settings empties it"], False),
+        (640, "Caches", "Data the app can load again", "blue", [
+            ("HomeStations.json", ["The Home tab's last stations,", "shown while the API wakes up"], False),
+            ("URLCache.shared", ["Artwork: 50 MB in memory and", "200 MB on disk. Clear Cache", "in Settings empties it"], False),
         ]),
     ]
     width = 280
