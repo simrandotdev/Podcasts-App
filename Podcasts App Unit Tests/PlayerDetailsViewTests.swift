@@ -8,13 +8,10 @@ import XCTest
 final class PlayerDetailsViewTests: XCTestCase {
     private static var retainedObjects: [AnyObject] = []
 
-    private func episode(_ id: String) throws -> EpisodeViewModel {
-        let data = try JSONSerialization.data(withJSONObject: [
-            "title": "An episode with a fairly long title that wraps onto more than one line, \(id)",
-            "subtitle": "", "pubDate": 0, "description": "", "author": "A Podcast Author With A Long Name",
-            "streamUrl": "file:///private/tmp/player-layout-test-\(id).wav"
-        ])
-        return EpisodeViewModel(episode: try JSONDecoder().decode(Episode.self, from: data))
+    private func episode(_ id: String) -> Episode {
+        Episode(title: "An episode with a fairly long title that wraps onto more than one line, \(id)",
+                subtitle: "", pubDate: Date(timeIntervalSinceReferenceDate: 0), description: "",
+                author: "A Podcast Author With A Long Name", streamUrl: "file:///private/tmp/player-layout-test-\(id).wav")
     }
 
     /// Lays the player out at the given size and returns its scroll view.
@@ -23,15 +20,16 @@ final class PlayerDetailsViewTests: XCTestCase {
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
         let player = AVPlayer()
-        let controller = PlaybackController(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        let playback = PlaybackManager(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        let viewModel = PlayerViewModel(playback: playback)
         Self.retainedObjects.append(player)
-        Self.retainedObjects.append(controller)
+        Self.retainedObjects.append(playback)
         // A second episode in the queue makes the player show its Up Next card too.
-        let current = try episode("current")
-        controller.load(current, queue: [current, try episode("next")], autoplay: false)
+        let current = episode("current")
+        playback.load(current, queue: [current, episode("next")], autoplay: false)
 
         let host = UIHostingController(rootView: PlayerDetailsView {}
-            .environmentObject(controller)
+            .environmentObject(viewModel)
             .environment(\.sizeCategory, size))
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: width, height: height))
         window.rootViewController = host

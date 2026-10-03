@@ -2,16 +2,12 @@ import SwiftUI
 
 /// Downloaded episodes and downloads in progress. Storage and the Wi-Fi only setting live in Settings.
 struct DownloadsScreen: View {
-    @EnvironmentObject private var downloads: DownloadManager
-    @EnvironmentObject private var player: PlaybackController
-    @EnvironmentObject private var episodesController: EpisodesController
+    @EnvironmentObject private var downloads: DownloadsViewModel
+    @EnvironmentObject private var player: PlayerViewModel
+    @EnvironmentObject private var history: HistoryViewModel
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     @State private var detailsEpisode: EpisodeViewModel?
     @State private var isConfirmingRemoveAll = false
-
-    private var downloadedEpisodes: [EpisodeViewModel] {
-        downloads.library.map { EpisodeViewModel(episode: $0.episode) }
-    }
 
     var body: some View {
         List {
@@ -31,13 +27,13 @@ struct DownloadsScreen: View {
                     emptyState
                 } else {
                     ForEach(downloads.library) { item in
-                        let episode = EpisodeViewModel(episode: item.episode)
-                        DownloadedRow(episode: episode, fileSize: item.fileSize,
-                                      isOnAir: player.isPlaying && player.episode?.streamUrl == episode.streamUrl)
-                            .episodeRowActions(play: { play(episode) }, showDetails: { detailsEpisode = episode })
+                        DownloadedRow(episode: item.episode, fileSize: item.fileSize,
+                                      isOnAir: player.isOnAir(item.episode))
+                            .episodeRowActions(play: { play(item.episode) }, showDetails: { detailsEpisode = item.episode })
                     }
                     .onDelete { offsets in
-                        for index in offsets { downloads.remove(downloads.library[index].id) }
+                        let library = downloads.library
+                        for index in offsets { downloads.remove(library[index].episode) }
                     }
                 }
             } header: {
@@ -56,7 +52,7 @@ struct DownloadsScreen: View {
                     }
                     .accessibilityElement(children: .combine)
                     Button("Remove Earlier Downloads", role: .destructive) {
-                        downloads.removeUnidentifiedDownloads()
+                        downloads.removeUnidentified()
                     }
                 } header: {
                     sectionHeader("Earlier Downloads")
@@ -67,9 +63,8 @@ struct DownloadsScreen: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Downloads 📥")
-        .task { await episodesController.fetchEpisodesFromHistory() }
-        // Listening history can identify downloads saved before episode details were recorded.
-        .onReceive(episodesController.$recentlyPlayedEpisodes) { downloads.identifyDownloads(from: $0) }
+        // Loading the listening history identifies downloads saved before episode details were recorded.
+        .task { await history.fetchHistory() }
         .toolbar {
             if !downloads.library.isEmpty {
                 ToolbarItem(placement: .primaryAction) {
@@ -80,7 +75,7 @@ struct DownloadsScreen: View {
         .confirmationDialog("Remove all downloaded episodes?", isPresented: $isConfirmingRemoveAll,
                             titleVisibility: .visible) {
             Button("Remove \(downloads.library.count) Episodes", role: .destructive) {
-                downloads.removeAllDownloads()
+                downloads.removeAll()
             }
         } message: {
             Text("This frees \(Self.formattedSize(downloads.totalBytes)). You can download them again later.")
@@ -115,14 +110,9 @@ struct DownloadsScreen: View {
         .padding(.vertical, 24)
     }
 
+    /// Plays (or resumes) the episode, with the other downloads as the queue.
     private func play(_ episode: EpisodeViewModel) {
-        if player.episode?.streamUrl == episode.streamUrl {
-            // Already loaded: keep the current position rather than reloading the item.
-            player.play()
-            maximizePlayerView(nil, nil)
-        } else {
-            maximizePlayerView(episode, downloadedEpisodes)
-        }
+        maximizePlayerView(episode, downloads.library.map(\.episode))
     }
 
     static func formattedSize(_ bytes: Int64) -> String {
@@ -171,7 +161,7 @@ private struct DownloadedRow: View {
 }
 
 private struct ActiveDownloadRow: View {
-    @EnvironmentObject private var downloads: DownloadManager
+    @EnvironmentObject private var downloads: DownloadsViewModel
     let episode: EpisodeViewModel
     let state: DownloadState
     let isWaitingForWiFi: Bool
@@ -205,7 +195,7 @@ private struct ActiveDownloadRow: View {
                 Button("Retry") { downloads.download(episode) }
                     .font(.subheadline.weight(.semibold))
             default:
-                Button("Cancel") { downloads.cancel(episode.streamUrl) }
+                Button("Cancel") { downloads.cancel(episode) }
                     .font(.subheadline.weight(.semibold))
             }
         }

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PlayerDetailsView: View {
-    @EnvironmentObject private var player: PlaybackController
+    @EnvironmentObject private var player: PlayerViewModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let minimize: () -> Void
     @State private var scrubTime = 0.0
@@ -232,12 +232,7 @@ struct PlayerDetailsView: View {
         .accessibilityElement(children: .combine)
     }
 
-    private var upNext: EpisodeViewModel? {
-        guard player.canPlayNext, let current = player.episode,
-              let index = player.queue.firstIndex(where: { $0.streamUrl == current.streamUrl }),
-              index + 1 < player.queue.count else { return nil }
-        return player.queue[index + 1]
-    }
+    private var upNext: EpisodeViewModel? { player.upNext }
 
     /// Elapsed, total running time, and remaining time, labelled like a radio's display.
     /// Radio-preset style speed buttons; the selected speed is filled with the accent color.
@@ -255,7 +250,7 @@ struct PlayerDetailsView: View {
             VStack(alignment: .leading, spacing: 6) {
                 speedLabel
                 Grid(horizontalSpacing: 8, verticalSpacing: 8) {
-                    let rates = PlaybackController.playbackRates
+                    let rates = PlayerViewModel.playbackRates
                     ForEach(Array(stride(from: 0, to: rates.count, by: 2)), id: \.self) { start in
                         GridRow {
                             ForEach(rates[start..<min(start + 2, rates.count)], id: \.self) { speedButton($0) }
@@ -277,7 +272,7 @@ struct PlayerDetailsView: View {
     }
 
     @ViewBuilder private var speedButtons: some View {
-        ForEach(PlaybackController.playbackRates, id: \.self) { speedButton($0) }
+        ForEach(PlayerViewModel.playbackRates, id: \.self) { speedButton($0) }
     }
 
     private func speedButton(_ rate: Float) -> some View {
@@ -358,13 +353,13 @@ struct PlayerDetailsView: View {
     }
 
     private func timeString(_ seconds: Double) -> String {
-        let total = Int(PlaybackController.validTime(seconds))
+        let total = Int(PlayerViewModel.validTime(seconds))
         return String(format: "%02d:%02d:%02d", total / 3600, total / 60 % 60, total % 60)
     }
 }
 
 struct MiniPlayerView: View {
-    @EnvironmentObject private var player: PlaybackController
+    @EnvironmentObject private var player: PlayerViewModel
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let expand: () -> Void
 

@@ -37,3 +37,12 @@ class EpisodeViewModel {
         self.podcastFeedUrl = episode.podcastFeedUrl
     }
 }
+
+extension Episode {
+    init(episodeViewModel: EpisodeViewModel) {
+        self.init(title: episodeViewModel.title, subtitle: episodeViewModel.subtitle, pubDate: episodeViewModel.pubDate,
+                  description: episodeViewModel.description, author: episodeViewModel.author,
+                  streamUrl: episodeViewModel.streamUrl, fileUrl: episodeViewModel.fileUrl,
+                  imageUrl: episodeViewModel.imageUrl, podcastFeedUrl: episodeViewModel.podcastFeedUrl)
+    }
+}

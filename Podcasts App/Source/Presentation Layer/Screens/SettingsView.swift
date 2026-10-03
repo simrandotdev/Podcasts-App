@@ -8,27 +8,25 @@
 
 import SwiftUI
 import Combine
-import Resolver
 
 /// Listening analytics, storage, and app settings.
 struct SettingsView: View {
-    @EnvironmentObject private var player: PlaybackController
-    @EnvironmentObject private var downloads: DownloadManager
-    @EnvironmentObject private var tracker: NewEpisodeTracker
+    @StateObject private var viewModel = SettingsViewModel()
+    @EnvironmentObject private var downloads: DownloadsViewModel
+    @EnvironmentObject private var newEpisodes: NewEpisodesViewModel
     @Environment(\.openURL) private var openURL
     /// Set when the user turned alerts on but iOS has notifications off for the app.
     @State private var notificationsDenied = false
     #if DEBUG
     @StateObject private var settingsViewModel = DebugSettingsViewModel()
     #endif
-    @State private var cacheBytes = Int64(URLCache.shared.currentDiskUsage)
     @State private var isConfirmingDeleteDownloads = false
     @State private var isConfirmingClearCache = false
 
     var body: some View {
         List {
             Section {
-                ListeningHeatmapView(heatmap: ListeningHeatmap(stats: stats))
+                ListeningHeatmapView(heatmap: viewModel.heatmap)
                     .padding(.vertical, 8)
             } header: {
                 sectionHeader("Listening Activity")
@@ -41,11 +39,11 @@ struct SettingsView: View {
                 }
                 .disabled(downloads.library.isEmpty)
 
-                storageRow("Artwork Cache", bytes: cacheBytes, systemImage: "photo.on.rectangle")
+                storageRow("Artwork Cache", bytes: viewModel.cacheBytes, systemImage: "photo.on.rectangle")
                 Button(role: .destructive) { isConfirmingClearCache = true } label: {
                     Label("Clear Cache", systemImage: "xmark.bin")
                 }
-                .disabled(cacheBytes == 0)
+                .disabled(viewModel.cacheBytes == 0)
             } header: {
                 sectionHeader("Storage")
             } footer: {
@@ -53,7 +51,7 @@ struct SettingsView: View {
             }
 
             Section {
-                Toggle(isOn: Binding(get: { downloads.wifiOnly }, set: { downloads.setWiFiOnly($0) })) {
+                Toggle(isOn: $downloads.wifiOnly) {
                     Label("Download on Wi-Fi Only", systemImage: "wifi")
                 }
                 .tint(Color.accentColor)
@@ -62,9 +60,9 @@ struct SettingsView: View {
             }
 
             Section {
-                Toggle(isOn: Binding(get: { tracker.notificationsEnabled }, set: { isOn in
+                Toggle(isOn: Binding(get: { newEpisodes.notificationsEnabled }, set: { isOn in
                     Task {
-                        let enabled = await tracker.setNotificationsEnabled(isOn)
+                        let enabled = await newEpisodes.setNotificationsEnabled(isOn)
                         notificationsDenied = isOn && !enabled
                     }
                 })) {
@@ -77,21 +75,21 @@ struct SettingsView: View {
                     }
                 }
                 Button {
-                    Task { await tracker.refresh() }
+                    Task { await newEpisodes.refresh() }
                 } label: {
                     HStack {
                         Label("Check Now", systemImage: "arrow.clockwise")
                         Spacer()
-                        if tracker.isRefreshing {
+                        if newEpisodes.isRefreshing {
                             ProgressView()
-                        } else if let lastRefresh = tracker.lastRefresh {
+                        } else if let lastRefresh = newEpisodes.lastRefresh {
                             Text(lastRefresh, format: .relative(presentation: .named))
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
                     }
                 }
-                .disabled(tracker.isRefreshing)
+                .disabled(newEpisodes.isRefreshing)
             } header: {
                 sectionHeader("New Episodes")
             } footer: {
@@ -104,7 +102,7 @@ struct SettingsView: View {
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text(appVersion).foregroundStyle(.secondary)
+                    Text(viewModel.appVersion).foregroundStyle(.secondary)
                 }
                 .accessibilityElement(children: .combine)
             } header: {
@@ -121,27 +119,21 @@ struct SettingsView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Settings ⚙️")
-        .task {
-            cacheBytes = Int64(URLCache.shared.currentDiskUsage)
-        }
+        .task { viewModel.refreshCacheSize() }
         .confirmationDialog("Delete all downloaded episodes?", isPresented: $isConfirmingDeleteDownloads,
                             titleVisibility: .visible) {
             Button("Delete \(downloads.library.count) Episodes", role: .destructive) {
-                downloads.removeAllDownloads()
+                downloads.removeAll()
             }
         } message: {
             Text("This frees \(Self.formattedSize(downloads.totalBytes)). You can download them again later.")
         }
         .confirmationDialog("Clear the cache?", isPresented: $isConfirmingClearCache, titleVisibility: .visible) {
-            Button("Clear \(Self.formattedSize(cacheBytes))", role: .destructive) {
-                URLCache.shared.removeAllCachedResponses()
-                cacheBytes = Int64(URLCache.shared.currentDiskUsage)
+            Button("Clear \(Self.formattedSize(viewModel.cacheBytes))", role: .destructive) {
+                viewModel.clearCache()
             }
         }
     }
-
-    // The player publishes its position every second while playing, so these stay current.
-    private var stats: ListeningStats { player.listeningStats }
 
     private func storageRow(_ title: String, bytes: Int64, systemImage: String) -> some View {
         HStack {
@@ -158,13 +150,6 @@ struct SettingsView: View {
         Text(title.uppercased())
             .font(.caption.weight(.heavy).monospaced())
             .foregroundStyle(Color.accentColor)
-    }
-
-    private var appVersion: String {
-        let info = Bundle.main.infoDictionary
-        let version = info?["CFBundleShortVersionString"] as? String ?? "–"
-        let build = info?["CFBundleVersion"] as? String ?? "–"
-        return "\(version) (\(build))"
     }
 
     static func formattedSize(_ bytes: Int64) -> String {

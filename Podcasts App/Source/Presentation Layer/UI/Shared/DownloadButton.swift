@@ -2,15 +2,13 @@ import SwiftUI
 
 /// Compact download control for an episode row: download, progress (tap to cancel), downloaded, or retry.
 struct DownloadButton: View {
-    @EnvironmentObject private var downloads: DownloadManager
+    @EnvironmentObject private var downloads: DownloadsViewModel
     let episode: EpisodeViewModel
     /// Draws the icon on a small material disc, for overlaying on artwork.
     var onArtwork = false
 
-    private var streamUrl: String { episode.streamUrl }
-
     var body: some View {
-        let state = downloads.state(for: streamUrl)
+        let state = downloads.state(for: episode)
         Group {
             switch state {
             case .notDownloaded:
@@ -19,7 +17,7 @@ struct DownloadButton: View {
                 }
                 .accessibilityLabel("Download")
             case .downloading(let progress):
-                Button { downloads.cancel(streamUrl) } label: {
+                Button { downloads.cancel(episode) } label: {
                     ZStack {
                         Circle().stroke(Color.secondary.opacity(0.3), lineWidth: 2.5)
                         Circle()
@@ -72,17 +70,16 @@ extension DownloadState {
 extension View {
     /// Download actions for rows that combine their children into one VoiceOver element,
     /// which hides the row's own download button.
-    func downloadAccessibilityActions(_ episode: EpisodeViewModel, downloads: DownloadManager) -> some View {
-        let streamUrl = episode.streamUrl
-        let state = downloads.state(for: streamUrl)
+    func downloadAccessibilityActions(_ episode: EpisodeViewModel, downloads: DownloadsViewModel) -> some View {
+        let state = downloads.state(for: episode)
         return accessibilityActions {
             switch state {
             case .notDownloaded, .failed:
                 Button("Download") { downloads.download(episode) }
             case .downloading:
-                Button("Cancel Download") { downloads.cancel(streamUrl) }
+                Button("Cancel Download") { downloads.cancel(episode) }
             case .downloaded:
-                Button("Remove Download") { downloads.remove(streamUrl) }
+                Button("Remove Download") { downloads.remove(episode) }
             }
         }
     }

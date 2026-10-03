@@ -10,7 +10,8 @@ enum DownloadState: Equatable {
 }
 
 /// Downloads episodes for offline listening with a background URLSession, so downloads continue
-/// while the app is suspended or not running. Episodes are identified by `streamUrl`.
+/// while the app is suspended or not running. Episodes are identified by `streamUrl`. Views reach it
+/// through `DownloadsViewModel`.
 @MainActor
 final class DownloadManager: ObservableObject {
     static let sessionIdentifier = "ca.bytesizedsoftware.hello-podcasts.downloads"
@@ -44,7 +45,7 @@ final class DownloadManager: ObservableObject {
     private var session: URLSession!
     private var tasks: [String: URLSessionDownloadTask] = [:]
     /// Details of episodes being downloaded, for the Downloads screen.
-    private var pendingEpisodes: [String: EpisodeViewModel] = [:]
+    private var pendingEpisodes: [String: Episode] = [:]
     private var pathMonitor: NWPathMonitor?
 
     init(store: DownloadStore = .standard, configuration: URLSessionConfiguration? = nil,
@@ -104,12 +105,12 @@ final class DownloadManager: ObservableObject {
     /// Recovers details for downloads saved before they were recorded. Files are named by a hash of
     /// the stream URL, so any episode the app sees again (in history or a podcast's episode list)
     /// can be matched to its file.
-    func identifyDownloads(from episodes: [EpisodeViewModel]) {
+    func identifyDownloads(from episodes: [Episode]) {
         guard unidentifiedCount > 0 else { return }
         var recovered = false
         for episode in episodes where downloadedStems.contains(DownloadStore.fileStem(for: episode.streamUrl))
             && store.metadata(for: episode.streamUrl) == nil {
-            try? store.saveMetadata(Episode(episodeViewModel: episode))
+            try? store.saveMetadata(episode)
             recovered = true
         }
         if recovered { refreshLibrary() }
@@ -141,10 +142,9 @@ final class DownloadManager: ObservableObject {
     var isWaitingForWiFi: Bool { wifiOnly && !hasWiFi }
 
     /// Downloads in progress or failed, with their episode details, for the Downloads screen.
-    var activeDownloads: [(episode: EpisodeViewModel, state: DownloadState)] {
+    var activeDownloads: [(episode: Episode, state: DownloadState)] {
         activeStates.compactMap { streamUrl, state in
-            guard let episode = pendingEpisodes[streamUrl] ?? store.metadata(for: streamUrl).map(EpisodeViewModel.init)
-            else { return nil }
+            guard let episode = pendingEpisodes[streamUrl] ?? store.metadata(for: streamUrl) else { return nil }
             return (episode, state)
         }
         .sorted { $0.episode.title < $1.episode.title }
@@ -163,7 +163,7 @@ final class DownloadManager: ObservableObject {
         defaults.set(isOn, forKey: Self.wifiOnlyKey)
     }
 
-    func download(_ episode: EpisodeViewModel) {
+    func download(_ episode: Episode) {
         let streamUrl = episode.streamUrl
         switch state(for: streamUrl) {
         case .downloading, .downloaded: return
@@ -175,7 +175,7 @@ final class DownloadManager: ObservableObject {
         }
         pendingEpisodes[streamUrl] = episode
         // Saved now so a download that finishes while the app isn't running can still be listed.
-        try? store.saveMetadata(Episode(episodeViewModel: episode))
+        try? store.saveMetadata(episode)
         var request = URLRequest(url: url)
         // Background sessions hold the task until an allowed network is available.
         request.allowsCellularAccess = !wifiOnly

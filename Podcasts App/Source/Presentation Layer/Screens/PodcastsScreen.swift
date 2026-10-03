@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct PodcastsScreen: View {
-    @EnvironmentObject private var controller: PodcastsController
-    @EnvironmentObject private var episodesController: EpisodesController
-    @EnvironmentObject private var player: PlaybackController
-    @EnvironmentObject private var tracker: NewEpisodeTracker
+    @EnvironmentObject private var viewModel: HomeViewModel
+    @EnvironmentObject private var history: HistoryViewModel
+    @EnvironmentObject private var player: PlayerViewModel
+    @EnvironmentObject private var newEpisodes: NewEpisodesViewModel
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
 
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 12)]
@@ -12,25 +12,25 @@ struct PodcastsScreen: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 24) {
-                if controller.searchText.isEmpty && !tracker.freshEpisodes.isEmpty {
+                if !viewModel.isSearching && !newEpisodes.freshEpisodes.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         sectionHeader("Fresh on Air")
                         FreshOnAirRow(maximizePlayerView: maximizePlayerView)
                     }
                 }
-                if controller.searchText.isEmpty && !recentEpisodes.isEmpty {
+                if !viewModel.isSearching && !history.recentEpisodes.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         sectionHeader("Recently Played")
-                        RecentlyPlayedRow(episodes: recentEpisodes, maximizePlayerView: maximizePlayerView)
+                        RecentlyPlayedRow(episodes: history.recentEpisodes, maximizePlayerView: maximizePlayerView)
                     }
                 }
                 VStack(alignment: .leading, spacing: 8) {
                     // While searching, the grid shows search results rather than the popular chart.
-                    sectionHeader(controller.searchText.isEmpty ? "Stations" : "Results")
-                    if let error = controller.errorMessage {
+                    sectionHeader(viewModel.isSearching ? "Results" : "Stations")
+                    if let error = viewModel.errorMessage {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(error).foregroundStyle(.secondary)
-                            Button("Retry") { Task { await controller.fetchPodcasts() } }
+                            Button("Retry") { Task { await viewModel.fetchPodcasts() } }
                         }
                         .padding(.horizontal)
                     }
@@ -40,37 +40,32 @@ struct PodcastsScreen: View {
             .padding(.vertical)
         }
         .navigationTitle("On Air 📻")
-        .searchable(text: $controller.searchText)
-        .task {
-            if controller.podcasts.isEmpty { await controller.fetchPodcasts() }
-        }
-        .task { await episodesController.fetchEpisodesFromHistory() }
+        .searchable(text: $viewModel.searchText)
+        .task { await viewModel.loadIfNeeded() }
+        .task { await history.fetchHistory() }
         .refreshable {
-            await controller.fetchPodcasts()
-            await episodesController.fetchEpisodesFromHistory()
-            await tracker.refresh()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .playbackHistoryChanged)) { _ in
-            Task { await episodesController.fetchEpisodesFromHistory() }
+            await viewModel.fetchPodcasts()
+            await history.fetchHistory()
+            await newEpisodes.refresh()
         }
     }
 
     private var stationGrid: some View {
         LazyVGrid(columns: columns, spacing: 12) {
-            if controller.isLoading && controller.podcasts.isEmpty {
+            if viewModel.isLoading && viewModel.podcasts.isEmpty {
                 ForEach(0..<8, id: \.self) { _ in
                     StationTile(title: "Podcast title", author: "Author", imageUrl: "", isOnAir: false)
                 }
                 .redacted(reason: .placeholder)
                 .accessibilityHidden(true)
             }
-            ForEach(controller.podcasts, id: \.rssFeedUrl) { podcast in
+            ForEach(viewModel.podcasts, id: \.rssFeedUrl) { podcast in
                 NavigationLink {
                     EpisodesScreen(podcast: podcast, maximizePlayerView: maximizePlayerView)
                 } label: {
                     StationTile(title: podcast.title, author: podcast.author,
                                 imageUrl: podcast.image, isOnAir: player.isOnAir(podcast),
-                                newCount: tracker.newCount(for: podcast.rssFeedUrl))
+                                newCount: newEpisodes.newCount(for: podcast))
                 }
                 .buttonStyle(.plain)
             }
@@ -83,10 +78,6 @@ struct PodcastsScreen: View {
             .font(.title2.bold())
             .padding(.horizontal)
             .accessibilityAddTraits(.isHeader)
-    }
-
-    private var recentEpisodes: [EpisodeViewModel] {
-        Array(episodesController.recentlyPlayedEpisodes.prefix(10))
     }
 }
 
@@ -194,14 +185,5 @@ struct OnAirBadge: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
         .background(color, in: Capsule())
-    }
-}
-
-extension PlaybackController {
-    /// Whether one of this podcast's episodes is playing, matched by the podcast's feed URL.
-    /// History entries saved before feed URLs were recorded never match.
-    func isOnAir(_ podcast: PodcastViewModel) -> Bool {
-        guard isPlaying, let feedUrl = episode?.podcastFeedUrl, !feedUrl.isEmpty else { return false }
-        return feedUrl == podcast.rssFeedUrl
     }
 }

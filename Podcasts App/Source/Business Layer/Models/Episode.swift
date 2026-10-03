@@ -1,21 +1,34 @@
 import Foundation
 import FeedKit
-import GRDB
 
-struct Episode : Codable, FetchableRecord, PersistableRecord {
-    
+struct Episode : Codable {
+
     let title: String
     let subtitle: String
     let pubDate: Date
     let description: String
     let author: String
+    /// Identifies an episode everywhere: the queue, history, downloads and resume positions.
     let streamUrl: String
     var fileUrl: String?
     var imageUrl: String?
-    /// RSS feed URL of the podcast this episode belongs to (the `podcast` table's key).
-    /// Nil for history rows saved before it was recorded.
+    /// RSS feed URL of the podcast this episode belongs to (a favorite's `rssFeedUrl`).
+    /// Nil for history entries saved before it was recorded.
     var podcastFeedUrl: String?
-    
+
+    init(title: String, subtitle: String, pubDate: Date, description: String, author: String, streamUrl: String,
+         fileUrl: String? = nil, imageUrl: String? = nil, podcastFeedUrl: String? = nil) {
+        self.title = title
+        self.subtitle = subtitle
+        self.pubDate = pubDate
+        self.description = description
+        self.author = author
+        self.streamUrl = streamUrl
+        self.fileUrl = fileUrl
+        self.imageUrl = imageUrl
+        self.podcastFeedUrl = podcastFeedUrl
+    }
+
     init(feedItem: RSSFeedItem, podcastFeedUrl: String? = nil) {
         self.streamUrl = feedItem.enclosure?.attributes?.url ?? ""
         self.title = feedItem.title ?? ""
@@ -25,17 +38,5 @@ struct Episode : Codable, FetchableRecord, PersistableRecord {
         self.imageUrl = feedItem.iTunes?.iTunesImage?.attributes?.href
         self.subtitle = feedItem.iTunes?.iTunesSubtitle ?? ""
         self.podcastFeedUrl = podcastFeedUrl
-    }
-    
-    init(episodeViewModel: EpisodeViewModel) {
-        self.streamUrl = episodeViewModel.streamUrl
-        self.title = episodeViewModel.title
-        self.pubDate = episodeViewModel.pubDate
-        self.description = episodeViewModel.description
-        self.author = episodeViewModel.author
-        self.imageUrl = episodeViewModel.imageUrl
-        self.subtitle = episodeViewModel.subtitle
-        self.fileUrl = episodeViewModel.fileUrl
-        self.podcastFeedUrl = episodeViewModel.podcastFeedUrl
     }
 }
