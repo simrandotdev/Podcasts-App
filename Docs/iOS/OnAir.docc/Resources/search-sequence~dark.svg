@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="624" viewBox="0 0 960 624">
+<defs><marker id="head-line" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#a1a1a6"/></marker><marker id="head-neutral" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#545458"/></marker><marker id="head-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#409cff"/></marker><marker id="head-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#bf5af2"/></marker><marker id="head-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#30d158"/></marker><marker id="head-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#ff9f0a"/></marker><marker id="head-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#40c8e0"/></marker><marker id="head-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#ff453a"/></marker><marker id="head-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9 z" fill="#8e8e93"/></marker><filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#000" flood-opacity="0.22"/></filter></defs>
+<path d="M80 57.5 V604" stroke="#a1a1a6" stroke-width="1" stroke-dasharray="4 4"/><path d="M240 57.5 V604" stroke="#a1a1a6" stroke-width="1" stroke-dasharray="4 4"/><path d="M400 57.5 V604" stroke="#a1a1a6" stroke-width="1" stroke-dasharray="4 4"/><path d="M560 57.5 V604" stroke="#a1a1a6" stroke-width="1" stroke-dasharray="4 4"/><path d="M720 57.5 V604" stroke="#a1a1a6" stroke-width="1" stroke-dasharray="4 4"/><path d="M875 57.5 V604" stroke="#a1a1a6" stroke-width="1" stroke-dasharray="4 4"/>
+<rect x="20.7" y="20" width="118.6" height="37.5" rx="10" fill="#0d2742" stroke="#409cff" stroke-width="1.25"/>
+<text x="80" y="42.2" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#f5f5f7" text-anchor="middle">PodcastsScreen</text>
+<rect x="184.15" y="20" width="111.7" height="37.5" rx="10" fill="#0d2742" stroke="#409cff" stroke-width="1.25"/>
+<text x="240" y="42.2" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#f5f5f7" text-anchor="middle">HomeViewModel</text>
+<rect x="337.25" y="20" width="125.5" height="37.5" rx="10" fill="#2c1b3b" stroke="#bf5af2" stroke-width="1.25"/>
+<text x="400" y="42.2" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#f5f5f7" text-anchor="middle">PodcastsManager</text>
+<rect x="486.9" y="20" width="146.2" height="37.5" rx="10" fill="#0f2f1b" stroke="#30d158" stroke-width="1.25"/>
+<text x="560" y="42.2" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#f5f5f7" text-anchor="middle">PodcastsRepository</text>
+<rect x="674.5" y="20" width="91" height="37.5" rx="10" fill="#0f2f1b" stroke="#30d158" stroke-width="1.25"/>
+<text x="720" y="42.2" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11.5" fill="#f5f5f7" text-anchor="middle">APIService</text>
+<rect x="809.981" y="20" width="130.038" height="37.5" rx="10" fill="#3b2509" stroke="#ff9f0a" stroke-width="1.25"/>
+<text x="875" y="42.2" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#f5f5f7" text-anchor="middle">iTunes Search API</text>
+<path d="M82 100 L238 100" fill="none" stroke="#a1a1a6" stroke-width="1.5" marker-end="url(#head-line)"/>
+<text x="160" y="93" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#a1a1a6" text-anchor="middle">searchText</text>
+<rect x="165" y="122" width="150" height="44" rx="6" fill="#1c1c1e" stroke="#545458" stroke-width="1.25"/>
+<text x="240" y="139.3" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#a1a1a6" text-anchor="middle">Waits 333 ms and</text>
+<text x="240" y="155.3" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#a1a1a6" text-anchor="middle">needs 3+ characters</text>
+<path d="M242 196 L398 196" fill="none" stroke="#a1a1a6" stroke-width="1.5" marker-end="url(#head-line)"/>
+<text x="320" y="189" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#a1a1a6" text-anchor="middle">searchPodcasts</text>
+<path d="M402 238 L558 238" fill="none" stroke="#a1a1a6" stroke-width="1.5" marker-end="url(#head-line)"/>
+<text x="480" y="231" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#a1a1a6" text-anchor="middle">search(forValue:)</text>
+<path d="M562 280 L718 280" fill="none" stroke="#a1a1a6" stroke-width="1.5" marker-end="url(#head-line)"/>
+<text x="640" y="273" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#a1a1a6" text-anchor="middle">fetchPodcastsAsync</text>
+<path d="M722 322 L873 322" fill="none" stroke="#a1a1a6" stroke-width="1.5" marker-end="url(#head-line)"/>
+<text x="797.5" y="315" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#a1a1a6" text-anchor="middle">GET /search</text>
+<path d="M873 364 L722 364" fill="none" stroke="#a1a1a6" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#head-line)"/>
+<text x="797.5" y="357" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#a1a1a6" text-anchor="middle">JSON results</text>
+<rect x="650" y="384" width="140" height="44" rx="6" fill="#1c1c1e" stroke="#545458" stroke-width="1.25"/>
+<text x="720" y="401.3" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#a1a1a6" text-anchor="middle">Skips results</text>
+<text x="720" y="417.3" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#a1a1a6" text-anchor="middle">without a feedUrl</text>
+<path d="M718 458 L562 458" fill="none" stroke="#a1a1a6" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#head-line)"/>
+<text x="640" y="451" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#a1a1a6" text-anchor="middle">[Podcast]</text>
+<path d="M558 500 L402 500" fill="none" stroke="#a1a1a6" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#head-line)"/>
+<text x="480" y="493" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#a1a1a6" text-anchor="middle">[Podcast]</text>
+<path d="M398 542 L242 542" fill="none" stroke="#a1a1a6" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#head-line)"/>
+<text x="320" y="535" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#a1a1a6" text-anchor="middle">[Podcast]</text>
+<path d="M238 584 L82 584" fill="none" stroke="#a1a1a6" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#head-line)"/>
+<text x="160" y="577" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#a1a1a6" text-anchor="middle">@Published podcasts</text>
+</svg>
