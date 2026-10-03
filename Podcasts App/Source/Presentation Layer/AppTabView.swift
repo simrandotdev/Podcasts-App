@@ -10,13 +10,16 @@ struct AppTabView: View {
     @State private var selection: AppSection? = .home
 
     private enum AppSection: String, CaseIterable, Identifiable {
-        case home = "Home", favorites = "Favorites", history = "Recently Played"
+        case home = "Home", favorites = "Favorites", history = "Recently Played", downloads = "Downloads",
+             settings = "Settings"
         var id: String { rawValue }
         var symbol: String {
             switch self {
             case .home: return "magnifyingglass"
             case .favorites: return "heart.fill"
             case .history: return "music.mic"
+            case .downloads: return "arrow.down.circle"
+            case .settings: return "gearshape"
             }
         }
     }
@@ -88,6 +91,8 @@ struct AppTabView: View {
         case .home: PodcastsScreen(maximizePlayerView: play)
         case .favorites: FavoritesScreen(maximizePlayerView: play)
         case .history: RecentlyPlayedEpisodesScreen(maximizePlayerView: play)
+        case .downloads: DownloadsScreen(maximizePlayerView: play)
+        case .settings: SettingsView()
         }
     }
 

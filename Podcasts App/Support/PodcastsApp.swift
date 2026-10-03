@@ -3,6 +3,7 @@ import Resolver
 
 @main
 struct PodcastsApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var player = PlaybackController()
     @State private var isShowingSplash = true
@@ -17,7 +18,7 @@ struct PodcastsApp: App {
         WindowGroup {
             AppTabView()
                 .environmentObject(player)
-                .tint(.purple)
+                .environmentObject(DownloadManager.shared)
                 .font(.system(.body, design: .rounded))
                 .overlay {
                     if isShowingSplash {
@@ -30,6 +31,20 @@ struct PodcastsApp: App {
                 player.saveProgress()
             }
         }
+    }
+}
+
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    /// iOS relaunches the app to deliver finished background downloads. Reconnect to the session
+    /// and hold the completion handler until the session has delivered every event.
+    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String,
+                     completionHandler: @escaping () -> Void) {
+        guard identifier == DownloadManager.sessionIdentifier else {
+            completionHandler()
+            return
+        }
+        DownloadManager.backgroundEventsCompletionHandler = completionHandler
+        _ = DownloadManager.shared
     }
 }
 

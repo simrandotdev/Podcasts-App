@@ -22,6 +22,7 @@ struct RecentlyPlayedRow: View {
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode) { resume(episode) }
                 .environmentObject(player)
+                .environmentObject(DownloadManager.shared)
         }
     }
 
@@ -37,6 +38,7 @@ struct RecentlyPlayedRow: View {
 }
 
 struct RecentEpisodeCard: View {
+    @EnvironmentObject private var downloads: DownloadManager
     @ScaledMetric(relativeTo: .caption) private var width: CGFloat = 140
     let episode: EpisodeViewModel
     let progress: Double?
@@ -47,6 +49,9 @@ struct RecentEpisodeCard: View {
                 .aspectRatio(1, contentMode: .fit)
                 .background(Color.gray.opacity(0.3))
                 .cornerRadius(10)
+                .overlay(alignment: .bottomTrailing) {
+                    DownloadButton(episode: episode, onArtwork: true)
+                }
             ProgressView(value: progress ?? 0)
                 .progressViewStyle(.linear)
             Text(episode.title)
@@ -59,9 +64,11 @@ struct RecentEpisodeCard: View {
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(episode.title)
-        .accessibilityValue(progressDescription)
+        .accessibilityValue([progressDescription, downloads.state(for: episode.streamUrl).statusDescription]
+            .compactMap { $0 }.joined(separator: ", "))
         .accessibilityHint("Resumes playback")
         .accessibilityAddTraits(.isButton)
+        .downloadAccessibilityActions(episode, downloads: downloads)
     }
 
     private var progressDescription: String {

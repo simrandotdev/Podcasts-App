@@ -9,6 +9,7 @@ extension EpisodeViewModel: Identifiable {
 /// Full show notes for an episode, with a button to play or resume it.
 struct EpisodeDetailsSheet: View {
     @EnvironmentObject private var player: PlaybackController
+    @EnvironmentObject private var downloads: DownloadManager
     @Environment(\.dismiss) private var dismiss
     let episode: EpisodeViewModel
     /// Artwork to fall back on when the episode has none of its own.
@@ -21,6 +22,7 @@ struct EpisodeDetailsSheet: View {
                 VStack(alignment: .leading, spacing: 16) {
                     header
                     playButton
+                    downloadControl
                     Divider()
                     Text("SHOW NOTES")
                         .font(.caption.weight(.heavy).monospaced())
@@ -90,6 +92,55 @@ struct EpisodeDetailsSheet: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 48)
                 .background(Color.accentColor, in: Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder private var downloadControl: some View {
+        let streamUrl = episode.streamUrl
+        switch downloads.state(for: streamUrl) {
+        case .notDownloaded:
+            secondaryButton("Download", systemImage: "arrow.down.circle") { downloads.download(episode) }
+        case .downloading(let fraction):
+            HStack(spacing: 12) {
+                ProgressView(value: fraction).tint(Color.accentColor)
+                Text("\(Int(fraction * 100))%")
+                    .font(.subheadline.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                Button("Cancel") { downloads.cancel(streamUrl) }
+                    .font(.subheadline.weight(.semibold))
+            }
+            .frame(minHeight: 44)
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("Downloading")
+            .accessibilityValue("\(Int(fraction * 100)) percent")
+        case .downloaded:
+            HStack {
+                Label("Downloaded for offline listening", systemImage: "arrow.down.circle.fill")
+                    .font(.subheadline)
+                    .foregroundStyle(Color.accentColor)
+                Spacer(minLength: 8)
+                Button("Remove", role: .destructive) { downloads.remove(streamUrl) }
+                    .font(.subheadline.weight(.semibold))
+            }
+            .frame(minHeight: 44)
+        case .failed(let message):
+            VStack(alignment: .leading, spacing: 6) {
+                Text(message)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                secondaryButton("Try Again", systemImage: "arrow.clockwise") { downloads.download(episode) }
+            }
+        }
+    }
+
+    private func secondaryButton(_ title: String, systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.headline)
+                .foregroundStyle(Color.accentColor)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .background(Color.accentColor.opacity(0.12), in: Capsule())
         }
         .buttonStyle(.plain)
     }
