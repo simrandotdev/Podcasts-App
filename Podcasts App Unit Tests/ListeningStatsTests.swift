@@ -63,6 +63,58 @@ final class ListeningStatsTests: XCTestCase {
         XCTAssertEqual(week.first?.day, calendar.startOfDay(for: date(1)))
     }
 
+    // MARK: - Heatmap
+
+    func test_heatmapLevel_usesFixedMinuteBands() {
+        XCTAssertEqual([0, 1, 14, 15, 29, 30, 59, 60, 240].map(ListeningHeatmap.level(forMinutes:)),
+                       [0, 1, 1, 2, 2, 3, 3, 4, 4])
+    }
+
+    func test_heatmap_alignsWeeksToTheCalendarAndEndsToday() {
+        var calendar = self.calendar
+        calendar.firstWeekday = 1   // Sunday
+        var stats = stats()
+        stats.calendar = calendar
+        let today = date(15)        // Thursday, October 15, 2026
+        stats.record(600, at: today)
+
+        let heatmap = ListeningHeatmap(stats: stats, endingOn: today, weekCount: 3)
+
+        XCTAssertEqual(heatmap.weeks.count, 3)
+        XCTAssertTrue(heatmap.weeks.allSatisfy { $0.count == 7 })
+        let firstDay = heatmap.weeks[0][0]?.date
+        XCTAssertEqual(firstDay.map { calendar.component(.weekday, from: $0) }, 1, "Columns start on Sunday")
+        XCTAssertEqual(firstDay, calendar.date(from: DateComponents(year: 2026, month: 9, day: 27)),
+                       "Three weeks ending the week of Oct 11 start on Sunday, Sep 27")
+        let lastWeek = heatmap.weeks[2]
+        XCTAssertEqual(lastWeek[4]?.date, calendar.startOfDay(for: today), "Thursday is the fifth row")
+        XCTAssertEqual(lastWeek[4]?.minutes, 10)
+        XCTAssertNil(lastWeek[5], "Days after today are empty")
+        XCTAssertNil(lastWeek[6])
+    }
+
+    func test_heatmap_countsActiveDaysAndStreaks() {
+        let stats = stats()
+        for day in [1, 2, 3, 6, 7, 8, 9] { stats.record(120, at: date(day)) }
+        stats.record(20, at: date(5))   // under a minute: not an active day
+
+        // Today (the 10th) has no listening yet, so the current streak runs through yesterday.
+        let heatmap = ListeningHeatmap(stats: stats, endingOn: date(10), weekCount: 4)
+
+        XCTAssertEqual(heatmap.activeDays, 7)
+        XCTAssertEqual(heatmap.longestStreak, 4)
+        XCTAssertEqual(heatmap.currentStreak, 4)
+        XCTAssertEqual(heatmap.totalSeconds, 7 * 120 + 20)
+    }
+
+    func test_heatmap_currentStreakIsZeroAfterAMissedDay() {
+        let stats = stats()
+        stats.record(120, at: date(7))
+        let heatmap = ListeningHeatmap(stats: stats, endingOn: date(9), weekCount: 2)
+        XCTAssertEqual(heatmap.currentStreak, 0)
+        XCTAssertEqual(heatmap.longestStreak, 1)
+    }
+
     // MARK: - PlaybackController
 
     private func makePlayer() throws -> PlaybackController {

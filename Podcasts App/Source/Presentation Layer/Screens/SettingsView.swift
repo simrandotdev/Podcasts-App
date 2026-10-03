@@ -6,7 +6,6 @@
 //  Copyright © 2021 Simran App. All rights reserved.
 //
 
-import Charts
 import SwiftUI
 import Combine
 import Resolver
@@ -15,8 +14,6 @@ import Resolver
 struct SettingsView: View {
     @EnvironmentObject private var player: PlaybackController
     @EnvironmentObject private var downloads: DownloadManager
-    @EnvironmentObject private var podcastsController: PodcastsController
-    @EnvironmentObject private var episodesController: EpisodesController
     #if DEBUG
     @StateObject private var settingsViewModel = DebugSettingsViewModel()
     #endif
@@ -24,34 +21,13 @@ struct SettingsView: View {
     @State private var isConfirmingDeleteDownloads = false
     @State private var isConfirmingClearCache = false
 
-    private let tileColumns = [GridItem(.adaptive(minimum: 140), spacing: 12)]
-
     var body: some View {
         List {
             Section {
-                LazyVGrid(columns: tileColumns, spacing: 12) {
-                    StatTile(label: "Minutes Listened", value: minutes(stats.totalSeconds), systemImage: "headphones")
-                    StatTile(label: "This Week", value: minutes(weekSeconds), unit: "min", systemImage: "calendar")
-                    StatTile(label: "Episodes Played", value: count(episodesController.recentlyPlayedEpisodes.count),
-                             systemImage: "music.mic")
-                    StatTile(label: "Subscribed Podcasts", value: count(podcastsController.favoritePodcasts.count),
-                             systemImage: "star.fill")
-                    StatTile(label: "Downloaded Episodes", value: count(downloads.library.count),
-                             systemImage: "arrow.down.circle.fill")
-                    StatTile(label: "Download Storage", value: Self.formattedSize(downloads.totalBytes),
-                             systemImage: "internaldrive")
-                }
-                .listRowInsets(EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12))
-                .listRowBackground(Color.clear)
-            } header: {
-                sectionHeader("Your Listening")
-            }
-
-            Section {
-                WeeklyListeningChart(days: stats.lastDays(7))
+                ListeningHeatmapView(heatmap: ListeningHeatmap(stats: stats))
                     .padding(.vertical, 8)
             } header: {
-                sectionHeader("Last 7 Days")
+                sectionHeader("Listening Activity")
             } footer: {
                 Text("Listening time is real time spent playing, so an hour at 2× counts as 30 minutes.")
             }
@@ -105,8 +81,6 @@ struct SettingsView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("Settings ⚙️")
         .task {
-            await podcastsController.fetchFavorites()
-            await episodesController.fetchEpisodesFromHistory()
             cacheBytes = Int64(URLCache.shared.currentDiskUsage)
         }
         .confirmationDialog("Delete all downloaded episodes?", isPresented: $isConfirmingDeleteDownloads,
@@ -127,13 +101,6 @@ struct SettingsView: View {
 
     // The player publishes its position every second while playing, so these stay current.
     private var stats: ListeningStats { player.listeningStats }
-    private var weekSeconds: Double { stats.lastDays(7).reduce(0) { $0 + $1.seconds } }
-
-    private func minutes(_ seconds: Double) -> String {
-        Int(seconds / 60).formatted(.number)
-    }
-
-    private func count(_ value: Int) -> String { value.formatted(.number) }
 
     private func storageRow(_ title: String, bytes: Int64, systemImage: String) -> some View {
         HStack {
@@ -164,106 +131,189 @@ struct SettingsView: View {
     }
 }
 
-/// A headline number with its label, styled like the player's station display.
-private struct StatTile: View {
-    let label: String
-    let value: String
-    var unit: String?
-    let systemImage: String
+/// A year of listening, GitHub style: one column per week, one row per weekday, shaded by minutes.
+/// Uses a validated one-hue ordinal ramp (Heat1–Heat4); empty days are neutral, not the ramp.
+private struct ListeningHeatmapView: View {
+    let heatmap: ListeningHeatmap
+    @State private var selected: ListeningHeatmap.Day?
+    @ScaledMetric(relativeTo: .caption2) private var cell: CGFloat = 13
+    private let gap: CGFloat = 3
+
+    private static let endID = "heatmap-end"
+    private static let levelColors: [Color] = [Color(.systemGray5), Color("Heat1"), Color("Heat2"), Color("Heat3"), Color("Heat4")]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Image(systemName: systemImage)
-                .font(.subheadline)
-                .foregroundStyle(Color.accentColor)
-            HStack(alignment: .firstTextBaseline, spacing: 3) {
-                Text(value)
-                    .font(.title.bold().monospacedDigit())
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)
-                if let unit {
-                    Text(unit)
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                }
-            }
-            Text(label)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(label)
-        .accessibilityValue(unit.map { "\(value) \($0)" } ?? value)
-    }
-}
-
-/// Minutes listened per day. One series, so no legend; the selected (or latest) day is labelled.
-private struct WeeklyListeningChart: View {
-    let days: [(day: Date, seconds: Double)]
-    @State private var selectedDay: Date?
-
-    private var isEmpty: Bool { days.allSatisfy { $0.seconds < 60 } }
-
-    private var labelledDay: Date? {
-        selectedDay ?? days.last(where: { $0.seconds >= 60 })?.day
-    }
-
-    var body: some View {
-        if isEmpty {
-            Text("Play an episode and your listening time will show up here.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, minHeight: 120)
-        } else {
-            Chart(days, id: \.day) { item in
-                let minutes = Int(item.seconds / 60)
-                BarMark(x: .value("Day", item.day, unit: .day),
-                        y: .value("Minutes", minutes),
-                        width: .fixed(18))
-                    .foregroundStyle(Color("ChartBar"))
-                    .cornerRadius(4)
-                    .annotation(position: .top, spacing: 4) {
-                        if Calendar.current.isDate(item.day, inSameDayAs: labelledDay ?? .distantPast) {
-                            Text("\(minutes) min")
-                                .font(.caption2.weight(.semibold).monospacedDigit())
-                                .foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 10) {
+            summary
+            HStack(alignment: .top, spacing: gap + 2) {
+                weekdayLabels
+                ScrollViewReader { proxy in
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            monthLabels
+                            HStack(alignment: .top, spacing: gap) {
+                                ForEach(Array(heatmap.weeks.enumerated()), id: \.offset) { _, week in
+                                    weekColumn(week)
+                                }
+                                // Room for the last month's label, which can extend past its column.
+                                // Scrolling to this keeps that label on screen.
+                                Color.clear.frame(width: 16, height: 1).id(Self.endID)
+                            }
                         }
                     }
-                    .accessibilityLabel(item.day.formatted(.dateTime.weekday(.wide)))
-                    .accessibilityValue("\(minutes) minutes")
-            }
-            .chartXAxis {
-                AxisMarks(values: .stride(by: .day)) { _ in
-                    AxisValueLabel(format: .dateTime.weekday(.narrow), centered: true)
+                    .onAppear { proxy.scrollTo(Self.endID, anchor: .trailing) }
                 }
             }
-            .chartYAxis {
-                AxisMarks(position: .leading) { _ in
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
-                        .foregroundStyle(Color.secondary.opacity(0.3))
-                    AxisValueLabel()
-                }
+            HStack {
+                Text(selectionText)
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+                Spacer(minLength: 8)
+                legend
             }
-            .chartOverlay { proxy in
-                GeometryReader { geometry in
-                    Rectangle().fill(.clear).contentShape(Rectangle())
-                        .gesture(DragGesture(minimumDistance: 0)
-                            .onChanged { value in
-                                let x = value.location.x - geometry[proxy.plotAreaFrame].origin.x
-                                if let date: Date = proxy.value(atX: x) {
-                                    selectedDay = Calendar.current.startOfDay(for: date)
-                                }
-                            }
-                            .onEnded { _ in selectedDay = nil })
-                }
-            }
-            .frame(height: 180)
-            .accessibilityLabel("Minutes listened in the last 7 days")
         }
+    }
+
+    private var summary: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("\(Int(heatmap.totalSeconds / 60).formatted()) minutes in the last year")
+                .font(.subheadline.weight(.semibold))
+            // Three short stats side by side; stacked at large text sizes instead of wrapping mid-phrase.
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 20) { summaryStats }
+                VStack(alignment: .leading, spacing: 6) { summaryStats }
+            }
+        }
+    }
+
+    @ViewBuilder private var summaryStats: some View {
+        miniStat(heatmap.activeDays.formatted(), "Active days")
+        miniStat(dayCount(heatmap.longestStreak), "Longest streak")
+        miniStat(dayCount(heatmap.currentStreak), "Current streak")
+    }
+
+    private func miniStat(_ value: String, _ label: String) -> some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text(value)
+                .font(.subheadline.weight(.bold).monospacedDigit())
+            Text(label)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .fixedSize()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityValue(value)
+    }
+
+    private func weekColumn(_ week: [ListeningHeatmap.Day?]) -> some View {
+        VStack(spacing: gap) {
+            ForEach(0..<7, id: \.self) { row in
+                if let day = week[row] {
+                    let isSelected = selected.map { heatmap.calendar.isDate($0.date, inSameDayAs: day.date) } ?? false
+                    RoundedRectangle(cornerRadius: 2.5, style: .continuous)
+                        .fill(Self.levelColors[day.level])
+                        .frame(width: cell, height: cell)
+                        .overlay {
+                            if isSelected {
+                                RoundedRectangle(cornerRadius: 2.5, style: .continuous)
+                                    .strokeBorder(Color.primary, lineWidth: 1.5)
+                            }
+                        }
+                        // A hit target larger than the square, without changing the layout.
+                        .contentShape(Rectangle().inset(by: -gap / 2))
+                        .onTapGesture { selected = isSelected ? nil : day }
+                } else {
+                    Color.clear.frame(width: cell, height: cell)
+                }
+            }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(weekLabel(week))
+        .accessibilityValue(weekValue(week))
+    }
+
+    /// Short month name over the first column of each month, skipping ones that would collide.
+    private var monthLabels: some View {
+        HStack(spacing: gap) {
+            ForEach(Array(monthLabelTexts.enumerated()), id: \.offset) { _, text in
+                Text(text ?? "")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .fixedSize()
+                    .frame(width: cell, alignment: .leading)
+            }
+        }
+        .accessibilityHidden(true)
+    }
+
+    private var monthLabelTexts: [String?] {
+        var lastLabelled = -3
+        return heatmap.weeks.enumerated().map { index, week in
+            guard let first = week.compactMap({ $0 }).first else { return nil }
+            let startsMonth = index == 0 || week.contains { day in
+                day.map { heatmap.calendar.component(.day, from: $0.date) == 1 } ?? false
+            }
+            guard startsMonth, index - lastLabelled >= 3 else { return nil }
+            lastLabelled = index
+            let monthDay = week.compactMap { $0 }.first { heatmap.calendar.component(.day, from: $0.date) == 1 } ?? first
+            return monthDay.date.formatted(.dateTime.month(.abbreviated))
+        }
+    }
+
+    /// Every other weekday name, like GitHub, so the column stays narrow.
+    private var weekdayLabels: some View {
+        let symbols = heatmap.calendar.shortWeekdaySymbols
+        let first = heatmap.calendar.firstWeekday - 1
+        return VStack(alignment: .trailing, spacing: gap) {
+            Text(" ").font(.caption2)   // aligns with the month label row
+                .padding(.bottom, 4 - gap)
+            ForEach(0..<7, id: \.self) { row in
+                Text(row % 2 == 1 ? symbols[(first + row) % 7] : "")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .frame(height: cell)
+            }
+        }
+        .fixedSize()
+        .accessibilityHidden(true)
+    }
+
+    private var legend: some View {
+        HStack(spacing: 3) {
+            Text("Less").font(.caption2).foregroundStyle(.secondary)
+            ForEach(0..<5, id: \.self) { level in
+                RoundedRectangle(cornerRadius: 2, style: .continuous)
+                    .fill(Self.levelColors[level])
+                    .frame(width: 10, height: 10)
+            }
+            Text("More").font(.caption2).foregroundStyle(.secondary)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Shading: none, under 15 minutes, 15 to 29, 30 to 59, and an hour or more")
+    }
+
+    private var selectionText: String {
+        guard let selected else { return "Tap a day for details" }
+        let date = selected.date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day())
+        return selected.minutes > 0 ? "\(date): \(selected.minutes) min" : "\(date): no listening"
+    }
+
+    private func dayCount(_ days: Int) -> String { days == 1 ? "1 day" : "\(days) days" }
+
+    private func weekLabel(_ week: [ListeningHeatmap.Day?]) -> String {
+        guard let first = week.compactMap({ $0 }).first else { return "" }
+        return "Week of \(first.date.formatted(.dateTime.month(.wide).day()))"
+    }
+
+    private func weekValue(_ week: [ListeningHeatmap.Day?]) -> String {
+        let days = week.compactMap { $0 }
+        let minutes = Int(days.reduce(0) { $0 + $1.seconds } / 60)
+        let active = days.filter { $0.level > 0 }.count
+        guard active > 0 else { return "No listening" }
+        return "\(minutes) minutes, on \(dayCount(active))"
     }
 }
 
