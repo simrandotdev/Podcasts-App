@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Downloaded episodes, downloads in progress, storage used, and the Wi-Fi only setting.
+/// Downloaded episodes and downloads in progress. Storage and the Wi-Fi only setting live in Settings.
 struct DownloadsScreen: View {
     @EnvironmentObject private var downloads: DownloadManager
     @EnvironmentObject private var player: PlaybackController
@@ -15,8 +15,6 @@ struct DownloadsScreen: View {
 
     var body: some View {
         List {
-            storageSection
-
             if !downloads.activeDownloads.isEmpty {
                 Section {
                     ForEach(downloads.activeDownloads, id: \.episode.streamUrl) { item in
@@ -91,29 +89,6 @@ struct DownloadsScreen: View {
             EpisodeDetailsSheet(episode: episode) { play(episode) }
                 .environmentObject(player)
                 .environmentObject(downloads)
-        }
-    }
-
-    private var storageSection: some View {
-        Section {
-            HStack {
-                Label("Storage Used", systemImage: "internaldrive")
-                Spacer()
-                Text(Self.formattedSize(downloads.totalBytes))
-                    .monospacedDigit()
-                    .foregroundStyle(.secondary)
-            }
-            .accessibilityElement(children: .combine)
-            Toggle(isOn: Binding(get: { downloads.wifiOnly }, set: { downloads.setWiFiOnly($0) })) {
-                Label("Download on Wi-Fi Only", systemImage: "wifi")
-            }
-            .tint(Color.accentColor)
-        } header: {
-            sectionHeader(downloads.library.count == 1 ? "1 Episode" : "\(downloads.library.count) Episodes")
-        } footer: {
-            Text(downloads.wifiOnly
-                 ? "New downloads wait for Wi-Fi and won't use mobile data."
-                 : "Downloads can use mobile data when Wi-Fi isn't available.")
         }
     }
 
