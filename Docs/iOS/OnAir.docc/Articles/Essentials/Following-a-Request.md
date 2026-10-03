@@ -10,13 +10,13 @@ The clearest way to see the architecture at work is to follow one request from a
 
 A search starts in the Home tab's search field and ends with the station grid showing results.
 
-![A sequence diagram. PodcastsScreen sends searchText to HomeViewModel, which waits 333 milliseconds and needs at least 3 characters. HomeViewModel calls PodcastsManager, which calls PodcastsRepository, which calls APIService, which sends a GET request to the iTunes Search API. The JSON results return to APIService, which skips results without a feed URL. An array of Podcast values returns through each layer to HomeViewModel, which publishes the podcasts to PodcastsScreen.](search-sequence)
+![A sequence diagram. PodcastsScreen sends searchText to HomeViewModel, which waits 333 milliseconds and needs at least 3 characters. HomeViewModel calls PodcastsManager, which calls PodcastsRepository, which calls APIService, which sends a GET request to the On Air API. The JSON results return to APIService, which skips results without a feed URL. An array of Podcast values returns through each layer to HomeViewModel, which publishes the podcasts to PodcastsScreen.](search-sequence)
 
 1. `PodcastsScreen` binds its `.searchable` field to `HomeViewModel.searchText`.
 2. `HomeViewModel` debounces the text. It ignores the initial value and repeated values, waits 333 ms after typing stops, and cancels any search still in flight.
-3. If the trimmed text is longer than 2 characters, the view model calls `PodcastsManager.searchPodcasts(forValue:)`. Otherwise it calls `fetchPodcasts()`, which loads the default station list.
+3. If the trimmed text is longer than 2 characters, the view model calls `PodcastsManager.searchPodcasts(forValue:)`. Otherwise it calls `fetchPodcasts()`, which loads trending podcasts.
 4. `PodcastsManager` calls `PodcastsRepository.search(forValue:)`, which calls `APIService.fetchPodcastsAsync(searchText:)`.
-5. `APIService` requests `https://itunes.apple.com/search`, decodes the response, skips results without a feed URL, and removes repeated feeds. It returns `[Podcast]`.
+5. `APIService` requests `/v1/search` from the On Air API, which searches Podcast Index. In builds without the API's address, it requests `https://itunes.apple.com/search` instead. It decodes the response, skips results without a feed URL, and removes repeated feeds. It returns `[Podcast]`.
 6. Back in `HomeViewModel`, a request ID discards responses that a newer search has replaced. The view model maps the results to `PodcastViewModel` values and publishes them, and the grid redraws under a Results heading.
 
 ### Play an Episode

@@ -31,10 +31,6 @@ protocol PodcastsManaging {
 
 final class PodcastsManager: PodcastsManaging {
 
-    /// The Home list is a search for this term.
-    static let homeSearchTerm = "podcasts"
-
-
     // MARK: - Dependencies
 
 
@@ -52,9 +48,10 @@ final class PodcastsManager: PodcastsManaging {
     // MARK: Public methods
 
 
+    /// The Home list: podcasts that are trending now.
     func fetchPodcasts() async throws -> [Podcast] {
 
-        try await repository.search(forValue: Self.homeSearchTerm)
+        try await repository.fetchTrendingPodcasts()
     }
 
 

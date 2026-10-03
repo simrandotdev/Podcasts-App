@@ -50,7 +50,7 @@ final class FavoritesViewModelTests: XCTestCase {
 | View models | Pass mock managers. For app-wide managers, pass instances from `IsolatedManagers` |
 | `PodcastsRepository` and `EpisodesRepository` | Use `CoreDataStack(inMemory: true)`, and inject `now` to control dates |
 | `LegacyDatabaseImporter` | Build GRDB-shaped SQLite files with the SQLite C API, as `LegacyDatabaseImporterTests` does |
-| `APIService` | Inject a `URLSession` whose configuration uses `PodcastURLProtocol` |
+| `APIService` | Inject a `URLSession` whose configuration uses `PodcastURLProtocol`, and an On Air API address, or `nil` to test the iTunes fallback |
 | `PlaybackManager` | Pass `systemPlaybackEnabled: false` and a stub `saveHistory` closure, plus private `UserDefaults` |
 | `DownloadManager` | Pass a temporary `DownloadStore`, an ephemeral configuration stubbed with a `URLProtocol`, and `monitorsNetwork: false` |
 | `NewEpisodesManager` | Inject `loadFavorites`, `fetchEpisodes`, a `NewEpisodeNotifying` notifier, and `now` |

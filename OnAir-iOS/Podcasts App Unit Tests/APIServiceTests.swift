@@ -10,7 +10,8 @@ final class APIServiceTests: XCTestCase {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [PodcastURLProtocol.self]
         session = URLSession(configuration: configuration)
-        api = APIService(session: session)
+        // Without an On Air API address, as in Release builds, searches go to iTunes.
+        api = APIService(session: session, onAirBaseURL: nil)
     }
 
     override func tearDown() {
@@ -19,7 +20,7 @@ final class APIServiceTests: XCTestCase {
         super.tearDown()
     }
 
-    func test_search_encodesQueryAndMapsUniqueUsableFeeds() async throws {
+    func test_searchWithoutOnAirAPI_queriesITunesAndMapsUniqueUsableFeeds() async throws {
         PodcastURLProtocol.respond = { request in
             let components = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
             XCTAssertEqual(components.queryItems?.first(where: { $0.name == "term" })?.value, "news & science")
@@ -39,6 +40,50 @@ final class APIServiceTests: XCTestCase {
         XCTAssertEqual(result.first?.title, "Science")
         XCTAssertEqual(result.first?.totalEpisodes, 12)
         XCTAssertEqual(result.first?.image, "https://example.com/art.jpg")
+    }
+
+    func test_searchWithOnAirAPI_queriesV1SearchAndPrefersITunesIDs() async throws {
+        let api = APIService(session: session, onAirBaseURL: URL(string: "https://api.example.com")!)
+        PodcastURLProtocol.respond = { request in
+            let components = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
+            XCTAssertEqual(components.host, "api.example.com")
+            XCTAssertEqual(components.path, "/v1/search")
+            XCTAssertEqual(components.queryItems?.first(where: { $0.name == "term" })?.value, "news & science")
+            XCTAssertEqual(components.queryItems?.first(where: { $0.name == "limit" })?.value, "50")
+            return (200, Data("""
+            {"resultCount":2,"results":[
+              {"collectionId":920666,"collectionName":"Known to iTunes","feedUrl":"https://example.com/a",
+               "itunesId":1219454367},
+              {"collectionId":42,"collectionName":"Podcast Index only","feedUrl":"https://example.com/b",
+               "itunesId":null}
+            ]}
+            """.utf8))
+        }
+        let result = try await api.fetchPodcastsAsync(searchText: "news & science")
+        XCTAssertEqual(result.map(\.recordId), ["1219454367", "42"])
+        XCTAssertEqual(result.map(\.rssFeedUrl), ["https://example.com/a", "https://example.com/b"])
+    }
+
+    func test_trendingWithOnAirAPI_requestsTrendingPodcasts() async throws {
+        let api = APIService(session: session, onAirBaseURL: URL(string: "http://127.0.0.1:8000")!)
+        PodcastURLProtocol.respond = { request in
+            XCTAssertEqual(request.url?.absoluteString, "http://127.0.0.1:8000/v1/podcasts/trending?limit=50")
+            return (200, Data(#"{"results":[{"collectionId":1,"collectionName":"Trending","feedUrl":"https://example.com/t"}]}"#.utf8))
+        }
+        let result = try await api.fetchTrendingPodcastsAsync()
+        XCTAssertEqual(result.first?.title, "Trending")
+    }
+
+    func test_trendingWithoutOnAirAPI_searchesITunesForPodcasts() async throws {
+        PodcastURLProtocol.respond = { request in
+            let components = URLComponents(url: request.url!, resolvingAgainstBaseURL: false)!
+            XCTAssertEqual(components.host, "itunes.apple.com")
+            XCTAssertEqual(components.queryItems?.first(where: { $0.name == "term" })?.value,
+                           APIService.iTunesHomeSearchTerm)
+            return (200, Data(#"{"results":[]}"#.utf8))
+        }
+        let result = try await api.fetchTrendingPodcastsAsync()
+        XCTAssertTrue(result.isEmpty)
     }
 
     func test_httpFailure_isReportedBeforeDecoding() async {

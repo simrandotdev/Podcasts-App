@@ -290,7 +290,7 @@ def architecture_layers():
         ("Services", ["Network, database,", "defaults and caches"], "green", True,
          ["APIService", "CoreDataStack", "LegacyDatabaseImporter", "UserDefaults", "URLCache"]),
         ("Platform", ["Apple frameworks and", "remote data"], "gray", False,
-         ["iTunes Search API", "RSS feeds", "Core Data", "AVFoundation", "MediaPlayer", "BackgroundTasks",
+         ["On Air API", "RSS feeds", "Core Data", "AVFoundation", "MediaPlayer", "BackgroundTasks",
           "UserNotifications", "Network"]),
     ]
     x, w, label_w, gap = 20, 860, 210, 26
@@ -375,15 +375,15 @@ def search_sequence():
     d = Diagram("search-sequence", 960, 624)
     seq = Sequence(d, [("PodcastsScreen", 80, "blue", True), ("HomeViewModel", 240, "blue", True),
                        ("PodcastsManager", 400, "purple", True), ("PodcastsRepository", 560, "green", True),
-                       ("APIService", 720, "green", True), ("iTunes Search API", 875, "orange", False)],
+                       ("APIService", 720, "green", True), ("On Air API", 875, "orange", False)],
                    top=20, bottom=604)
     seq.message("PodcastsScreen", "HomeViewModel", 100, "searchText")
     seq.note("HomeViewModel", 122, ["Waits 333 ms and", "needs 3+ characters"], 150)
     seq.message("HomeViewModel", "PodcastsManager", 196, "searchPodcasts")
     seq.message("PodcastsManager", "PodcastsRepository", 238, "search(forValue:)")
     seq.message("PodcastsRepository", "APIService", 280, "fetchPodcastsAsync")
-    seq.message("APIService", "iTunes Search API", 322, "GET /search")
-    seq.message("iTunes Search API", "APIService", 364, "JSON results", dashed=True, mono=False)
+    seq.message("APIService", "On Air API", 322, "GET /v1/search")
+    seq.message("On Air API", "APIService", 364, "JSON results", dashed=True, mono=False)
     seq.note("APIService", 384, ["Skips results", "without a feedUrl"], 140)
     seq.message("APIService", "PodcastsRepository", 458, "[Podcast]", dashed=True)
     seq.message("PodcastsRepository", "PodcastsManager", 500, "[Podcast]", dashed=True)
@@ -593,7 +593,7 @@ def networking():
     d = Diagram("networking", 940, 300)
     d.text(20, 40, "Searching", 13, "secondary", bold=True, anchor="start")
     d.box(20, 52, 240, 64, "APIService", [("fetchPodcastsAsync(searchText:)", True)], "green")
-    d.box(290, 52, 250, 64, "iTunes Search API", ["GET itunes.apple.com/search", "media and entity podcast, limit 50"],
+    d.box(290, 52, 250, 64, "On Air API", ["GET /v1/search, limit 50; or iTunes", "when the API isn’t configured"],
           "orange", mono=False, bold=True)
     d.box(570, 52, 220, 64, "Decode", ["Skip results without a feedUrl", "and repeated feeds"], "neutral",
           mono=False, bold=True)

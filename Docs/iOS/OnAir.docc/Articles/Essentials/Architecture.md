@@ -67,7 +67,7 @@ Two smaller stores sit at the same level. `DownloadStore` names, finds, and dele
 
 #### Services
 
-`APIService` searches the iTunes Search API and downloads RSS feeds. `CoreDataStack` owns the persistent container. `LegacyDatabaseImporter` moves favorites and history out of the database that earlier versions of the app kept. For details, see <doc:Loading-Podcasts-and-Feeds> and <doc:Storing-Data>.
+`APIService` finds podcasts through the On Air API, or the iTunes Search API when the On Air API isn't configured, and downloads RSS feeds. `CoreDataStack` owns the persistent container. `LegacyDatabaseImporter` moves favorites and history out of the database that earlier versions of the app kept. For details, see <doc:Loading-Podcasts-and-Feeds> and <doc:Storing-Data>.
 
 ### Identify Podcasts and Episodes by URL
 

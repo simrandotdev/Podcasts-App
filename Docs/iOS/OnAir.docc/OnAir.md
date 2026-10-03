@@ -10,7 +10,7 @@ A radio-inspired podcast player for iPhone and iPad, built with SwiftUI.
 
 ## Overview
 
-On Air presents podcasts as radio stations. Shows appear as station tiles, favorites become numbered presets, the listening history reads like a broadcast log, and an ON AIR badge marks whatever is playing. Behind that styling is a complete podcast player: it searches the iTunes catalog, streams or downloads episodes, remembers each episode's position, and checks the user's presets for new episodes.
+On Air presents podcasts as radio stations. Shows appear as station tiles, favorites become numbered presets, the listening history reads like a broadcast log, and an ON AIR badge marks whatever is playing. Behind that styling is a complete podcast player: it searches Podcast Index through its own API, streams or downloads episodes, remembers each episode's position, and checks the user's presets for new episodes.
 
 @Row {
     @Column {
@@ -31,7 +31,7 @@ The app uses SwiftUI with the Model-View-ViewModel (MVVM) pattern and repositori
 | Interface | SwiftUI on iOS 16 and later, for iPhone and iPad |
 | Playback | AVFoundation and MediaPlayer |
 | Persistence | Core Data, files in Application Support, and `UserDefaults` |
-| Networking | `URLSession`, the iTunes Search API, and FeedKit for RSS |
+| Networking | `URLSession`, the On Air API backed by Podcast Index, and FeedKit for RSS |
 | Dependency injection | Resolver |
 | Background work | A background `URLSession` and BackgroundTasks |
 

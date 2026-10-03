@@ -2,7 +2,7 @@
 
 A small FastAPI service that replaces the iTunes Search API in the On Air apps with [Podcast Index](https://podcastindex.org). It keeps the Podcast Index secret on the server, so the apps never ship it.
 
-The iOS app uses iTunes only to search for podcasts. Episodes come from each podcast's RSS feed. This service provides that search in the same response shape, plus trending podcasts for the Home screen.
+The iOS app used iTunes only to search for podcasts. Episodes come from each podcast's RSS feed. This service provides that search in the same response shape, plus trending podcasts for the Home screen.
 
 ## Endpoints
 
@@ -103,7 +103,9 @@ The tests replace Podcast Index with an `httpx.MockTransport`, so they never use
 
 ## Use It from the iOS App
 
-In `OnAir-iOS`, `APIService.fetchPodcastsAsync(searchText:)` builds the iTunes URL. Point it at this service's `/v1/search` instead. The query parameters and the response format stay the same. To use trending podcasts for the Home list, call `/v1/podcasts/trending` where `PodcastsManager.fetchPodcasts()` searches for "podcasts" today.
+The iOS app reads this service's address from the `ONAIR_API_BASE_URL` build setting, through the `OnAirAPIBaseURL` key in its `Info.plist`. Debug builds use `http://127.0.0.1:8000`, so start this service before running the app in the Simulator. `APIService.fetchPodcastsAsync(searchText:)` calls `/v1/search`, and the Home list calls `/v1/podcasts/trending`.
+
+Release builds leave the setting empty and keep using the iTunes Search API. After you deploy this service, set the Release value to its address.
 
 ## Project Layout
 

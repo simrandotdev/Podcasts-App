@@ -93,11 +93,17 @@ final class MockEpisodesManager: EpisodesManaging {
 final class MockPodcastsRepository: PodcastsRepositoryProtocol {
     var shouldFail = false
     var searches: [String] = []
+    var trendingFetches = 0
     var favorites: [Podcast] = []
 
     func search(forValue value: String) async throws -> [Podcast] {
         searches.append(value)
         return [makePodcast(title: value)]
+    }
+
+    func fetchTrendingPodcasts() async throws -> [Podcast] {
+        trendingFetches += 1
+        return [makePodcast(title: "Trending")]
     }
 
     func fetchFavoritePodcasts() async throws -> [Podcast] { favorites }

@@ -5,9 +5,9 @@
 <text x="140" y="79.9" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#1d1d1f" text-anchor="middle">APIService</text>
 <text x="140" y="96.3" font-family="ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace" font-size="11" fill="#6e6e73" text-anchor="middle">fetchPodcastsAsync(searchText:)</text>
 <rect x="290" y="52" width="250" height="64" rx="10" fill="#fff4e6" stroke="#c96a00" stroke-width="1.25"/>
-<text x="415" y="71.9" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#1d1d1f" text-anchor="middle">iTunes Search API</text>
-<text x="415" y="88.3" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#6e6e73" text-anchor="middle">GET itunes.apple.com/search</text>
-<text x="415" y="104.3" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#6e6e73" text-anchor="middle">media and entity podcast, limit 50</text>
+<text x="415" y="71.9" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#1d1d1f" text-anchor="middle">On Air API</text>
+<text x="415" y="88.3" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#6e6e73" text-anchor="middle">GET /v1/search, limit 50; or iTunes</text>
+<text x="415" y="104.3" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#6e6e73" text-anchor="middle">when the API isn’t configured</text>
 <rect x="570" y="52" width="220" height="64" rx="10" fill="#f5f5f7" stroke="#c7c7cc" stroke-width="1.25"/>
 <text x="680" y="71.9" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="13" font-weight="600" fill="#1d1d1f" text-anchor="middle">Decode</text>
 <text x="680" y="88.3" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="11" fill="#6e6e73" text-anchor="middle">Skip results without a feedUrl</text>

@@ -818,6 +818,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
+				ONAIR_API_BASE_URL = "http://127.0.0.1:8000";
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.on-air";
 				PRODUCT_NAME = "Podcasts Bin";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -850,6 +851,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
+				ONAIR_API_BASE_URL = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.on-air";
 				PRODUCT_NAME = "Podcasts Bin";
 				PROVISIONING_PROFILE_SPECIFIER = "";

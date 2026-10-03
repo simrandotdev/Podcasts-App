@@ -11,10 +11,11 @@ import Foundation
 // MARK: - PodcastsRepositoryProtocol
 
 
-/// Podcasts from the iTunes Search API, and favorites (presets) kept in Core Data.
+/// Podcasts from the On Air API or the iTunes Search API, and favorites (presets) kept in Core Data.
 protocol PodcastsRepositoryProtocol {
 
     func search(forValue value: String) async throws -> [Podcast]
+    func fetchTrendingPodcasts() async throws -> [Podcast]
     func fetchFavoritePodcasts() async throws -> [Podcast]
     func isFavorite(podcast: Podcast) async throws -> Bool
     func favorite(podcast: Podcast) async throws
@@ -47,6 +48,11 @@ final class PodcastsRepository: PodcastsRepositoryProtocol {
 
     func search(forValue value: String) async throws -> [Podcast] {
         try await api.fetchPodcastsAsync(searchText: value)
+    }
+
+
+    func fetchTrendingPodcasts() async throws -> [Podcast] {
+        try await api.fetchTrendingPodcastsAsync()
     }
 
 
