@@ -32,5 +32,3 @@ Several items refer to the radio-style UI (station tiles, presets, broadcast log
 ## Quality
 
 - [ ] **Tests for new logic.** History re-insert ordering in `EpisodesRepository.saveInHistory`, and the Up Next calculation in the player.
-- [ ] **Remove dead code.** `StandardListItemView`, `StandardListLoadingView` (and `listRowCard()`), `PodcastThumbnailCell`, `HistoryItemCell`.
-- [ ] **Remove stale schemes.** `Podcasts AppTests` and `PodcastsUITests` reference targets that no longer exist.
