@@ -4,6 +4,7 @@ struct PodcastsScreen: View {
     @EnvironmentObject private var controller: PodcastsController
     @EnvironmentObject private var episodesController: EpisodesController
     @EnvironmentObject private var player: PlaybackController
+    @EnvironmentObject private var tracker: NewEpisodeTracker
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
 
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 12)]
@@ -11,6 +12,12 @@ struct PodcastsScreen: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 24) {
+                if controller.searchText.isEmpty && !tracker.freshEpisodes.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        sectionHeader("Fresh on Air")
+                        FreshOnAirRow(maximizePlayerView: maximizePlayerView)
+                    }
+                }
                 if controller.searchText.isEmpty && !recentEpisodes.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         sectionHeader("Recently Played")
@@ -41,6 +48,7 @@ struct PodcastsScreen: View {
         .refreshable {
             await controller.fetchPodcasts()
             await episodesController.fetchEpisodesFromHistory()
+            await tracker.refresh()
         }
         .onReceive(NotificationCenter.default.publisher(for: .playbackHistoryChanged)) { _ in
             Task { await episodesController.fetchEpisodesFromHistory() }
@@ -61,7 +69,8 @@ struct PodcastsScreen: View {
                     EpisodesScreen(podcast: podcast, maximizePlayerView: maximizePlayerView)
                 } label: {
                     StationTile(title: podcast.title, author: podcast.author,
-                                imageUrl: podcast.image, isOnAir: player.isOnAir(podcast))
+                                imageUrl: podcast.image, isOnAir: player.isOnAir(podcast),
+                                newCount: tracker.newCount(for: podcast.rssFeedUrl))
                 }
                 .buttonStyle(.plain)
             }
@@ -90,6 +99,8 @@ struct StationTile: View {
     let isOnAir: Bool
     /// Preset number shown as "P1", "P2"… in the top-leading corner, like a radio's preset buttons.
     var preset: Int?
+    /// Episodes published since the user last opened this podcast.
+    var newCount = 0
 
     var body: some View {
         PodcastArtwork(urlString: imageUrl)
@@ -113,7 +124,11 @@ struct StationTile: View {
                 .background(.black.opacity(0.6))
             }
             .overlay(alignment: .topTrailing) {
-                if isOnAir { OnAirBadge().padding(8) }
+                VStack(alignment: .trailing, spacing: 4) {
+                    if isOnAir { OnAirBadge() }
+                    if newCount > 0 { NewBadge(count: newCount) }
+                }
+                .padding(8)
             }
             .overlay(alignment: .topLeading) {
                 if let preset {
@@ -135,12 +150,33 @@ struct StationTile: View {
             .contentShape(Rectangle())
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(accessibilityTitle)
-            .accessibilityValue(isOnAir ? "On air" : "")
+            .accessibilityValue(accessibilityStatus)
+    }
+
+    private var accessibilityStatus: String {
+        let new = newCount == 0 ? nil : (newCount == 1 ? "1 new episode" : "\(newCount) new episodes")
+        return [isOnAir ? "On air" : nil, new].compactMap { $0 }.joined(separator: ", ")
     }
 
     private var accessibilityTitle: String {
         let name = author.isEmpty ? title : "\(title), \(author)"
         return preset.map { "Preset \($0), \(name)" } ?? name
+    }
+}
+
+/// "NEW" (or "3 NEW") on dark glass, readable on any artwork.
+struct NewBadge: View {
+    var count = 1
+
+    var body: some View {
+        Text(count > 1 ? "\(count) NEW" : "NEW")
+            .font(.caption2.weight(.heavy).monospacedDigit())
+            .foregroundStyle(.white)
+            .padding(.horizontal, 7)
+            .padding(.vertical, 3)
+            .background(.black.opacity(0.75), in: Capsule())
+            .overlay { Capsule().strokeBorder(Color.accentColor, lineWidth: 1.5) }
+            .accessibilityHidden(true)
     }
 }
 

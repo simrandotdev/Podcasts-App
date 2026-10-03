@@ -5,6 +5,7 @@ struct EpisodesScreen: View {
     @EnvironmentObject private var podcastsController: PodcastsController
     @EnvironmentObject private var player: PlaybackController
     @EnvironmentObject private var downloads: DownloadManager
+    @EnvironmentObject private var tracker: NewEpisodeTracker
     @StateObject private var episodesController = EpisodesController()
     @State private var isFavorite = false
     @State private var isUpdatingFavorite = false
@@ -55,7 +56,11 @@ struct EpisodesScreen: View {
         .navigationBarTitleDisplayMode(.inline)
         .task(id: podcast.rssFeedUrl) { await fetchEpisodes() }
         // A podcast's episode list can identify downloads saved before episode details were recorded.
-        .onReceive(episodesController.$episodes) { downloads.identifyDownloads(from: $0) }
+        .onReceive(episodesController.$episodes) { episodes in
+            downloads.identifyDownloads(from: episodes)
+            // Opening a podcast clears its NEW badge and its Fresh on Air episodes.
+            if !episodes.isEmpty { tracker.markSeen(podcast.rssFeedUrl, episodeUrls: episodes.map(\.streamUrl)) }
+        }
         .refreshable { await fetchEpisodes() }
     }
 

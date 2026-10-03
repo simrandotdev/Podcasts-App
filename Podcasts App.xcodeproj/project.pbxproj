@@ -57,6 +57,9 @@
 		A10000000000000000000020 /* ListeningStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001F /* ListeningStats.swift */; };
 		A10000000000000000000022 /* ListeningStatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000021 /* ListeningStatsTests.swift */; };
 		A10000000000000000000024 /* ListeningHeatmap.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000023 /* ListeningHeatmap.swift */; };
+		A10000000000000000000026 /* NewEpisodeTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000025 /* NewEpisodeTracker.swift */; };
+		A10000000000000000000028 /* FreshOnAirRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000027 /* FreshOnAirRow.swift */; };
+		A1000000000000000000002A /* NewEpisodeTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000029 /* NewEpisodeTrackerTests.swift */; };
 		CD9597F290653D9B81AFEF84 /* Pods_Podcasts_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2636EEA62AD5E74280931919 /* Pods_Podcasts_App.framework */; };
 		D414F0D120ACD1E400D92DA8 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D414F0D020ACD1E400D92DA8 /* APIService.swift */; };
 		D429ED3F20AB81FA008C66DD /* PodcastsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D429ED3E20AB81FA008C66DD /* PodcastsApp.swift */; };
@@ -133,6 +136,9 @@
 		A1000000000000000000001F /* ListeningStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningStats.swift; sourceTree = "<group>"; };
 		A10000000000000000000021 /* ListeningStatsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningStatsTests.swift; sourceTree = "<group>"; };
 		A10000000000000000000023 /* ListeningHeatmap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListeningHeatmap.swift; sourceTree = "<group>"; };
+		A10000000000000000000025 /* NewEpisodeTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEpisodeTracker.swift; sourceTree = "<group>"; };
+		A10000000000000000000027 /* FreshOnAirRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreshOnAirRow.swift; sourceTree = "<group>"; };
+		A10000000000000000000029 /* NewEpisodeTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEpisodeTrackerTests.swift; sourceTree = "<group>"; };
 		D414F0D020ACD1E400D92DA8 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		D429ED3E20AB81FA008C66DD /* PodcastsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastsApp.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		D429ED4520AB81FC008C66DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -177,6 +183,7 @@
 				A10000000000000000000013 /* PersistanceManagerTests.swift */,
 				A1000000000000000000001B /* DownloadManagerTests.swift */,
 				A10000000000000000000021 /* ListeningStatsTests.swift */,
+				A10000000000000000000029 /* NewEpisodeTrackerTests.swift */,
 			);
 			path = "Podcasts App Unit Tests";
 			sourceTree = "<group>";
@@ -253,6 +260,7 @@
 				491941542874B9D80034254A /* EpisodesController.swift */,
 				A10000000000000000000001 /* PlaybackController.swift */,
 				A10000000000000000000017 /* DownloadManager.swift */,
+				A10000000000000000000025 /* NewEpisodeTracker.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -316,6 +324,7 @@
 				4980A44A284C64A000E74629 /* HistoryItemCell.swift */,
 				495E530D284D4937007B2A7A /* PodcastThumbnailCell.swift */,
 				A1000000000000000000000B /* RecentlyPlayedRow.swift */,
+				A10000000000000000000027 /* FreshOnAirRow.swift */,
 				493A41AC2874091E0030D12D /* StandardListItemView.swift */,
 			);
 			path = Cells;
@@ -611,6 +620,7 @@
 				A10000000000000000000014 /* PersistanceManagerTests.swift in Sources */,
 				A1000000000000000000001C /* DownloadManagerTests.swift in Sources */,
 				A10000000000000000000022 /* ListeningStatsTests.swift in Sources */,
+				A1000000000000000000002A /* NewEpisodeTrackerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -653,6 +663,8 @@
 				493A41A9287403710030D12D /* PersistanceManager.swift in Sources */,
 				A10000000000000000000016 /* DownloadStore.swift in Sources */,
 				A10000000000000000000018 /* DownloadManager.swift in Sources */,
+				A10000000000000000000026 /* NewEpisodeTracker.swift in Sources */,
+				A10000000000000000000028 /* FreshOnAirRow.swift in Sources */,
 				A1000000000000000000001A /* DownloadButton.swift in Sources */,
 				4980A44B284C64A000E74629 /* HistoryItemCell.swift in Sources */,
 				495E530E284D4937007B2A7A /* PodcastThumbnailCell.swift in Sources */,
@@ -849,16 +861,17 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = WC362J72KA;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "On Air";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.hello-podcasts";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.on-air";
 				PRODUCT_NAME = "Podcasts Bin";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -881,16 +894,17 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = WC362J72KA;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "On Air";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.hello-podcasts";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.on-air";
 				PRODUCT_NAME = "Podcasts Bin";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
