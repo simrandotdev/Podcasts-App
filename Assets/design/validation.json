@@ -1,0 +1,58 @@
+[
+  {
+    "file": "01-discover.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "bytes": 2345845
+  },
+  {
+    "file": "02-favorites.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "bytes": 2154382
+  },
+  {
+    "file": "03-player.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "bytes": 2385899
+  },
+  {
+    "file": "04-mini-player.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "bytes": 1950161
+  },
+  {
+    "file": "05-history.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "bytes": 1916720
+  },
+  {
+    "file": "06-episode-details.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "bytes": 1896933
+  },
+  {
+    "file": "07-on-air.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "bytes": 2428570
+  }
+]
