@@ -23,10 +23,10 @@ protocol NewEpisodeNotifying {
 ///
 /// An episode is new when its stream URL wasn't in the feed the last time the user opened that
 /// podcast *and* it's dated after that visit. Requiring both keeps undated episodes (which FeedKit
-/// parsing dates "now") from looking new on every check.
+/// parsing dates "now") from looking new on every check. Views reach it through `NewEpisodesViewModel`.
 @MainActor
-final class NewEpisodeTracker: ObservableObject {
-    static let shared = NewEpisodeTracker()
+final class NewEpisodesManager: ObservableObject {
+    static let shared = NewEpisodesManager()
     static let refreshTaskIdentifier = "ca.bytesizedsoftware.hello-podcasts.refresh"
     static let notificationsKey = "newEpisodeNotificationsEnabled"
     /// Foreground checks are skipped if one ran this recently.
@@ -64,7 +64,7 @@ final class NewEpisodeTracker: ObservableObject {
     private static let maxFreshPerFeed = 10
     private static let maxRemembered = 500
 
-    init(stateURL: URL = NewEpisodeTracker.defaultStateURL,
+    init(stateURL: URL = NewEpisodesManager.defaultStateURL,
          defaults: UserDefaults = .standard,
          loadFavorites: (() async throws -> [Podcast])? = nil,
          fetchEpisodes: ((String) async throws -> [Episode])? = nil,
@@ -73,12 +73,12 @@ final class NewEpisodeTracker: ObservableObject {
         self.stateURL = stateURL
         self.defaults = defaults
         self.loadFavorites = loadFavorites ?? {
-            let repository: PodcastsRepository = Resolver.resolve()
-            return try await repository.fetchFavoritePodcasts()
+            let podcasts: PodcastsManaging = Resolver.resolve()
+            return try await podcasts.fetchFavorites()
         }
         self.fetchEpisodes = fetchEpisodes ?? { feedUrl in
-            let api: APIService = Resolver.resolve()
-            return try await api.fetchEpisodesAsync(forPodcast: feedUrl)
+            let episodes: EpisodesManaging = Resolver.resolve()
+            return try await episodes.fetchEpisodes(forFeedUrl: feedUrl)
         }
         self.notifier = notifier
         self.now = now

@@ -7,53 +7,65 @@
 //
 
 import Foundation
-import Resolver
 
 // MARK: - EpisodesRepositoryProtocol
 
 
+/// Episodes from a podcast's RSS feed, and the listening history kept in Core Data.
 protocol EpisodesRepositoryProtocol {
-    
-    func fetchAllEpisodes(forPodcast podcast: Podcast) async throws -> [Episode]
+
+    func fetchEpisodes(forFeedUrl feedUrl: String) async throws -> [Episode]
+    func saveInHistory(episode: Episode) async throws
+    func fetchHistory() async throws -> [Episode]
 }
 
 
 // MARK: - EpisodesRepositoryProtocol Implementation
 
 
-class EpisodesRepository {
-    
-    
+final class EpisodesRepository: EpisodesRepositoryProtocol {
+
+
     // MARK: - Dependencies
-    
-    
-    @Injected var api: APIService
-    @Injected var db: PersistanceManager
-    
-    // MARK: - Public properties
-    
-    
-    public func fetchAllEpisodes(forPodcast podcast: Podcast) async throws -> [Episode] {
-        
-        guard let rssFeedUrl = podcast.rssFeedUrl else { return [] }
-        
-        let episodes = try await api.fetchEpisodesAsync(forPodcast: rssFeedUrl)
-        return episodes
+
+
+    private let api: APIService
+    private let store: CoreDataStack
+    private let now: () -> Date
+
+    init(api: APIService, store: CoreDataStack, now: @escaping () -> Date = Date.init) {
+        self.api = api
+        self.store = store
+        self.now = now
     }
-    
-    public func saveInHistory(episode: Episode) async throws {
-        
-        try await db.dbQueue?.write({ db in
-            // Re-insert so a replayed episode moves to the end of the table (newest in history).
-            _ = try episode.delete(db)
-            try episode.insert(db)
-        })
+
+
+    // MARK: - Public methods
+
+
+    func fetchEpisodes(forFeedUrl feedUrl: String) async throws -> [Episode] {
+        guard !feedUrl.isEmpty else { return [] }
+        return try await api.fetchEpisodesAsync(forPodcast: feedUrl)
     }
-    
-    public func getEpisodesFromHistory() async throws -> [Episode] {
-        
-        return try await db.dbQueue?.read({ db in
-            return try Episode.fetchAll(db).reversed()
-        }) ?? []
+
+
+    /// Records a play. Playing an episode again replaces its details and moves it to the top.
+    func saveInHistory(episode: Episode) async throws {
+        guard !episode.streamUrl.isEmpty else { throw PersistenceError.missingIdentifier }
+        let playedAt = now()
+        try await store.perform { context in
+            let entity = try context.fetch(HistoryEpisodeEntity.request(streamUrl: episode.streamUrl)).first
+                ?? HistoryEpisodeEntity(context: context)
+            entity.update(from: episode)
+            entity.lastPlayedAt = playedAt
+        }
+    }
+
+
+    /// The listening history, most recently played first.
+    func fetchHistory() async throws -> [Episode] {
+        try await store.perform { context in
+            try context.fetch(HistoryEpisodeEntity.allRequest()).map(\.episode)
+        }
     }
 }

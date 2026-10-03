@@ -51,3 +51,11 @@ class PodcastViewModel: Equatable {
         return lhs.recordId == rhs.recordId
     }
 }
+
+extension Podcast {
+    convenience init(podcastViewModel: PodcastViewModel) {
+        self.init(recordId: podcastViewModel.recordId, title: podcastViewModel.title, author: podcastViewModel.author,
+                  image: podcastViewModel.image, totalEpisodes: podcastViewModel.totalEpisodes,
+                  rssFeedUrl: podcastViewModel.rssFeedUrl)
+    }
+}

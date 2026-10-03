@@ -6,7 +6,7 @@ import XCTest
 @testable import Podcasts_Bin
 
 @MainActor
-final class PlaybackControllerTests: XCTestCase {
+final class PlaybackManagerTests: XCTestCase {
     /// AVPlayer and MPNowPlayingSession finish configuring asynchronously and crash (KVO on a freed
     /// object) if released immediately, taking down whichever test runs next. Keep them alive.
     private static var retainedObjects: [AnyObject] = []
@@ -55,18 +55,15 @@ final class PlaybackControllerTests: XCTestCase {
                         "Published metadata: \(String(describing: session.nowPlayingInfoCenter.nowPlayingInfo))")
     }
 
-    private func episode(_ id: String, title: String = "Same title") throws -> EpisodeViewModel {
-        let data = try JSONSerialization.data(withJSONObject: [
-            "title": title, "subtitle": "", "pubDate": 0, "description": "", "author": "Author",
-            "streamUrl": "file:///private/tmp/podcast-test-\(id).wav"
-        ])
-        return EpisodeViewModel(episode: try JSONDecoder().decode(Episode.self, from: data))
+    private func episode(_ id: String, title: String = "Same title") -> Episode {
+        Episode(title: title, subtitle: "", pubDate: Date(timeIntervalSinceReferenceDate: 0), description: "",
+                author: "Author", streamUrl: "file:///private/tmp/podcast-test-\(id).wav")
     }
 
-    private func withPlayer(_ body: (PlaybackController, UserDefaults) throws -> Void) rethrows {
-        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+    private func withPlayer(_ body: (PlaybackManager, UserDefaults) throws -> Void) rethrows {
+        let suite = "PlaybackManagerTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
-        let sut = PlaybackController(player: makePlayer(), defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        let sut = PlaybackManager(player: makePlayer(), defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
         defer {
             sut.close()
             defaults.removePersistentDomain(forName: suite)
@@ -75,7 +72,7 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_loadingEpisode_restoresLegacyPositionKey() throws {
-        let first = try episode("first")
+        let first = episode("first")
         try withPlayer { sut, defaults in
             defaults.set(125, forKey: first.streamUrl)
             sut.load(first, queue: [first], autoplay: false)
@@ -85,7 +82,7 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_pausingAndPlaying_doesNotResetSeekPosition() throws {
-        let first = try episode("first")
+        let first = episode("first")
         withPlayer { sut, defaults in
             sut.load(first, queue: [first], autoplay: false)
             sut.seek(to: 82)
@@ -98,7 +95,7 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_skipping_clampsNegativeAndIgnoresNonfinitePositions() throws {
-        let first = try episode("first")
+        let first = episode("first")
         withPlayer { sut, _ in
             sut.load(first, queue: [first], autoplay: false)
             sut.seek(to: 10)
@@ -112,8 +109,8 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_queue_identifiesEpisodesByURLWhenTitlesMatch() throws {
-        let first = try episode("first")
-        let second = try episode("second")
+        let first = episode("first")
+        let second = episode("second")
         withPlayer { sut, _ in
             sut.load(second, queue: [first, second], autoplay: false)
             XCTAssertTrue(sut.canPlayPrevious)
@@ -128,8 +125,8 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_switchingEpisodes_savesOutgoingAndRestoresIncomingPosition() throws {
-        let first = try episode("first")
-        let second = try episode("second")
+        let first = episode("first")
+        let second = episode("second")
         withPlayer { sut, defaults in
             defaults.set(40, forKey: second.streamUrl)
             sut.load(first, queue: [first, second], autoplay: false)
@@ -141,7 +138,7 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_close_savesProgressAndClearsPlayback() throws {
-        let first = try episode("first")
+        let first = episode("first")
         withPlayer { sut, defaults in
             sut.load(first, queue: [], autoplay: false)
             sut.seek(to: 35)
@@ -154,8 +151,8 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_invalidURL_keepsCurrentEpisodeAndReportsError() throws {
-        let first = try episode("first")
-        let invalid = try episode("invalid")
+        let first = episode("first")
+        var invalid = episode("invalid")
         invalid.fileUrl = "invalid-scheme://audio"
         withPlayer { sut, _ in
             sut.load(first, queue: [], autoplay: false)
@@ -166,12 +163,12 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_episodeSelection_recordsHistoryInSelectionOrder() async throws {
-        let first = try episode("first")
-        let second = try episode("second")
+        let first = episode("first")
+        let second = episode("second")
         let saved = expectation(description: "Both episodes saved")
         saved.expectedFulfillmentCount = 2
         var urls: [String] = []
-        let sut = PlaybackController(player: makePlayer(), systemPlaybackEnabled: false) { episode in
+        let sut = PlaybackManager(player: makePlayer(), systemPlaybackEnabled: false) { episode in
             urls.append(episode.streamUrl)
             saved.fulfill()
         }
@@ -183,28 +180,28 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_progress_isUnknownUntilDurationHasBeenLoaded() throws {
-        let first = try episode("first")
+        let first = episode("first")
         withPlayer { sut, defaults in
             defaults.set(30, forKey: first.streamUrl)
-            XCTAssertNil(sut.progress(for: first))
+            XCTAssertNil(sut.progress(for: first.streamUrl))
         }
     }
 
     func test_progress_usesSavedPositionAndDuration() throws {
-        let first = try episode("first")
+        let first = episode("first")
         withPlayer { sut, defaults in
             defaults.set(30, forKey: first.streamUrl)
             defaults.set(120, forKey: "duration:" + first.streamUrl)
-            XCTAssertEqual(sut.progress(for: first), 0.25)
+            XCTAssertEqual(sut.progress(for: first.streamUrl), 0.25)
         }
     }
 
     func test_progress_clampsPositionsBeyondTheDuration() throws {
-        let first = try episode("first")
+        let first = episode("first")
         withPlayer { sut, defaults in
             defaults.set(500, forKey: first.streamUrl)
             defaults.set(120, forKey: "duration:" + first.streamUrl)
-            XCTAssertEqual(sut.progress(for: first), 1)
+            XCTAssertEqual(sut.progress(for: first.streamUrl), 1)
         }
     }
 
@@ -215,11 +212,11 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_setPlaybackRate_appliesToPlayerAndPersists() {
-        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+        let suite = "PlaybackManagerTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
         let player = makePlayer()
-        let sut = PlaybackController(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        let sut = PlaybackManager(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
         defer { sut.close() }
 
         sut.setPlaybackRate(1.5)
@@ -251,13 +248,13 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_init_restoresSavedPlaybackRate() {
-        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+        let suite = "PlaybackManagerTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
         defaults.set(Float(2), forKey: "playbackRate")
         let player = makePlayer()
 
-        let sut = PlaybackController(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        let sut = PlaybackManager(player: player, defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
         defer { sut.close() }
 
         XCTAssertEqual(sut.playbackRate, 2)
@@ -265,63 +262,26 @@ final class PlaybackControllerTests: XCTestCase {
     }
 
     func test_init_ignoresUnsupportedSavedPlaybackRate() {
-        let suite = "PlaybackControllerTests.\(UUID().uuidString)"
+        let suite = "PlaybackManagerTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
         defaults.set(Float(7), forKey: "playbackRate")
 
-        let sut = PlaybackController(player: makePlayer(), defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
+        let sut = PlaybackManager(player: makePlayer(), defaults: defaults, systemPlaybackEnabled: false, saveHistory: { _ in })
         defer { sut.close() }
 
         XCTAssertEqual(sut.playbackRate, 1)
     }
 
     func test_rateLabel_formatsSpeeds() {
-        XCTAssertEqual(PlaybackController.playbackRates.map(PlayerDetailsView.rateLabel),
+        XCTAssertEqual(PlaybackManager.playbackRates.map(PlayerDetailsView.rateLabel),
                        ["1×", "1.25×", "1.5×", "2×"])
     }
 
-    private func episode(feed: String?, author: String) throws -> EpisodeViewModel {
-        var fields: [String: Any] = ["title": "Episode", "subtitle": "", "pubDate": 0, "description": "",
-                                     "author": author, "streamUrl": "file:///private/tmp/podcast-test-on-air.wav"]
-        fields["podcastFeedUrl"] = feed
-        let data = try JSONSerialization.data(withJSONObject: fields)
-        return EpisodeViewModel(episode: try JSONDecoder().decode(Episode.self, from: data))
-    }
-
-    private func podcast(feed: String, author: String) -> PodcastViewModel {
-        PodcastViewModel(title: "Show", author: author, image: "", totalEpisodes: 1, rssFeedUrl: feed)
-    }
-
-    func test_isOnAir_matchesThePlayingPodcastByFeedUrlNotAuthor() throws {
-        let playing = try episode(feed: "https://example.com/a", author: "Shared Network")
-        withPlayer { sut, _ in
-            sut.load(playing, queue: [playing])
-            XCTAssertTrue(sut.isOnAir(podcast(feed: "https://example.com/a", author: "Someone Else")))
-            XCTAssertFalse(sut.isOnAir(podcast(feed: "https://example.com/b", author: "Shared Network")))
-        }
-    }
-
-    func test_isOnAir_isFalseWhenPaused() throws {
-        let playing = try episode(feed: "https://example.com/a", author: "Author")
-        withPlayer { sut, _ in
-            sut.load(playing, queue: [playing], autoplay: false)
-            XCTAssertFalse(sut.isOnAir(podcast(feed: "https://example.com/a", author: "Author")))
-        }
-    }
-
-    func test_isOnAir_isFalseForLegacyEpisodesWithoutFeedUrl() throws {
-        let legacy = try episode(feed: nil, author: "Author")
-        withPlayer { sut, _ in
-            sut.load(legacy, queue: [legacy])
-            XCTAssertFalse(sut.isOnAir(podcast(feed: "https://example.com/a", author: "Author")))
-        }
-    }
-
     func test_invalidDuration_isSafeForDisplay() {
-        XCTAssertEqual(PlaybackController.validTime(.nan), 0)
-        XCTAssertEqual(PlaybackController.validTime(.infinity), 0)
-        XCTAssertEqual(PlaybackController.validTime(-10), 0)
-        XCTAssertEqual(PlaybackController.validTime(12.5), 12.5)
+        XCTAssertEqual(PlaybackManager.validTime(.nan), 0)
+        XCTAssertEqual(PlaybackManager.validTime(.infinity), 0)
+        XCTAssertEqual(PlaybackManager.validTime(-10), 0)
+        XCTAssertEqual(PlaybackManager.validTime(12.5), 12.5)
     }
 }

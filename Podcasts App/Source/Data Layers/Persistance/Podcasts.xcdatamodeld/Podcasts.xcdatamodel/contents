@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="1" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="FavoritePodcastEntity" representedClassName="FavoritePodcastEntity" syncable="YES">
+        <attribute name="author" optional="YES" attributeType="String"/>
+        <attribute name="favoritedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="image" optional="YES" attributeType="String"/>
+        <attribute name="recordId" optional="YES" attributeType="String"/>
+        <attribute name="rssFeedUrl" attributeType="String" defaultValueString=""/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <attribute name="totalEpisodes" optional="YES" attributeType="Integer 64" usesScalarValueType="NO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="rssFeedUrl"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="HistoryEpisodeEntity" representedClassName="HistoryEpisodeEntity" syncable="YES">
+        <attribute name="author" attributeType="String" defaultValueString=""/>
+        <attribute name="episodeDescription" attributeType="String" defaultValueString=""/>
+        <attribute name="fileUrl" optional="YES" attributeType="String"/>
+        <attribute name="imageUrl" optional="YES" attributeType="String"/>
+        <attribute name="lastPlayedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="podcastFeedUrl" optional="YES" attributeType="String"/>
+        <attribute name="pubDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="streamUrl" attributeType="String" defaultValueString=""/>
+        <attribute name="subtitle" attributeType="String" defaultValueString=""/>
+        <attribute name="title" attributeType="String" defaultValueString=""/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="streamUrl"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+</model>

@@ -3,23 +3,18 @@ import SwiftUI
 /// Horizontally scrolling cards for new episodes of the user's presets. Playing one takes it off the
 /// shelf; opening its podcast clears all of that podcast's new episodes.
 struct FreshOnAirRow: View {
-    @EnvironmentObject private var player: PlaybackController
-    @EnvironmentObject private var downloads: DownloadManager
-    @EnvironmentObject private var tracker: NewEpisodeTracker
+    @EnvironmentObject private var player: PlayerViewModel
+    @EnvironmentObject private var downloads: DownloadsViewModel
+    @EnvironmentObject private var newEpisodes: NewEpisodesViewModel
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     @State private var detailsEpisode: EpisodeViewModel?
-
-    private var episodes: [EpisodeViewModel] {
-        tracker.freshEpisodes.map { EpisodeViewModel(episode: $0.episode) }
-    }
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(alignment: .top, spacing: 12) {
-                ForEach(tracker.freshEpisodes) { fresh in
-                    let episode = EpisodeViewModel(episode: fresh.episode)
-                    FreshEpisodeCard(fresh: fresh, episode: episode)
-                        .episodeRowActions(play: { play(episode) }, showDetails: { detailsEpisode = episode })
+                ForEach(newEpisodes.freshEpisodes) { fresh in
+                    FreshEpisodeCard(fresh: fresh)
+                        .episodeRowActions(play: { play(fresh.episode) }, showDetails: { detailsEpisode = fresh.episode })
                 }
             }
             .padding(.horizontal)
@@ -32,17 +27,18 @@ struct FreshOnAirRow: View {
     }
 
     private func play(_ episode: EpisodeViewModel) {
-        let queue = episodes
-        tracker.markPlayed(episode.streamUrl)
+        let queue = newEpisodes.freshEpisodes.map(\.episode)
+        newEpisodes.markPlayed(episode)
         maximizePlayerView(episode, queue)
     }
 }
 
 private struct FreshEpisodeCard: View {
-    @EnvironmentObject private var downloads: DownloadManager
+    @EnvironmentObject private var downloads: DownloadsViewModel
     @ScaledMetric(relativeTo: .caption) private var width: CGFloat = 150
-    let fresh: FreshEpisode
-    let episode: EpisodeViewModel
+    let fresh: NewEpisodesViewModel.Item
+
+    private var episode: EpisodeViewModel { fresh.episode }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
@@ -70,7 +66,7 @@ private struct FreshEpisodeCard: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("New from \(fresh.podcastTitle): \(episode.title)")
         .accessibilityValue([publishedAt.formatted(.relative(presentation: .named)),
-                             downloads.state(for: episode.streamUrl).statusDescription].compactMap { $0 }.joined(separator: ", "))
+                             downloads.state(for: episode).statusDescription].compactMap { $0 }.joined(separator: ", "))
         .accessibilityHint("Plays this episode")
         .accessibilityAddTraits(.isButton)
         .downloadAccessibilityActions(episode, downloads: downloads)

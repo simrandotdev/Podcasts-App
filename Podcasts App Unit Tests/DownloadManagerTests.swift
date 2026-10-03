@@ -37,12 +37,12 @@ final class DownloadManagerTests: XCTestCase {
                                defaults: defaults ?? self.defaults, monitorsNetwork: false)
     }
 
-    private func episode(_ streamUrl: String? = nil, title: String = "Episode") throws -> EpisodeViewModel {
+    private func episode(_ streamUrl: String? = nil, title: String = "Episode") throws -> Episode {
         let data = try JSONSerialization.data(withJSONObject: [
             "title": title, "subtitle": "", "pubDate": 0, "description": "", "author": "Author",
             "streamUrl": streamUrl ?? self.streamUrl, "podcastFeedUrl": "https://example.com/feed"
         ])
-        return EpisodeViewModel(episode: try JSONDecoder().decode(Episode.self, from: data))
+        return try JSONDecoder().decode(Episode.self, from: data)
     }
 
     private func waitForState(_ expected: DownloadState, timeout: TimeInterval = 5) async throws {
@@ -251,14 +251,14 @@ final class DownloadManagerTests: XCTestCase {
         let data = try JSONSerialization.data(withJSONObject: [
             "title": "Episode", "subtitle": "", "pubDate": 0, "description": "", "author": "Author", "streamUrl": streamUrl
         ])
-        let episode = EpisodeViewModel(episode: try JSONDecoder().decode(Episode.self, from: data))
+        let episode = try JSONDecoder().decode(Episode.self, from: data)
         let player = AVPlayer()
         Self.retainedPlayers.append(player)
         let suite = "DownloadManagerTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
-        let sut = PlaybackController(player: player, defaults: defaults, systemPlaybackEnabled: false,
-                                     localFile: { [store] in store!.existingFile(for: $0) }, saveHistory: { _ in })
+        let sut = PlaybackManager(player: player, defaults: defaults, systemPlaybackEnabled: false,
+                                  localFile: { [store] in store!.existingFile(for: $0) }, saveHistory: { _ in })
         defer { sut.close() }
 
         sut.load(episode, queue: [episode], autoplay: false)

@@ -4,7 +4,8 @@ import SwiftUI
 /// has been listened to. Tapping a card resumes the episode from its saved position; long-pressing
 /// shows its show notes.
 struct RecentlyPlayedRow: View {
-    @EnvironmentObject private var player: PlaybackController
+    @EnvironmentObject private var player: PlayerViewModel
+    @EnvironmentObject private var downloads: DownloadsViewModel
     let episodes: [EpisodeViewModel]
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     @State private var detailsEpisode: EpisodeViewModel?
@@ -22,23 +23,17 @@ struct RecentlyPlayedRow: View {
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode) { resume(episode) }
                 .environmentObject(player)
-                .environmentObject(DownloadManager.shared)
+                .environmentObject(downloads)
         }
     }
 
     private func resume(_ episode: EpisodeViewModel) {
-        if player.episode?.streamUrl == episode.streamUrl {
-            // Already loaded: keep the current position rather than reloading the item.
-            player.play()
-            maximizePlayerView(nil, nil)
-        } else {
-            maximizePlayerView(episode, episodes)
-        }
+        maximizePlayerView(episode, episodes)
     }
 }
 
 struct RecentEpisodeCard: View {
-    @EnvironmentObject private var downloads: DownloadManager
+    @EnvironmentObject private var downloads: DownloadsViewModel
     @ScaledMetric(relativeTo: .caption) private var width: CGFloat = 140
     let episode: EpisodeViewModel
     let progress: Double?
@@ -64,7 +59,7 @@ struct RecentEpisodeCard: View {
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(episode.title)
-        .accessibilityValue([progressDescription, downloads.state(for: episode.streamUrl).statusDescription]
+        .accessibilityValue([progressDescription, downloads.state(for: episode).statusDescription]
             .compactMap { $0 }.joined(separator: ", "))
         .accessibilityHint("Resumes playback")
         .accessibilityAddTraits(.isButton)

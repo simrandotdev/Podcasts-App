@@ -8,8 +8,8 @@ extension EpisodeViewModel: Identifiable {
 
 /// Full show notes for an episode, with a button to play or resume it.
 struct EpisodeDetailsSheet: View {
-    @EnvironmentObject private var player: PlaybackController
-    @EnvironmentObject private var downloads: DownloadManager
+    @EnvironmentObject private var player: PlayerViewModel
+    @EnvironmentObject private var downloads: DownloadsViewModel
     @Environment(\.dismiss) private var dismiss
     let episode: EpisodeViewModel
     /// Artwork to fall back on when the episode has none of its own.
@@ -97,8 +97,7 @@ struct EpisodeDetailsSheet: View {
     }
 
     @ViewBuilder private var downloadControl: some View {
-        let streamUrl = episode.streamUrl
-        switch downloads.state(for: streamUrl) {
+        switch downloads.state(for: episode) {
         case .notDownloaded:
             secondaryButton("Download", systemImage: "arrow.down.circle") { downloads.download(episode) }
         case .downloading(let fraction):
@@ -107,7 +106,7 @@ struct EpisodeDetailsSheet: View {
                 Text("\(Int(fraction * 100))%")
                     .font(.subheadline.monospacedDigit())
                     .foregroundStyle(.secondary)
-                Button("Cancel") { downloads.cancel(streamUrl) }
+                Button("Cancel") { downloads.cancel(episode) }
                     .font(.subheadline.weight(.semibold))
             }
             .frame(minHeight: 44)
@@ -120,7 +119,7 @@ struct EpisodeDetailsSheet: View {
                     .font(.subheadline)
                     .foregroundStyle(Color.accentColor)
                 Spacer(minLength: 8)
-                Button("Remove", role: .destructive) { downloads.remove(streamUrl) }
+                Button("Remove", role: .destructive) { downloads.remove(episode) }
                     .font(.subheadline.weight(.semibold))
             }
             .frame(minHeight: 44)
@@ -147,9 +146,7 @@ struct EpisodeDetailsSheet: View {
 
     private var progress: Double? { player.progress(for: episode) }
 
-    private var isCurrentAndPlaying: Bool {
-        player.isPlaying && player.episode?.streamUrl == episode.streamUrl
-    }
+    private var isCurrentAndPlaying: Bool { player.isOnAir(episode) }
 
     private var playTitle: String {
         if isCurrentAndPlaying { return "Now Playing" }

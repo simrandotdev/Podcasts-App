@@ -2,30 +2,33 @@ import SwiftUI
 
 /// Favorites shown as numbered presets, like the preset buttons on a radio.
 struct FavoritesScreen: View {
-    @EnvironmentObject private var controller: PodcastsController
-    @EnvironmentObject private var player: PlaybackController
-    @EnvironmentObject private var tracker: NewEpisodeTracker
+    @EnvironmentObject private var viewModel: FavoritesViewModel
+    @EnvironmentObject private var player: PlayerViewModel
+    @EnvironmentObject private var newEpisodes: NewEpisodesViewModel
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
 
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 12)]
 
     var body: some View {
         ScrollView {
-            if controller.favoritePodcasts.isEmpty && !controller.isLoading {
+            if viewModel.isEmpty {
                 emptyState
             } else {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Presets")
                         .font(.title2.bold())
                         .accessibilityAddTraits(.isHeader)
+                    if let error = viewModel.errorMessage {
+                        Text(error).foregroundStyle(.secondary)
+                    }
                     LazyVGrid(columns: columns, spacing: 12) {
-                        ForEach(Array(controller.favoritePodcasts.enumerated()), id: \.element.rssFeedUrl) { index, podcast in
+                        ForEach(Array(viewModel.favorites.enumerated()), id: \.element.rssFeedUrl) { index, podcast in
                             NavigationLink {
                                 EpisodesScreen(podcast: podcast, maximizePlayerView: maximizePlayerView)
                             } label: {
                                 StationTile(title: podcast.title, author: podcast.author, imageUrl: podcast.image,
                                             isOnAir: player.isOnAir(podcast), preset: index + 1,
-                                            newCount: tracker.newCount(for: podcast.rssFeedUrl))
+                                            newCount: newEpisodes.newCount(for: podcast))
                             }
                             .buttonStyle(.plain)
                         }
@@ -35,10 +38,10 @@ struct FavoritesScreen: View {
             }
         }
         .navigationTitle("Favorites ❤️")
-        .task { await controller.fetchFavorites() }
+        .task { await viewModel.fetchFavorites() }
         .refreshable {
-            await controller.fetchFavorites()
-            await tracker.refresh()
+            await viewModel.fetchFavorites()
+            await newEpisodes.refresh()
         }
     }
 

@@ -115,18 +115,18 @@ final class ListeningStatsTests: XCTestCase {
         XCTAssertEqual(heatmap.longestStreak, 1)
     }
 
-    // MARK: - PlaybackController
+    // MARK: - PlaybackManager
 
-    private func makePlayer() throws -> PlaybackController {
+    private func makePlayer() throws -> PlaybackManager {
         let data = try JSONSerialization.data(withJSONObject: [
             "title": "Episode", "subtitle": "", "pubDate": 0, "description": "", "author": "Author",
             "streamUrl": "file:///private/tmp/listening-stats-test.wav"
         ])
-        let episode = EpisodeViewModel(episode: try JSONDecoder().decode(Episode.self, from: data))
+        let episode = try JSONDecoder().decode(Episode.self, from: data)
         let avPlayer = AVPlayer()
         Self.retainedPlayers.append(avPlayer)
-        let sut = PlaybackController(player: avPlayer, defaults: defaults, systemPlaybackEnabled: false,
-                                     localFile: { _ in nil }, saveHistory: { _ in })
+        let sut = PlaybackManager(player: avPlayer, defaults: defaults, systemPlaybackEnabled: false,
+                                  localFile: { _ in nil }, saveHistory: { _ in })
         sut.load(episode, queue: [episode])
         return sut
     }

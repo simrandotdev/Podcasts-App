@@ -3,11 +3,15 @@ import Combine
 import MediaPlayer
 import Resolver
 
-/// Owns playback independently of the currently visible screen or player size.
+/// Owns playback independently of the currently visible screen or player size. Views reach it
+/// through `PlayerViewModel`.
 @MainActor
-final class PlaybackController: ObservableObject {
-    @Published private(set) var episode: EpisodeViewModel?
-    @Published private(set) var queue: [EpisodeViewModel] = []
+final class PlaybackManager: ObservableObject {
+    /// One player for the whole app, so playback survives navigation.
+    static let shared = PlaybackManager()
+
+    @Published private(set) var episode: Episode?
+    @Published private(set) var queue: [Episode] = []
     @Published private(set) var isPlaying = false
     @Published private(set) var isBuffering = false
     @Published private(set) var currentTime: Double = 0
@@ -43,8 +47,8 @@ final class PlaybackController: ObservableObject {
          systemPlaybackEnabled: Bool = true,
          localFile: @escaping (String) -> URL? = { DownloadStore.standard.existingFile(for: $0) },
          saveHistory: @escaping (Episode) async throws -> Void = { episode in
-             let repository: EpisodesRepository = Resolver.resolve()
-             try await repository.saveInHistory(episode: episode)
+             let episodes: EpisodesManaging = Resolver.resolve()
+             try await episodes.saveInHistory(episode: episode)
          }) {
         self.player = player
         self.defaults = defaults
@@ -84,7 +88,7 @@ final class PlaybackController: ObservableObject {
         return currentIndex + 1 < queue.count
     }
 
-    func load(_ episode: EpisodeViewModel, queue: [EpisodeViewModel], autoplay: Bool = true) {
+    func load(_ episode: Episode, queue: [Episode], autoplay: Bool = true) {
         // Prefer a downloaded copy so the episode plays offline.
         guard let url = localFile(episode.streamUrl) ?? URL(string: episode.fileUrl ?? episode.streamUrl),
               ["http", "https", "file"].contains(url.scheme?.lowercased() ?? "") else {
@@ -115,7 +119,7 @@ final class PlaybackController: ObservableObject {
                 guard let self, let item, item === self.player.currentItem else { return }
                 if status == .readyToPlay {
                     self.duration = Self.validTime(item.duration.seconds)
-                    if self.duration > 0 { self.defaults.set(self.duration, forKey: Self.durationKey(for: episode)) }
+                    if self.duration > 0 { self.defaults.set(self.duration, forKey: Self.durationKey(for: episode.streamUrl)) }
                     // Restore only when loading a new item, never on ordinary play/pause.
                     let saved = Self.validTime(self.defaults.double(forKey: episode.streamUrl))
                     self.seek(to: self.duration > 0 && saved >= self.duration ? 0 : saved)
@@ -130,8 +134,7 @@ final class PlaybackController: ObservableObject {
             // Serialize writes so quickly selecting episodes preserves their history order.
             await previousHistoryTask?.value
             do {
-                try await saveHistory(Episode(episodeViewModel: episode))
-                NotificationCenter.default.post(name: .playbackHistoryChanged, object: nil)
+                try await saveHistory(episode)
             } catch {
                 self.errorMessage = "Unable to save listening history: \(error.localizedDescription)"
             }
@@ -253,17 +256,17 @@ final class PlaybackController: ObservableObject {
         lastListeningTick = now
     }
 
-    /// Fraction of the episode played (0...1), or nil if its length has never been loaded.
-    func progress(for episode: EpisodeViewModel) -> Double? {
-        let isCurrent = episode.streamUrl == self.episode?.streamUrl
-        let total = isCurrent && duration > 0 ? duration : defaults.double(forKey: Self.durationKey(for: episode))
+    /// Fraction of an episode played (0...1), or nil if its length has never been loaded.
+    func progress(for streamUrl: String) -> Double? {
+        let isCurrent = streamUrl == episode?.streamUrl
+        let total = isCurrent && duration > 0 ? duration : defaults.double(forKey: Self.durationKey(for: streamUrl))
         guard total > 0 else { return nil }
-        let position = isCurrent ? currentTime : Self.validTime(defaults.double(forKey: episode.streamUrl))
+        let position = isCurrent ? currentTime : Self.validTime(defaults.double(forKey: streamUrl))
         return min(max(position / total, 0), 1)
     }
 
-    private static func durationKey(for episode: EpisodeViewModel) -> String {
-        "duration:" + episode.streamUrl
+    private static func durationKey(for streamUrl: String) -> String {
+        "duration:" + streamUrl
     }
 
     static func validTime(_ seconds: Double) -> Double {
@@ -344,7 +347,7 @@ final class PlaybackController: ObservableObject {
         updateRemoteAvailability()
     }
 
-    private func register(_ command: MPRemoteCommand, action: @escaping @MainActor (PlaybackController) -> Void) {
+    private func register(_ command: MPRemoteCommand, action: @escaping @MainActor (PlaybackManager) -> Void) {
         let target = command.addTarget { [weak self] _ in
             Task { @MainActor in
                 guard let self, self.episode != nil else { return }
@@ -362,13 +365,13 @@ final class PlaybackController: ObservableObject {
         center.previousTrackCommand.isEnabled = canPlayPrevious
     }
 
-    private static func nowPlayingInfo(for episode: EpisodeViewModel) -> [String: Any] {
+    private static func nowPlayingInfo(for episode: Episode) -> [String: Any] {
         [MPMediaItemPropertyTitle: episode.title,
          MPMediaItemPropertyArtist: episode.author,
          MPNowPlayingInfoPropertyMediaType: MPNowPlayingInfoMediaType.audio.rawValue]
     }
 
-    private func loadArtwork(for episode: EpisodeViewModel, item: AVPlayerItem) {
+    private func loadArtwork(for episode: Episode, item: AVPlayerItem) {
         // MPNowPlayingSession publishes the item's nowPlayingInfo, including artwork, to the
         // lock screen and Control Center. AVPlayerItem.externalMetadata is not usable on iOS 16/17.
         artworkTask = Task { [weak self, weak item] in
@@ -381,8 +384,4 @@ final class PlaybackController: ObservableObject {
             item.nowPlayingInfo = info
         }
     }
-}
-
-extension Notification.Name {
-    static let playbackHistoryChanged = Notification.Name("playbackHistoryChanged")
 }

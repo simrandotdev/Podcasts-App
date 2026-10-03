@@ -2,26 +2,26 @@ import SwiftUI
 
 /// Listening history styled as a station's broadcast log, newest first.
 struct RecentlyPlayedEpisodesScreen: View {
-    @EnvironmentObject private var episodesController: EpisodesController
-    @EnvironmentObject private var player: PlaybackController
+    @EnvironmentObject private var history: HistoryViewModel
+    @EnvironmentObject private var player: PlayerViewModel
+    @EnvironmentObject private var downloads: DownloadsViewModel
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     @State private var detailsEpisode: EpisodeViewModel?
 
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 10) {
-                if let error = episodesController.errorMessage {
+                if let error = history.errorMessage {
                     Text(error).foregroundStyle(.secondary)
                 }
-                if episodesController.recentlyPlayedEpisodes.isEmpty {
+                if history.episodes.isEmpty {
                     emptyState
                 } else {
                     Text("Broadcast Log")
                         .font(.title2.bold())
                         .accessibilityAddTraits(.isHeader)
-                    ForEach(episodesController.recentlyPlayedEpisodes, id: \.streamUrl) { episode in
-                        LogEntryRow(episode: episode,
-                                    isOnAir: player.isPlaying && player.episode?.streamUrl == episode.streamUrl,
+                    ForEach(history.episodes, id: \.streamUrl) { episode in
+                        LogEntryRow(episode: episode, isOnAir: player.isOnAir(episode),
                                     progress: player.progress(for: episode))
                             .episodeRowActions(play: { resume(episode) }, showDetails: { detailsEpisode = episode })
                     }
@@ -33,23 +33,15 @@ struct RecentlyPlayedEpisodesScreen: View {
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode) { resume(episode) }
                 .environmentObject(player)
-                .environmentObject(DownloadManager.shared)
+                .environmentObject(downloads)
         }
-        .task { await episodesController.fetchEpisodesFromHistory() }
-        .refreshable { await episodesController.fetchEpisodesFromHistory() }
-        .onReceive(NotificationCenter.default.publisher(for: .playbackHistoryChanged)) { _ in
-            Task { await episodesController.fetchEpisodesFromHistory() }
-        }
+        .task { await history.fetchHistory() }
+        .refreshable { await history.fetchHistory() }
     }
 
+    /// Resumes the episode from its saved position, with the rest of the history as the queue.
     private func resume(_ episode: EpisodeViewModel) {
-        if player.episode?.streamUrl == episode.streamUrl {
-            // Already loaded: keep the current position rather than reloading the item.
-            player.play()
-            maximizePlayerView(nil, nil)
-        } else {
-            maximizePlayerView(episode, episodesController.recentlyPlayedEpisodes)
-        }
+        maximizePlayerView(episode, history.episodes)
     }
 
     private var emptyState: some View {
@@ -70,7 +62,7 @@ struct RecentlyPlayedEpisodesScreen: View {
 }
 
 private struct LogEntryRow: View {
-    @EnvironmentObject private var downloads: DownloadManager
+    @EnvironmentObject private var downloads: DownloadsViewModel
     let episode: EpisodeViewModel
     let isOnAir: Bool
     let progress: Double?
@@ -122,7 +114,7 @@ private struct LogEntryRow: View {
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(episode.title), \(episode.author)")
-        .accessibilityValue([isOnAir ? "On air" : nil, status, downloads.state(for: episode.streamUrl).statusDescription]
+        .accessibilityValue([isOnAir ? "On air" : nil, status, downloads.state(for: episode).statusDescription]
             .compactMap { $0 }.joined(separator: ", "))
         .accessibilityHint("Resumes playback")
         .accessibilityAddTraits(.isButton)

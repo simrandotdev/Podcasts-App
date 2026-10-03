@@ -5,7 +5,10 @@ import Resolver
 struct PodcastsApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @Environment(\.scenePhase) private var scenePhase
-    @StateObject private var player = PlaybackController()
+    // App-wide view models, shared by every screen so playback and downloads survive navigation.
+    @StateObject private var player = PlayerViewModel()
+    @StateObject private var downloads = DownloadsViewModel()
+    @StateObject private var newEpisodes = NewEpisodesViewModel()
     @State private var isShowingSplash = true
 
     init() {
@@ -18,8 +21,8 @@ struct PodcastsApp: App {
         WindowGroup {
             AppTabView()
                 .environmentObject(player)
-                .environmentObject(DownloadManager.shared)
-                .environmentObject(NewEpisodeTracker.shared)
+                .environmentObject(downloads)
+                .environmentObject(newEpisodes)
                 .font(.system(.body, design: .rounded))
                 .overlay {
                     if isShowingSplash {
@@ -32,14 +35,14 @@ struct PodcastsApp: App {
                 player.saveProgress()
             }
             switch phase {
-            case .active: Task { await NewEpisodeTracker.shared.refreshIfStale() }
-            case .background: NewEpisodeTracker.shared.scheduleBackgroundRefresh()
+            case .active: Task { await newEpisodes.refreshIfStale() }
+            case .background: newEpisodes.scheduleBackgroundRefresh()
             default: break
             }
         }
         // iOS wakes the app periodically to check presets for new episodes.
-        .backgroundTask(.appRefresh(NewEpisodeTracker.refreshTaskIdentifier)) {
-            await NewEpisodeTracker.shared.refreshInBackground()
+        .backgroundTask(.appRefresh(NewEpisodesManager.refreshTaskIdentifier)) {
+            await NewEpisodesManager.shared.refreshInBackground()
         }
     }
 }
@@ -58,14 +61,23 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
     }
 }
 
+/// Data-layer and business-layer registrations. ViewModels resolve their managers from here; the
+/// app-wide `PlaybackManager`, `DownloadManager` and `NewEpisodesManager` are main-actor singletons
+/// (`.shared`) that ViewModels take as initializer defaults instead.
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
-        register { URLSession(configuration: .default) }
+        // Services and persistence
         register { APIService.shared }
-        register { PodcastsInteractor() }.implements(PodcastsInteractable.self)
-        register { EpisodesInteractor() }.implements(EpisodesInteractable.self)
-        register { PodcastsRepository() }.implements(PodcastsRepositoryProtocol.self)
-        register { EpisodesRepository() }.implements(EpisodesRepositoryProtocol.self)
-        register { PersistanceManager.shared }
+        register { CoreDataStack.shared }
+        // Repositories
+        register(PodcastsRepositoryProtocol.self) { PodcastsRepository(api: resolve(), store: resolve()) }
+            .scope(.application)
+        register(EpisodesRepositoryProtocol.self) { EpisodesRepository(api: resolve(), store: resolve()) }
+            .scope(.application)
+        // Managers. Application scope, so everyone shares their change notifications.
+        register(PodcastsManaging.self) { PodcastsManager(repository: resolve()) }
+            .scope(.application)
+        register(EpisodesManaging.self) { EpisodesManager(repository: resolve()) }
+            .scope(.application)
     }
 }

@@ -2,7 +2,7 @@ import XCTest
 @testable import Podcasts_Bin
 
 @MainActor
-final class NewEpisodeTrackerTests: XCTestCase {
+final class NewEpisodesManagerTests: XCTestCase {
     private var stateURL: URL!
     private var defaults: UserDefaults!
     private var suite: String!
@@ -16,8 +16,8 @@ final class NewEpisodeTrackerTests: XCTestCase {
     private let feedB = "https://example.com/b.xml"
 
     override func setUp() async throws {
-        stateURL = FileManager.default.temporaryDirectory.appendingPathComponent("NewEpisodeTrackerTests-\(UUID().uuidString).json")
-        suite = "NewEpisodeTrackerTests.\(UUID().uuidString)"
+        stateURL = FileManager.default.temporaryDirectory.appendingPathComponent("NewEpisodesManagerTests-\(UUID().uuidString).json")
+        suite = "NewEpisodesManagerTests.\(UUID().uuidString)"
         defaults = UserDefaults(suiteName: suite)
         notifier = RecordingNotifier()
         favorites = [podcast(feedA, title: "Show A"), podcast(feedB, title: "Show B")]
@@ -29,8 +29,8 @@ final class NewEpisodeTrackerTests: XCTestCase {
         defaults.removePersistentDomain(forName: suite)
     }
 
-    private func makeTracker() -> NewEpisodeTracker {
-        NewEpisodeTracker(stateURL: stateURL, defaults: defaults,
+    private func makeManager() -> NewEpisodesManager {
+        NewEpisodesManager(stateURL: stateURL, defaults: defaults,
                           loadFavorites: { [unowned self] in self.favorites },
                           fetchEpisodes: { [unowned self] feed in
                               if self.failingFeeds.contains(feed) { throw URLError(.notConnectedToInternet) }
@@ -60,161 +60,161 @@ final class NewEpisodeTrackerTests: XCTestCase {
     // MARK: - Detecting new episodes
 
     func test_firstCheck_treatsExistingEpisodesAsOld() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
-        XCTAssertTrue(tracker.freshEpisodes.isEmpty)
-        XCTAssertEqual(tracker.newCount(for: feedA), 0)
-        XCTAssertNotNil(tracker.lastRefresh)
+        let manager = makeManager()
+        await manager.refresh()
+        XCTAssertTrue(manager.freshEpisodes.isEmpty)
+        XCTAssertEqual(manager.newCount(for: feedA), 0)
+        XCTAssertNotNil(manager.lastRefresh)
     }
 
     func test_episodePublishedAfterBaseline_isFreshAndCounted() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("a2", hoursAgo: 1))
         feeds[feedA]!.append(episode("a3", hoursAgo: 2))
 
-        await tracker.refresh()
+        await manager.refresh()
 
-        XCTAssertEqual(tracker.freshEpisodes.map(\.episode.title), ["Episode a2", "Episode a3"], "Newest first")
-        XCTAssertEqual(tracker.newCount(for: feedA), 2)
-        XCTAssertEqual(tracker.newCount(for: feedB), 0)
-        XCTAssertEqual(tracker.freshEpisodes.first?.podcastTitle, "Show A")
-        XCTAssertEqual(tracker.freshEpisodes.first?.episode.podcastFeedUrl, feedA)
+        XCTAssertEqual(manager.freshEpisodes.map(\.episode.title), ["Episode a2", "Episode a3"], "Newest first")
+        XCTAssertEqual(manager.newCount(for: feedA), 2)
+        XCTAssertEqual(manager.newCount(for: feedB), 0)
+        XCTAssertEqual(manager.freshEpisodes.first?.podcastTitle, "Show A")
+        XCTAssertEqual(manager.freshEpisodes.first?.episode.podcastFeedUrl, feedA)
     }
 
     func test_undatedEpisodesAlreadyInFeed_neverLookNew() async {
         // FeedKit dates undated items "now", so they always look recent.
         feeds[feedA] = [episode("undated", hoursAgo: 0)]
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA] = [episode("undated", hoursAgo: 0)]
 
-        await tracker.refresh()
+        await manager.refresh()
 
-        XCTAssertTrue(tracker.freshEpisodes.isEmpty)
+        XCTAssertTrue(manager.freshEpisodes.isEmpty)
     }
 
     func test_backCatalogAdditions_dontCountAsNew() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("old-reupload", daysAgo: 30))
 
-        await tracker.refresh()
+        await manager.refresh()
 
-        XCTAssertTrue(tracker.freshEpisodes.isEmpty)
+        XCTAssertTrue(manager.freshEpisodes.isEmpty)
     }
 
     // MARK: - Clearing
 
     func test_openingThePodcast_clearsItsNewEpisodes() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("a2", hoursAgo: 1))
         feeds[feedB]!.append(episode("b2", hoursAgo: 1))
-        await tracker.refresh()
+        await manager.refresh()
 
-        tracker.markSeen(feedA, episodeUrls: feeds[feedA]!.map(\.streamUrl))
+        manager.markSeen(feedA, episodeUrls: feeds[feedA]!.map(\.streamUrl))
         advance(hours: 1)
-        await tracker.refresh()
+        await manager.refresh()
 
-        XCTAssertEqual(tracker.newCount(for: feedA), 0)
-        XCTAssertEqual(tracker.newCount(for: feedB), 1)
+        XCTAssertEqual(manager.newCount(for: feedA), 0)
+        XCTAssertEqual(manager.newCount(for: feedB), 1)
     }
 
     func test_playedEpisode_leavesTheShelfAndStaysOff() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("a2", hoursAgo: 1))
-        await tracker.refresh()
+        await manager.refresh()
 
-        tracker.markPlayed("https://example.com/a2.mp3")
-        await tracker.refresh()
+        manager.markPlayed("https://example.com/a2.mp3")
+        await manager.refresh()
 
-        XCTAssertTrue(tracker.freshEpisodes.isEmpty)
+        XCTAssertTrue(manager.freshEpisodes.isEmpty)
     }
 
     func test_removedPreset_dropsItsNewEpisodes() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("a2", hoursAgo: 1))
-        await tracker.refresh()
+        await manager.refresh()
 
         favorites = [podcast(feedB, title: "Show B")]
-        await tracker.refresh()
+        await manager.refresh()
 
-        XCTAssertTrue(tracker.freshEpisodes.isEmpty)
+        XCTAssertTrue(manager.freshEpisodes.isEmpty)
     }
 
     func test_failedFeed_keepsItsPreviousNewEpisodes() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("a2", hoursAgo: 1))
-        await tracker.refresh()
+        await manager.refresh()
 
         failingFeeds = [feedA]
-        await tracker.refresh()
+        await manager.refresh()
 
-        XCTAssertEqual(tracker.newCount(for: feedA), 1)
+        XCTAssertEqual(manager.newCount(for: feedA), 1)
     }
 
     func test_state_survivesRelaunch() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("a2", hoursAgo: 1))
-        await tracker.refresh()
+        await manager.refresh()
 
-        let relaunched = makeTracker()
+        let relaunched = makeManager()
 
         XCTAssertEqual(relaunched.freshEpisodes.map(\.id), ["https://example.com/a2.mp3"])
-        XCTAssertEqual(relaunched.lastRefresh, tracker.lastRefresh)
+        XCTAssertEqual(relaunched.lastRefresh, manager.lastRefresh)
     }
 
     func test_refreshIfStale_skipsRecentChecks() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         feeds[feedA]!.append(episode("a2", hoursAgo: 0))
         advance(hours: 0.1)
-        await tracker.refreshIfStale()
-        let checkedAt = tracker.lastRefresh
+        await manager.refreshIfStale()
+        let checkedAt = manager.lastRefresh
 
         advance(hours: 1)
-        await tracker.refreshIfStale()
+        await manager.refreshIfStale()
 
-        XCTAssertNotEqual(tracker.lastRefresh, checkedAt)
+        XCTAssertNotEqual(manager.lastRefresh, checkedAt)
     }
 
     // MARK: - Notifications
 
     func test_notifications_offByDefault() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("a2", hoursAgo: 1))
 
-        let announced = await tracker.refresh()
+        let announced = await manager.refresh()
 
         XCTAssertTrue(announced.isEmpty)
         XCTAssertTrue(notifier.sent.isEmpty)
     }
 
     func test_notifications_announceEachNewEpisodeOnce() async {
-        let tracker = makeTracker()
-        await tracker.setNotificationsEnabled(true)
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.setNotificationsEnabled(true)
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("a2", hoursAgo: 1))
         feeds[feedB]!.append(episode("b2", hoursAgo: 2))
 
-        await tracker.refresh()
-        await tracker.refresh()
+        await manager.refresh()
+        await manager.refresh()
 
         XCTAssertEqual(notifier.sent.count, 1, "One batch, not repeated on the next check")
         XCTAssertEqual(Set(notifier.sent.first?.map(\.id) ?? []),
@@ -222,25 +222,25 @@ final class NewEpisodeTrackerTests: XCTestCase {
     }
 
     func test_notifications_dontAnnounceBacklogWhenTurnedOnLater() async {
-        let tracker = makeTracker()
-        await tracker.refresh()
+        let manager = makeManager()
+        await manager.refresh()
         advance(hours: 6)
         feeds[feedA]!.append(episode("a2", hoursAgo: 1))
-        await tracker.refresh()
+        await manager.refresh()
 
-        await tracker.setNotificationsEnabled(true)
-        await tracker.refresh()
+        await manager.setNotificationsEnabled(true)
+        await manager.refresh()
 
         XCTAssertTrue(notifier.sent.isEmpty)
     }
 
     func test_notifications_staySilentWithoutPermission() async {
         notifier.grantsPermission = false
-        let tracker = makeTracker()
-        let enabled = await tracker.setNotificationsEnabled(true)
+        let manager = makeManager()
+        let enabled = await manager.setNotificationsEnabled(true)
         XCTAssertFalse(enabled)
-        XCTAssertFalse(tracker.notificationsEnabled)
-        XCTAssertFalse(defaults.bool(forKey: NewEpisodeTracker.notificationsKey))
+        XCTAssertFalse(manager.notificationsEnabled)
+        XCTAssertFalse(defaults.bool(forKey: NewEpisodesManager.notificationsKey))
     }
 }
 

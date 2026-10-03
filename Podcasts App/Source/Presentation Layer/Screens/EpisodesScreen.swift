@@ -2,16 +2,18 @@ import SwiftUI
 
 /// A podcast presented as a radio station: a station header, then its episodes as the schedule.
 struct EpisodesScreen: View {
-    @EnvironmentObject private var podcastsController: PodcastsController
-    @EnvironmentObject private var player: PlaybackController
-    @EnvironmentObject private var downloads: DownloadManager
-    @EnvironmentObject private var tracker: NewEpisodeTracker
-    @StateObject private var episodesController = EpisodesController()
-    @State private var isFavorite = false
-    @State private var isUpdatingFavorite = false
+    @EnvironmentObject private var player: PlayerViewModel
+    @EnvironmentObject private var downloads: DownloadsViewModel
+    @StateObject private var viewModel: PodcastDetailViewModel
     @State private var detailsEpisode: EpisodeViewModel?
-    let podcast: PodcastViewModel
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
+
+    init(podcast: PodcastViewModel, maximizePlayerView: @escaping (EpisodeViewModel?, [EpisodeViewModel]?) -> Void) {
+        _viewModel = StateObject(wrappedValue: PodcastDetailViewModel(podcast: podcast))
+        self.maximizePlayerView = maximizePlayerView
+    }
+
+    private var podcast: PodcastViewModel { viewModel.podcast }
 
     var body: some View {
         ScrollView {
@@ -23,11 +25,11 @@ struct EpisodesScreen: View {
                     .font(.title2.bold())
                     .accessibilityAddTraits(.isHeader)
 
-                if let error = episodesController.errorMessage {
+                if let error = viewModel.errorMessage {
                     Text(error).foregroundStyle(.secondary)
-                    Button("Retry") { Task { await fetchEpisodes() } }
+                    Button("Retry") { Task { await viewModel.load() } }
                 }
-                if episodesController.isLoading && episodesController.episodes.isEmpty {
+                if viewModel.isLoading && viewModel.episodes.isEmpty {
                     ForEach(0..<8, id: \.self) { _ in
                         ScheduleRow(date: .now, title: "Episode title placeholder",
                                     summary: "A short description of the episode goes here.",
@@ -36,9 +38,9 @@ struct EpisodesScreen: View {
                     .redacted(reason: .placeholder)
                     .accessibilityHidden(true)
                 }
-                ForEach(episodesController.episodes, id: \.streamUrl) { episode in
+                ForEach(viewModel.episodes, id: \.streamUrl) { episode in
                     ScheduleRow(date: episode.pubDate, title: episode.title, summary: episode.shortDescription,
-                                isOnAir: isOnAir(episode), progress: player.progress(for: episode),
+                                isOnAir: player.isOnAir(episode), progress: player.progress(for: episode),
                                 episode: episode)
                         .episodeRowActions(play: { play(episode) }, showDetails: { detailsEpisode = episode })
                 }
@@ -51,17 +53,11 @@ struct EpisodesScreen: View {
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode, fallbackImageUrl: podcast.image) { play(episode) }
                 .environmentObject(player)
-                .environmentObject(DownloadManager.shared)
+                .environmentObject(downloads)
         }
         .navigationBarTitleDisplayMode(.inline)
-        .task(id: podcast.rssFeedUrl) { await fetchEpisodes() }
-        // A podcast's episode list can identify downloads saved before episode details were recorded.
-        .onReceive(episodesController.$episodes) { episodes in
-            downloads.identifyDownloads(from: episodes)
-            // Opening a podcast clears its NEW badge and its Fresh on Air episodes.
-            if !episodes.isEmpty { tracker.markSeen(podcast.rssFeedUrl, episodeUrls: episodes.map(\.streamUrl)) }
-        }
-        .refreshable { await fetchEpisodes() }
+        .task(id: podcast.rssFeedUrl) { await viewModel.load() }
+        .refreshable { await viewModel.load() }
     }
 
     private var stationHeader: some View {
@@ -107,58 +103,30 @@ struct EpisodesScreen: View {
             Label("Tune In", systemImage: "play.fill")
                 .headerButtonLabel(foreground: .white, background: Color.accentColor)
         }
-        .disabled(episodesController.episodes.isEmpty)
+        .disabled(viewModel.episodes.isEmpty)
         .accessibilityHint("Plays the latest episode")
 
-        Button { Task { await toggleFavorite() } } label: {
-            Label(isFavorite ? "Saved Preset" : "Save Preset",
-                  systemImage: isFavorite ? "star.fill" : "star")
+        Button { Task { await viewModel.toggleFavorite() } } label: {
+            Label(viewModel.isFavorite ? "Saved Preset" : "Save Preset",
+                  systemImage: viewModel.isFavorite ? "star.fill" : "star")
                 .headerButtonLabel(foreground: Color.accentColor, background: Color.accentColor.opacity(0.12))
         }
-        .disabled(isUpdatingFavorite)
-        .accessibilityLabel(isFavorite ? "Remove from favorites" : "Add to favorites")
+        .disabled(viewModel.isUpdatingFavorite)
+        .accessibilityLabel(viewModel.isFavorite ? "Remove from favorites" : "Add to favorites")
     }
 
     /// The playing episode belongs to this podcast's schedule.
     private var isStationOnAir: Bool {
-        guard player.isPlaying, let current = player.episode?.streamUrl else { return false }
-        // The stream-URL check also covers history entries saved before feed URLs were recorded.
-        return player.isOnAir(podcast) || episodesController.episodes.contains { $0.streamUrl == current }
-    }
-
-    private func isOnAir(_ episode: EpisodeViewModel) -> Bool {
-        player.isPlaying && player.episode?.streamUrl == episode.streamUrl
+        player.isOnAir(podcast, episodes: viewModel.episodes)
     }
 
     private func tuneIn() {
-        guard let latest = episodesController.episodes.first else { return }
+        guard let latest = viewModel.latestEpisode else { return }
         play(latest)
     }
 
     private func play(_ episode: EpisodeViewModel) {
-        if player.episode?.streamUrl == episode.streamUrl {
-            // Already loaded: keep the current position rather than reloading the item.
-            player.play()
-            maximizePlayerView(nil, nil)
-        } else {
-            maximizePlayerView(episode, episodesController.episodes)
-        }
-    }
-
-    private func fetchEpisodes() async {
-        await episodesController.fetchEpisodes(forPodcast: podcast)
-        isFavorite = await podcastsController.isfavorite(podcast: podcast)
-    }
-
-    private func toggleFavorite() async {
-        isUpdatingFavorite = true
-        defer { isUpdatingFavorite = false }
-        if isFavorite {
-            await podcastsController.unfavorite(podcast: podcast)
-        } else {
-            await podcastsController.favorite(podcast: podcast)
-        }
-        isFavorite = await podcastsController.isfavorite(podcast: podcast)
+        maximizePlayerView(episode, viewModel.episodes)
     }
 }
 
@@ -178,7 +146,7 @@ private extension View {
 
 /// One slot in the station schedule: a date "time slot", the episode, and how much was heard.
 private struct ScheduleRow: View {
-    @EnvironmentObject private var downloads: DownloadManager
+    @EnvironmentObject private var downloads: DownloadsViewModel
     let date: Date
     let title: String
     let summary: String
@@ -252,7 +220,7 @@ private struct ScheduleRow: View {
     }
 
     private var accessibilityStatus: String {
-        let download = episode.flatMap { downloads.state(for: $0.streamUrl).statusDescription }
+        let download = episode.flatMap { downloads.state(for: $0).statusDescription }
         return [isOnAir ? "On air" : nil, progress.map(status), download].compactMap { $0 }.joined(separator: ", ")
     }
 
@@ -264,7 +232,7 @@ private struct ScheduleRow: View {
 /// Adds download VoiceOver actions only for rows that have an episode.
 private struct DownloadActions: ViewModifier {
     let episode: EpisodeViewModel?
-    let downloads: DownloadManager
+    let downloads: DownloadsViewModel
 
     func body(content: Content) -> some View {
         if let episode {

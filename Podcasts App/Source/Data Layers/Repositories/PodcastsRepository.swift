@@ -7,83 +7,88 @@
 //
 
 import Foundation
-import Resolver
-import GRDB
 
 // MARK: - PodcastsRepositoryProtocol
 
 
+/// Podcasts from the iTunes Search API, and favorites (presets) kept in Core Data.
 protocol PodcastsRepositoryProtocol {
-    
-    func fetchAll() async throws -> [Podcast]
+
     func search(forValue value: String) async throws -> [Podcast]
+    func fetchFavoritePodcasts() async throws -> [Podcast]
+    func isFavorite(podcast: Podcast) async throws -> Bool
     func favorite(podcast: Podcast) async throws
     func unfavorite(podcast: Podcast) async throws
-    func isFavorite(podcast: Podcast) async throws -> Bool
-    func fetchFavoritePodcasts() async throws -> [Podcast]
 }
 
 
 // MARK: - PodcastsRepositoryProtocol Implementation
 
 
-class PodcastsRepository: PodcastsRepositoryProtocol {
-    
-    
+final class PodcastsRepository: PodcastsRepositoryProtocol {
+
+
     // MARK: - Dependencies
-    
-    
-    @Injected var api: APIService
-    @Injected var db: PersistanceManager
-    
-    
-    // MARK: - Public properties
-    
-    
-    public func fetchAll() async throws -> [Podcast] {
-        let podcasts = try await search(forValue: "podcasts")
-        return podcasts
+
+
+    private let api: APIService
+    private let store: CoreDataStack
+    private let now: () -> Date
+
+    init(api: APIService, store: CoreDataStack, now: @escaping () -> Date = Date.init) {
+        self.api = api
+        self.store = store
+        self.now = now
     }
-    
-    
-    public func search(forValue value: String) async throws -> [Podcast] {
-        let podcasts = try await api.fetchPodcastsAsync(searchText: value)
-        return podcasts
+
+
+    // MARK: - Public methods
+
+
+    func search(forValue value: String) async throws -> [Podcast] {
+        try await api.fetchPodcastsAsync(searchText: value)
     }
-    
-    
-    public func favorite(podcast: Podcast) async throws {
-        
-        try await db.dbQueue?.write({ db in
-            try podcast.save(db)
-        })
+
+
+    /// Favorites in the order they were saved.
+    func fetchFavoritePodcasts() async throws -> [Podcast] {
+        try await store.perform { context in
+            try context.fetch(FavoritePodcastEntity.allRequest()).map(\.podcast)
+        }
     }
-    
-    
-    public func unfavorite(podcast: Podcast) async throws {
-        _ = try await db.dbQueue?.write({ db in
-            try podcast.delete(db)
-        })
+
+
+    func isFavorite(podcast: Podcast) async throws -> Bool {
+        guard let feedUrl = podcast.rssFeedUrl, !feedUrl.isEmpty else { return false }
+        return try await store.perform { context in
+            try context.count(for: FavoritePodcastEntity.request(rssFeedUrl: feedUrl)) > 0
+        }
     }
-    
-    
-    public func isFavorite(podcast: Podcast) async throws -> Bool {
-        let favoritePodcast = try await db.dbQueue?.read({ db in
-            return try Podcast
-                .filter(Column("rssFeedUrl") == podcast.rssFeedUrl)
-                .fetchOne(db)
-        })
-        
-        return favoritePodcast != nil
+
+
+    /// Saves a favorite. Saving one that already exists updates its details and keeps its preset number.
+    func favorite(podcast: Podcast) async throws {
+        guard let feedUrl = podcast.rssFeedUrl, !feedUrl.isEmpty else { throw PersistenceError.missingIdentifier }
+        let favoritedAt = now()
+        try await store.perform { context in
+            let entity: FavoritePodcastEntity
+            if let existing = try context.fetch(FavoritePodcastEntity.request(rssFeedUrl: feedUrl)).first {
+                entity = existing
+            } else {
+                entity = FavoritePodcastEntity(context: context)
+                entity.favoritedAt = favoritedAt
+            }
+            entity.update(from: podcast)
+        }
     }
-    
-    public func fetchFavoritePodcasts() async throws -> [Podcast] {
-        let favoritePodcasts = try await db.dbQueue?.read({ db in
-            return try Podcast
-                .fetchAll(db)
-        })
-        
-        return favoritePodcasts ?? []
-        
+
+
+    func unfavorite(podcast: Podcast) async throws {
+        guard let feedUrl = podcast.rssFeedUrl, !feedUrl.isEmpty else { return }
+        try await store.perform { context in
+            for entity in try context.fetch(FavoritePodcastEntity.request(rssFeedUrl: feedUrl)) {
+                context.delete(entity)
+            }
+        }
     }
 }
