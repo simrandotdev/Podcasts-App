@@ -143,3 +143,6 @@ DerivedData/
 
 # End of https://www.toptal.com/developers/gitignore/api/cocoapods,xcode,macos
 n
+
+# DocC preview output
+.docc-build/
