@@ -17,7 +17,7 @@ xcodebuild -workspace "Podcasts App.xcworkspace" -scheme "Podcasts App" -destina
 xcodebuild ... test -only-testing:"Podcasts App Unit Tests/PlaybackManagerTests/test_close_savesProgressAndClearsPlayback"
 ```
 
-Use the `Podcasts App` scheme for tests. The `Podcasts AppTests` and `PodcastsUITests` schemes reference targets that no longer exist. There is no lint or format tooling.
+Use the `Podcasts App` scheme for tests. It's the only scheme. There is no lint or format tooling.
 
 ## Architecture
 

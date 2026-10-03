@@ -33,7 +33,7 @@ Use four-space indentation, `UpperCamelCase` types, and `lowerCamelCase` methods
 
 ## Testing Guidelines
 
-Use XCTest with injected mock interactors, following `PodcastsControllerTests.swift`. Name tests `test_<behavior>_<expectedResult>`. Cover changed controller behavior and failure paths without live network dependencies. No coverage threshold is configured. Use the main app scheme; older test schemes reference a missing `PodcastsUITests` target.
+Use XCTest with injected mock interactors, following `PodcastsControllerTests.swift`. Name tests `test_<behavior>_<expectedResult>`. Cover changed controller behavior and failure paths without live network dependencies. No coverage threshold is configured. Use the main app scheme.
 
 ## Commit & Pull Request Guidelines
 
