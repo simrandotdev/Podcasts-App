@@ -103,9 +103,13 @@ The tests replace Podcast Index with an `httpx.MockTransport`, so they never use
 
 ## Use It from the iOS App
 
-The iOS app reads this service's address from the `ONAIR_API_BASE_URL` build setting, through the `OnAirAPIBaseURL` key in its `Info.plist`. Debug builds use `http://127.0.0.1:8000`, so start this service before running the app in the Simulator. `APIService.fetchPodcastsAsync(searchText:)` calls `/v1/search`, and the Home list calls `/v1/podcasts/trending`.
+The iOS app reads this service's address from the `ONAIR_API_BASE_URL` build setting, through the `OnAirAPIBaseURL` key in its `Info.plist`. Debug and Release builds both use the deployment on Render, `https://onair-api.onrender.com`. `APIService.fetchPodcastsAsync(searchText:)` calls `/v1/search`, and the Home list calls `/v1/podcasts/trending`.
 
-Release builds leave the setting empty and keep using the iTunes Search API. After you deploy this service, set the Release value to its address.
+To try changes to this service from the app before deploying them, run it locally and set the Debug value to `http://127.0.0.1:8000`.
+
+## Deploy
+
+`render.yaml` at the repository root deploys this folder to Render as the `onair-api` web service. Pushes that change `OnAirAPI/` redeploy it. Set `PODCASTINDEX_API_KEY` and `PODCASTINDEX_API_SECRET` in the service's environment on Render.
 
 ## Project Layout
 

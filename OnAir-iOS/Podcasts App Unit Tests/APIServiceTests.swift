@@ -10,7 +10,7 @@ final class APIServiceTests: XCTestCase {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [PodcastURLProtocol.self]
         session = URLSession(configuration: configuration)
-        // Without an On Air API address, as in Release builds, searches go to iTunes.
+        // Without an On Air API address, searches fall back to iTunes.
         api = APIService(session: session, onAirBaseURL: nil)
     }
 

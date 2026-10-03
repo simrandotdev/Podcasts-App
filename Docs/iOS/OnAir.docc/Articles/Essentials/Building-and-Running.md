@@ -15,15 +15,17 @@ The iOS app lives in the `OnAir-iOS` folder. It targets iOS 16.0 and runs on iPh
 
 Open `OnAir-iOS/Podcasts App.xcworkspace`, not the project inside it, because the package versions are pinned in the workspace. Xcode fetches the packages on the first build. Choose the Podcasts App scheme, which is the only scheme, and an iPhone or iPad simulator.
 
-### Run the On Air API
+### Use the On Air API
 
-Debug builds find podcasts through the On Air API at `http://127.0.0.1:8000`. Start it before running the app, from the repository's `OnAirAPI` folder:
+Debug and Release builds both find podcasts through the On Air API, deployed on Render at `https://onair-api.onrender.com`. Nothing needs to run on the Mac.
+
+To try changes to the service before deploying them, start it from the repository's `OnAirAPI` folder, and set the Debug value of `ONAIR_API_BASE_URL` to `http://127.0.0.1:8000`:
 
 ```sh
 uv run uvicorn app.main:app --reload
 ```
 
-The service needs a Podcast Index API key and secret in `OnAirAPI/.env`. `OnAirAPI/README.md` explains the setup. Without the service, the Home tab shows an error with a Retry button. Release builds leave `ONAIR_API_BASE_URL` empty and use the iTunes Search API until the service is deployed. See <doc:Loading-Podcasts-and-Feeds>.
+The local service needs a Podcast Index API key and secret in `OnAirAPI/.env`. `OnAirAPI/README.md` explains the setup. See <doc:Loading-Podcasts-and-Feeds>.
 
 ### Build and Test from the Command Line
 

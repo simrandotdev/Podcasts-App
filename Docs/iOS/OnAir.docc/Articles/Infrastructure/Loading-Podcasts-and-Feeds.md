@@ -18,12 +18,14 @@ The app finds the service through the `OnAirAPIBaseURL` key in `Info.plist`, whi
 
 | Configuration | `ONAIR_API_BASE_URL` | Podcasts come from |
 | --- | --- | --- |
-| Debug | `http://127.0.0.1:8000` | The On Air API, running on the Mac |
-| Release | Empty | The iTunes Search API |
+| Debug | `https://onair-api.onrender.com` | The On Air API, deployed on Render |
+| Release | `https://onair-api.onrender.com` | The On Air API, deployed on Render |
 
-When the value is empty, `APIService` falls back to the iTunes Search API. The On Air API returns the iTunes response format, so both sources decode the same way. Once the service is deployed, set the Release value to its address.
+The service is deployed on Render from the repository's `render.yaml`. It runs on Render's free plan, which stops the service after 15 minutes without traffic. The first request afterwards waits while it starts, and can take longer than the app's 30-second request timeout. The Retry button then loads the list.
 
-> Note: `127.0.0.1` reaches the Mac from the iOS Simulator, but not from a device. To use a device, run the service with `--host 0.0.0.0` and set the Debug value to the Mac's network address.
+When the value is empty, `APIService` falls back to the iTunes Search API. The On Air API returns the iTunes response format, so both sources decode the same way.
+
+> Tip: To try changes to the service before deploying them, run it on the Mac and set the Debug value to `http://127.0.0.1:8000`. That address reaches the Mac from the iOS Simulator, but not from a device. For a device, run the service with `--host 0.0.0.0` and use the Mac's network address.
 
 ### Search for Podcasts
 
@@ -89,7 +91,7 @@ Each case has a readable `errorDescription`, which view models include in the er
 
 ### Allow Plain HTTP
 
-Many podcast feeds and audio files are still served over plain HTTP, and Debug builds reach the On Air API at `http://127.0.0.1:8000`. `Info.plist` sets `NSAllowsArbitraryLoads` so the app can load them.
+Many podcast feeds and audio files are still served over plain HTTP, and so is the On Air API when it runs on the Mac. `Info.plist` sets `NSAllowsArbitraryLoads` so the app can load them.
 
 ### Load Artwork
 
