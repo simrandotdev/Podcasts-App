@@ -6,10 +6,9 @@ See also `AGENTS.md` for coding style, test naming, and commit/PR conventions. S
 
 ## Build & Test
 
-Always build through the workspace. Dependencies come from CocoaPods (FeedKit, Resolver). Persistence uses Core Data and SQLite from the SDK, so there are no Swift packages.
+Always build through the workspace. Dependencies come from Swift Package Manager: FeedKit (9.x) and Resolver, pinned in the workspace's `Package.resolved` (`Podcasts App.xcworkspace/xcshareddata/swiftpm/`). Xcode fetches them on the first build. Persistence uses Core Data and SQLite from the SDK.
 
 ```sh
-pod install
 xcodebuild -workspace "Podcasts App.xcworkspace" -scheme "Podcasts App" -destination 'generic/platform=iOS Simulator' build
 xcodebuild -workspace "Podcasts App.xcworkspace" -scheme "Podcasts App" -destination 'platform=iOS Simulator,name=<Simulator>' test
 
