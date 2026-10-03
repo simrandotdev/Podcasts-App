@@ -1,0 +1,24 @@
+# Render Blueprint for the On Air API (OnAirAPI/). The iOS app in OnAir-iOS/ isn't deployed.
+# Create it in the Render Dashboard with New > Blueprint. https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: onair-api
+    runtime: python
+    # Build and run only OnAirAPI/. Changes elsewhere in the repository don't redeploy the API.
+    rootDir: OnAirAPI
+    # Free instances stop after 15 minutes without traffic, and the next request waits for them to start.
+    # A paid plan keeps the API running.
+    plan: free
+    buildCommand: uv sync --frozen --no-dev
+    startCommand: uv run --no-sync uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    buildFilter:
+      ignoredPaths:
+        - OnAirAPI/README.md
+        - OnAirAPI/tests/**
+    envVars:
+      # Render asks for these when the Blueprint is created. Never commit their values.
+      - key: PODCASTINDEX_API_KEY
+        sync: false
+      - key: PODCASTINDEX_API_SECRET
+        sync: false
