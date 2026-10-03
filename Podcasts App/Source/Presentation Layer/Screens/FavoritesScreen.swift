@@ -4,6 +4,7 @@ import SwiftUI
 struct FavoritesScreen: View {
     @EnvironmentObject private var controller: PodcastsController
     @EnvironmentObject private var player: PlaybackController
+    @EnvironmentObject private var tracker: NewEpisodeTracker
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
 
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 12)]
@@ -23,7 +24,8 @@ struct FavoritesScreen: View {
                                 EpisodesScreen(podcast: podcast, maximizePlayerView: maximizePlayerView)
                             } label: {
                                 StationTile(title: podcast.title, author: podcast.author, imageUrl: podcast.image,
-                                            isOnAir: player.isOnAir(podcast), preset: index + 1)
+                                            isOnAir: player.isOnAir(podcast), preset: index + 1,
+                                            newCount: tracker.newCount(for: podcast.rssFeedUrl))
                             }
                             .buttonStyle(.plain)
                         }
@@ -34,7 +36,10 @@ struct FavoritesScreen: View {
         }
         .navigationTitle("Favorites ❤️")
         .task { await controller.fetchFavorites() }
-        .refreshable { await controller.fetchFavorites() }
+        .refreshable {
+            await controller.fetchFavorites()
+            await tracker.refresh()
+        }
     }
 
     private var emptyState: some View {

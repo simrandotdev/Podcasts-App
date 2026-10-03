@@ -19,6 +19,7 @@ struct PodcastsApp: App {
             AppTabView()
                 .environmentObject(player)
                 .environmentObject(DownloadManager.shared)
+                .environmentObject(NewEpisodeTracker.shared)
                 .font(.system(.body, design: .rounded))
                 .overlay {
                     if isShowingSplash {
@@ -30,6 +31,15 @@ struct PodcastsApp: App {
             if phase != .active {
                 player.saveProgress()
             }
+            switch phase {
+            case .active: Task { await NewEpisodeTracker.shared.refreshIfStale() }
+            case .background: NewEpisodeTracker.shared.scheduleBackgroundRefresh()
+            default: break
+            }
+        }
+        // iOS wakes the app periodically to check presets for new episodes.
+        .backgroundTask(.appRefresh(NewEpisodeTracker.refreshTaskIdentifier)) {
+            await NewEpisodeTracker.shared.refreshInBackground()
         }
     }
 }

@@ -14,6 +14,10 @@ import Resolver
 struct SettingsView: View {
     @EnvironmentObject private var player: PlaybackController
     @EnvironmentObject private var downloads: DownloadManager
+    @EnvironmentObject private var tracker: NewEpisodeTracker
+    @Environment(\.openURL) private var openURL
+    /// Set when the user turned alerts on but iOS has notifications off for the app.
+    @State private var notificationsDenied = false
     #if DEBUG
     @StateObject private var settingsViewModel = DebugSettingsViewModel()
     #endif
@@ -28,8 +32,6 @@ struct SettingsView: View {
                     .padding(.vertical, 8)
             } header: {
                 sectionHeader("Listening Activity")
-            } footer: {
-                Text("Listening time is real time spent playing, so an hour at 2× counts as 30 minutes.")
             }
 
             Section {
@@ -57,6 +59,45 @@ struct SettingsView: View {
                 .tint(Color.accentColor)
             } header: {
                 sectionHeader("Downloads")
+            }
+
+            Section {
+                Toggle(isOn: Binding(get: { tracker.notificationsEnabled }, set: { isOn in
+                    Task {
+                        let enabled = await tracker.setNotificationsEnabled(isOn)
+                        notificationsDenied = isOn && !enabled
+                    }
+                })) {
+                    Label("New Episode Alerts", systemImage: "bell.badge")
+                }
+                .tint(Color.accentColor)
+                if notificationsDenied {
+                    Button("Allow Notifications in Settings") {
+                        if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+                    }
+                }
+                Button {
+                    Task { await tracker.refresh() }
+                } label: {
+                    HStack {
+                        Label("Check Now", systemImage: "arrow.clockwise")
+                        Spacer()
+                        if tracker.isRefreshing {
+                            ProgressView()
+                        } else if let lastRefresh = tracker.lastRefresh {
+                            Text(lastRefresh, format: .relative(presentation: .named))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .disabled(tracker.isRefreshing)
+            } header: {
+                sectionHeader("New Episodes")
+            } footer: {
+                Text(notificationsDenied
+                     ? "Notifications are turned off for On Air in iOS Settings."
+                     : "On Air checks your presets for new episodes in the background and marks them NEW. With alerts on, you'll get a notification for each podcast with something new.")
             }
 
             Section {
