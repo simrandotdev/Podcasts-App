@@ -4,9 +4,9 @@ Keep favorites and history in Core Data, downloads and tracking state in files, 
 
 ## Overview
 
-On Air stores each kind of data where its owner can read it most simply. Records the app queries and sorts go in Core Data. Files and state that belong to one manager go in Application Support. Small values go in `UserDefaults`.
+On Air stores each kind of data where its owner can read it most simply. Records the app queries and sorts go in Core Data. Files and state that belong to one manager go in Application Support. Small values go in `UserDefaults`, and data the app can load again goes in Caches.
 
-![Three groups. Application Support holds Podcasts.sqlite for favorites and history, the Downloads folder, NewEpisodes.json, and the old db.sqlite, which is imported once and then deleted. UserDefaults holds resume positions keyed by stream URL, episode durations, the playback rate, listening time per day, and two settings. URLCache.shared holds artwork, up to 50 megabytes in memory and 200 on disk.](storage-map)
+![Three groups. Application Support holds Podcasts.sqlite for favorites and history, the Downloads folder, NewEpisodes.json, and the old db.sqlite, which is imported once and then deleted. UserDefaults holds resume positions keyed by stream URL, episode durations, the playback rate, listening time per day, and two settings. Caches hold HomeStations.json, the Home tab's last stations, and URLCache.shared, which holds artwork, up to 50 megabytes in memory and 200 on disk.](storage-map)
 
 ### Model Favorites and History
 
@@ -66,6 +66,7 @@ History saved before the app recorded feed URLs keeps a `nil` `podcastFeedUrl`.
 
 - `Application Support/Downloads` holds downloaded audio and a JSON sidecar for each episode. See <doc:Downloading-Episodes>.
 - `Application Support/NewEpisodes.json` holds the new-episode tracking state. See <doc:Tracking-New-Episodes>.
+- `Library/Caches/HomeStations.json` holds the Home tab's stations from the last successful load, written by `StationsCache`. It's in Caches because the stations can always be loaded again. See <doc:Discovering-Podcasts>.
 
 ## See Also
 

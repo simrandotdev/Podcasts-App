@@ -24,6 +24,11 @@ final class MockPodcastsManager: PodcastsManaging {
     var lastQuery: String?
     var favorites: [Podcast] = []
     let podcast = makePodcast(title: "Podcast title")
+    /// What `cachedPodcasts()` returns: the saved Home list.
+    var cached: [Podcast] = []
+    /// The number of `fetchPodcasts()` calls that fail before one succeeds.
+    var failuresBeforeSuccess = 0
+    private(set) var fetchCount = 0
     private let favoritesSubject = PassthroughSubject<Void, Never>()
 
     var favoritesDidChange: AnyPublisher<Void, Never> { favoritesSubject.eraseToAnyPublisher() }
@@ -32,9 +37,12 @@ final class MockPodcastsManager: PodcastsManaging {
     func sendFavoritesDidChange() { favoritesSubject.send() }
 
     func fetchPodcasts() async throws -> [Podcast] {
-        if shouldFail { throw URLError(.notConnectedToInternet) }
+        fetchCount += 1
+        if shouldFail || fetchCount <= failuresBeforeSuccess { throw URLError(.timedOut) }
         return [podcast]
     }
+
+    func cachedPodcasts() async -> [Podcast] { cached }
 
     func searchPodcasts(forValue value: String) async throws -> [Podcast] {
         lastQuery = value
@@ -105,6 +113,8 @@ final class MockPodcastsRepository: PodcastsRepositoryProtocol {
         trendingFetches += 1
         return [makePodcast(title: "Trending")]
     }
+
+    func cachedTrendingPodcasts() async -> [Podcast] { [] }
 
     func fetchFavoritePodcasts() async throws -> [Podcast] { favorites }
 
