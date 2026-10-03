@@ -59,7 +59,7 @@ Types that touch the system take closures or values for those parts, with defaul
 | `NewEpisodesManager` | The state file URL, `UserDefaults`, `loadFavorites`, `fetchEpisodes`, a `NewEpisodeNotifying` notifier, and `now` |
 | `PodcastsRepository` and `EpisodesRepository` | The `APIService`, the `CoreDataStack`, and `now` |
 | `LegacyDatabaseImporter` | The database URL and `now` |
-| `APIService` | The `URLSession` |
+| `APIService` | The `URLSession`, and the On Air API's address |
 
 ### Add a Dependency
 

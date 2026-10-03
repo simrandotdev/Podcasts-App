@@ -16,14 +16,17 @@ final class PodcastsManagerTests: XCTestCase {
         subscription = sut.favoritesDidChange.sink { [unowned self] in self.changes += 1 }
     }
 
-    func test_fetchPodcasts_searchesForTheHomeTerm() async throws {
-        _ = try await sut.fetchPodcasts()
-        XCTAssertEqual(repository.searches, [PodcastsManager.homeSearchTerm])
+    func test_fetchPodcasts_loadsTrendingPodcasts() async throws {
+        let podcasts = try await sut.fetchPodcasts()
+        XCTAssertEqual(repository.trendingFetches, 1)
+        XCTAssertEqual(repository.searches, [])
+        XCTAssertEqual(podcasts.first?.title, "Trending")
     }
 
     func test_blankSearch_showsTheHomeList() async throws {
         _ = try await sut.searchPodcasts(forValue: "  \n")
-        XCTAssertEqual(repository.searches, ["podcasts"])
+        XCTAssertEqual(repository.trendingFetches, 1)
+        XCTAssertEqual(repository.searches, [])
     }
 
     func test_search_usesTheQuery() async throws {

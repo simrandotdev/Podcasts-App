@@ -17,7 +17,7 @@ Several items refer to the radio-style UI (station tiles, presets, broadcast log
 - [ ] **Downloads for offline listening.** `Episode.fileUrl` exists but is unused. Needs background `URLSession` downloads, a download indicator on schedule rows, and playback from the local file when it exists.
 - [ ] **New-episode tracking for presets.** Check favorite feeds for new episodes, show a "NEW" badge on station tiles, and add a "Fresh on Air" shelf on the Podcasts screen. Later: `BGAppRefreshTask` and notifications.
 - [ ] **Up Next queue editing.** Reorder, "Play next" / "Play later", and remove. `PlaybackController` already has a queue, but it's only filled from a single list.
-- [ ] **Browse by category.** Use the iTunes Search API's `genreId` to show bands of stations (News, Comedy, Tech…) instead of only searching for `"podcasts"`.
+- [ ] **Browse by category.** Use the On Air API's `/v1/podcasts/trending?category=` to show bands of stations (News, Comedy, Tech…) instead of one trending list.
 - [ ] **Chapters.** Read them from the feed or the audio file's metadata.
 - [ ] **Skip silence.** Needs audio processing.
 

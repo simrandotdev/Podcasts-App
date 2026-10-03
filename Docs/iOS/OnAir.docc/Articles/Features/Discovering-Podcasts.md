@@ -1,6 +1,6 @@
 # Discovering Podcasts
 
-Browse popular shows, search the iTunes catalog, and pick up recent listening from the Home tab.
+Browse trending shows, search for podcasts, and pick up recent listening from the Home tab.
 
 ## Overview
 
@@ -19,7 +19,7 @@ The Home tab is `PodcastsScreen`, backed by `HomeViewModel`. It's a single scrol
 
 ### Browse Stations
 
-Without a search, the grid shows the result of searching the iTunes catalog for `PodcastsManager.homeSearchTerm`, which is "podcasts". The iTunes Search API returns up to 50 shows. While the first load runs, the grid shows eight placeholder tiles.
+Without a search, the grid shows up to 50 podcasts that are trending now, from the On Air API's `/v1/podcasts/trending`. In builds without the API's address, it shows an iTunes search for "podcasts" instead. See <doc:Loading-Podcasts-and-Feeds>. While the first load runs, the grid shows eight placeholder tiles.
 
 The grid is an adaptive `LazyVGrid` with columns at least 150 points wide, so it shows more columns on iPad. Each `StationTile` shows the artwork with the title and author on a dark band, and two badges in the corner:
 
@@ -28,9 +28,9 @@ The grid is an adaptive `LazyVGrid` with columns at least 150 points wide, so it
 
 Tapping a tile opens the podcast's page. See <doc:Viewing-a-Podcast>.
 
-### Search the Catalog
+### Search for Podcasts
 
-The search field comes from `.searchable(text:)`, bound to `HomeViewModel.searchText`. The view model waits until typing pauses for 333 ms and cancels any search still running. It searches once the trimmed text is longer than 2 characters. Shorter text, including an empty field, brings back the default station list.
+The search field comes from `.searchable(text:)`, bound to `HomeViewModel.searchText`. The view model waits until typing pauses for 333 ms and cancels any search still running. It searches once the trimmed text is longer than 2 characters. Shorter text, including an empty field, brings back the trending stations.
 
 Each request carries an ID, and the view model drops any response that a newer request has replaced. So a slow response never overwrites newer results. If a request fails, the grid shows the error with a Retry button. For the full path of a search request, see <doc:Following-a-Request>.
 
