@@ -861,16 +861,17 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = WC362J72KA;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "On Air";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.hello-podcasts";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.on-air";
 				PRODUCT_NAME = "Podcasts Bin";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
@@ -893,16 +894,17 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.1;
 				DEVELOPMENT_TEAM = WC362J72KA;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "On Air";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1;
-				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.hello-podcasts";
+				PRODUCT_BUNDLE_IDENTIFIER = "ca.bytesizedsoftware.on-air";
 				PRODUCT_NAME = "Podcasts Bin";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
