@@ -1,10 +1,11 @@
 import Foundation
-import Combine
+import Observation
 
 /// Download state and controls for every view that shows downloads: the Downloads tab, download
 /// buttons, episode details and Settings. Wraps the app's `DownloadManager`.
 @MainActor
-final class DownloadsViewModel: ObservableObject {
+@Observable
+final class DownloadsViewModel {
     /// A finished download.
     struct Item: Identifiable {
         let episode: EpisodeViewModel
@@ -13,20 +14,17 @@ final class DownloadsViewModel: ObservableObject {
     }
 
     /// Finished downloads, newest first.
-    @Published private(set) var library: [Item] = []
+    var library: [Item] {
+        manager.library.map { Item(episode: EpisodeViewModel(episode: $0.episode), fileSize: $0.fileSize) }
+    }
 
     private let manager: DownloadManager
-    private var subscription: AnyCancellable?
 
     /// - Parameter manager: Defaults to the app's shared download manager.
     init(manager: DownloadManager? = nil) {
-        let manager = manager ?? .shared
-        self.manager = manager
-        manager.$library
-            .map { $0.map { Item(episode: EpisodeViewModel(episode: $0.episode), fileSize: $0.fileSize) } }
-            .assign(to: &$library)
-        // Republish progress and state changes so download buttons update while downloading.
-        subscription = manager.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+        // Every property below reads DownloadManager, which is observable, so download buttons update while
+        // downloading.
+        self.manager = manager ?? .shared
     }
 
     // MARK: - State

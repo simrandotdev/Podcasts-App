@@ -6,9 +6,9 @@ struct PodcastsApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @Environment(\.scenePhase) private var scenePhase
     // App-wide view models, shared by every screen so playback and downloads survive navigation.
-    @StateObject private var player = PlayerViewModel()
-    @StateObject private var downloads = DownloadsViewModel()
-    @StateObject private var newEpisodes = NewEpisodesViewModel()
+    @State private var player = PlayerViewModel()
+    @State private var downloads = DownloadsViewModel()
+    @State private var newEpisodes = NewEpisodesViewModel()
     @State private var isShowingSplash = true
 
     init() {
@@ -20,9 +20,9 @@ struct PodcastsApp: App {
     var body: some Scene {
         WindowGroup {
             AppTabView()
-                .environmentObject(player)
-                .environmentObject(downloads)
-                .environmentObject(newEpisodes)
+                .environment(player)
+                .environment(downloads)
+                .environment(newEpisodes)
                 .font(.system(.body, design: .rounded))
                 .overlay {
                     if isShowingSplash {
@@ -30,7 +30,7 @@ struct PodcastsApp: App {
                     }
                 }
         }
-        .onChange(of: scenePhase) { phase in
+        .onChange(of: scenePhase) { _, phase in
             if phase != .active {
                 player.saveProgress()
             }

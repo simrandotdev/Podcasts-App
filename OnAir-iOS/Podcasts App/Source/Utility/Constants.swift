@@ -20,9 +20,7 @@ struct Constants {
     struct InAppSubscribed {
         static var isUserSubscribed: Bool {
             set {
-                DispatchQueue.main.async {
-                    UserDefaults.standard.set(newValue, forKey: "isUserSubscribed")
-                }
+                UserDefaults.standard.set(newValue, forKey: "isUserSubscribed")
             }
             
             get {
@@ -33,9 +31,7 @@ struct Constants {
         
         static var firstTimeSync: Bool {
             set {
-                DispatchQueue.main.async {
-                    UserDefaults.standard.set(newValue, forKey: "firstTimeSync")
-                }
+                UserDefaults.standard.set(newValue, forKey: "firstTimeSync")
             }
             
             get {

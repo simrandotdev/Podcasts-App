@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PlayerDetailsView: View {
-    @EnvironmentObject private var player: PlayerViewModel
+    @Environment(PlayerViewModel.self) private var player
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let minimize: () -> Void
     @State private var scrubTime = 0.0
@@ -138,7 +138,7 @@ struct PlayerDetailsView: View {
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: dragOffset > 0 ? 24 : 0, style: .continuous))
         .offset(y: dragOffset)
-        .onChange(of: player.episode?.streamUrl) { _ in isScrubbing = false }
+        .onChange(of: player.episode?.streamUrl) { isScrubbing = false }
         .accessibilityAction(.escape, minimize)
     }
 
@@ -359,7 +359,7 @@ struct PlayerDetailsView: View {
 }
 
 struct MiniPlayerView: View {
-    @EnvironmentObject private var player: PlayerViewModel
+    @Environment(PlayerViewModel.self) private var player
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let expand: () -> Void
 

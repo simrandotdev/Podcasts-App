@@ -8,8 +8,8 @@ extension EpisodeViewModel: Identifiable {
 
 /// Full show notes for an episode, with a button to play or resume it.
 struct EpisodeDetailsSheet: View {
-    @EnvironmentObject private var player: PlayerViewModel
-    @EnvironmentObject private var downloads: DownloadsViewModel
+    @Environment(PlayerViewModel.self) private var player
+    @Environment(DownloadsViewModel.self) private var downloads
     @Environment(\.dismiss) private var dismiss
     let episode: EpisodeViewModel
     /// Artwork to fall back on when the episode has none of its own.

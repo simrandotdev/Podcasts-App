@@ -4,7 +4,7 @@ Open the workspace, build the app, and run its tests.
 
 ## Overview
 
-The iOS app lives in the `OnAir-iOS` folder. It targets iOS 16.0 and runs on iPhone and iPad. Its two dependencies come from Swift Package Manager, pinned in the workspace's `Package.resolved`:
+The iOS app lives in the `OnAir-iOS` folder. It targets iOS 18.0 and runs on iPhone and iPad, so building and testing need an iOS 18 or later simulator. Its two dependencies come from Swift Package Manager, pinned in the workspace's `Package.resolved`:
 
 | Package | Requirement | Used for |
 | --- | --- | --- |

@@ -7,15 +7,14 @@
 //
 
 import Foundation
-import Combine
 
 
 // MARK: - PodcastsManaging protocol
 
 protocol PodcastsManaging {
 
-    /// Sends after a podcast is favorited or unfavorited, on an arbitrary thread.
-    var favoritesDidChange: AnyPublisher<Void, Never> { get }
+    /// A new stream for each caller, which delivers a value after a podcast is favorited or unfavorited.
+    func favoritesChanges() -> AsyncStream<Void>
 
     func fetchPodcasts() async throws -> [Podcast]
     /// The Home list from the last successful `fetchPodcasts()`, to show before the latest one loads.
@@ -38,9 +37,7 @@ final class PodcastsManager: PodcastsManaging {
 
     private let repository: PodcastsRepositoryProtocol
 
-    private let favoritesSubject = PassthroughSubject<Void, Never>()
-
-    var favoritesDidChange: AnyPublisher<Void, Never> { favoritesSubject.eraseToAnyPublisher() }
+    private let favoritesBroadcaster = ChangeBroadcaster()
 
     init(repository: PodcastsRepositoryProtocol) {
         self.repository = repository
@@ -48,6 +45,12 @@ final class PodcastsManager: PodcastsManaging {
 
 
     // MARK: Public methods
+
+
+    func favoritesChanges() -> AsyncStream<Void> {
+
+        favoritesBroadcaster.changes()
+    }
 
 
     /// The Home list: podcasts that are trending now.
@@ -76,14 +79,14 @@ final class PodcastsManager: PodcastsManaging {
     func favorite(podcast: Podcast) async throws {
 
         try await repository.favorite(podcast: podcast)
-        favoritesSubject.send()
+        favoritesBroadcaster.send()
     }
 
 
     func unfavorite(podcast: Podcast) async throws {
 
         try await repository.unfavorite(podcast: podcast)
-        favoritesSubject.send()
+        favoritesBroadcaster.send()
     }
 
 

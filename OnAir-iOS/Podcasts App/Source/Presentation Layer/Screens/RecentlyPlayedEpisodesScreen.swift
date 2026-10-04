@@ -2,9 +2,9 @@ import SwiftUI
 
 /// Listening history styled as a station's broadcast log, newest first.
 struct RecentlyPlayedEpisodesScreen: View {
-    @EnvironmentObject private var history: HistoryViewModel
-    @EnvironmentObject private var player: PlayerViewModel
-    @EnvironmentObject private var downloads: DownloadsViewModel
+    @Environment(HistoryViewModel.self) private var history
+    @Environment(PlayerViewModel.self) private var player
+    @Environment(DownloadsViewModel.self) private var downloads
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     @State private var detailsEpisode: EpisodeViewModel?
 
@@ -32,8 +32,8 @@ struct RecentlyPlayedEpisodesScreen: View {
         .navigationTitle("Recently Played 🎙")
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode) { resume(episode) }
-                .environmentObject(player)
-                .environmentObject(downloads)
+                .environment(player)
+                .environment(downloads)
         }
         .task { await history.fetchHistory() }
         .refreshable { await history.fetchHistory() }
@@ -62,7 +62,7 @@ struct RecentlyPlayedEpisodesScreen: View {
 }
 
 private struct LogEntryRow: View {
-    @EnvironmentObject private var downloads: DownloadsViewModel
+    @Environment(DownloadsViewModel.self) private var downloads
     let episode: EpisodeViewModel
     let isOnAir: Bool
     let progress: Double?

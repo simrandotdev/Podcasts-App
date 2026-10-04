@@ -8,7 +8,7 @@ Settings opens with a Listening Activity section: a heatmap of the past year in 
 
 - term ListeningStats: Records seconds of listening per calendar day, in `UserDefaults` under `listeningSecondsByDay`.
 - term ListeningHeatmap: Arranges the last 53 weeks of those totals into columns and computes the summary values.
-- term SettingsViewModel: Builds the heatmap from `PlaybackManager.listeningStats`, and republishes the player's changes so the heatmap stays current while an episode plays.
+- term SettingsViewModel: Builds the heatmap from `PlaybackManager.listeningStats`. It also reads `PlaybackManager.listeningStatsRevision`, which goes up each time listening time is recorded, so the heatmap stays current while an episode plays.
 
 ### Count Listening Time
 

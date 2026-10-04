@@ -24,13 +24,13 @@ OnAir-iOS/Podcasts App/
 
 #### Views
 
-Views are SwiftUI structures that draw state and forward user actions. A view reads only view models, which it receives as environment objects or creates as state objects. It never calls a manager, a repository, or a system service.
+Views are SwiftUI structures that draw state and forward user actions. A view reads only view models, which it gets from the environment with `@Environment(Type.self)` or owns with `@State`. For a binding, such as the search field's text, it makes a local `@Bindable` copy. It never calls a manager, a repository, or a system service.
 
 Screens that start playback don't hold the player. `AppTabView` passes each one a `maximizePlayerView(episode, queue)` closure, which starts the episode and expands the player.
 
 #### View Models
 
-View models are `@MainActor` classes that conform to `ObservableObject`. They load data through managers, convert domain models into display models, and publish the result. There are two kinds.
+View models are `@MainActor` classes marked `@Observable`, from the Observation framework. They load data through managers, convert domain models into display models, and publish the result. There are two kinds.
 
 Screen view models back one screen, or a few screens that show the same data:
 
@@ -79,15 +79,18 @@ A podcast's identity is its RSS feed URL, `rssFeedUrl`. An episode's identity is
 
 Writes travel down through the layers. Changes come back up in one of two ways, depending on which object owns the state.
 
-![Three columns. On the left, a write goes from EpisodesScreen through PodcastDetailViewModel, PodcastsManager, and PodcastsRepository to CoreDataStack. In the middle, PodcastsManager sends favoritesDidChange to FavoritesViewModel, which updates FavoritesScreen. On the right, PlaybackManager's published state reaches PlayerViewModel and then the player views through objectWillChange.](state-propagation)
+![Three columns. On the left, a write goes from EpisodesScreen through PodcastDetailViewModel, PodcastsManager, and PodcastsRepository to CoreDataStack. In the middle, PodcastsManager announces the change through favoritesChanges to FavoritesViewModel, which reloads, and FavoritesScreen observes it. On the right, the player views observe PlayerViewModel, whose properties read PlaybackManager's observable state.](state-propagation)
 
-**Change events.** After `PodcastsManager` saves or removes a favorite, it sends `favoritesDidChange`. After `EpisodesManager` records a play, it sends `historyDidChange`. Each subscribed view model moves to the main queue with `receive(on:)` and reloads. That's how saving a preset on a podcast's page updates the Favorites tab, and how playing an episode anywhere updates Recently Played.
+**Change events.** After `PodcastsManager` saves or removes a favorite, it announces the change to everyone listening to `favoritesChanges()`. After `EpisodesManager` records a play, it announces it through `historyChanges()`. Each call returns a new `AsyncStream<Void>`, made by `ChangeBroadcaster`. `FavoritesViewModel` and `HistoryViewModel` subscribe when they're created and reload after each change. That's how saving a preset on a podcast's page updates the Favorites tab, and how playing an episode anywhere updates Recently Played.
 
-**Republished state.** The app-wide managers are observable objects. Their view models forward the manager's `objectWillChange`, so a view that observes `PlayerViewModel` redraws whenever `PlaybackManager` publishes a new position, and the same holds for downloads and new episodes. Where views need display models, the view model maps the manager's published value. For example, `PlayerViewModel` maps `PlaybackManager.$episode` into an `EpisodeViewModel`.
+**Observed state.** The app-wide managers are `@Observable`, and their view models expose computed properties that read them. For example, `PlayerViewModel.isPlaying` reads `PlaybackManager.isPlaying`. Observation records every property a view reads while it draws, including properties reached through another object, so the view redraws when the manager changes. Nothing has to be forwarded. Where views need display models, the view model converts the manager's value when it's read. For example, `PlayerViewModel.episode` turns `PlaybackManager.episode` into an `EpisodeViewModel`.
 
 ### Use Concurrency Safely
 
+- The app uses Swift concurrency only: async/await, `Task`, and `AsyncSequence`. Nothing imports Combine or uses GCD.
 - View models and the app-wide managers run on the main actor.
+- `PlaybackManager` observes `AVPlayer` with KVO tokens from `observe(_:options:)`, and reads system notifications with `NotificationCenter.notifications(named:)`. Both move to the main actor before changing state. Its periodic time observer has no queue, so AVFoundation calls it on the main queue, where it enters the main actor with `MainActor.assumeIsolated`.
+- `DownloadManager` watches the network by iterating `NWPathMonitor`, which is an `AsyncSequence`.
 - Repository methods are `async`. Core Data work runs on a new background context for each call. Its merge policy, `NSMergeByPropertyObjectTrumpMergePolicy`, updates a row that another context saved at the same time rather than duplicating it.
 - `APIService` parses feeds inside its `async` methods, off the main actor.
 - `DownloadSessionDelegate` receives `URLSession` callbacks on the session's queue and forwards them to `DownloadManager` on the main actor.

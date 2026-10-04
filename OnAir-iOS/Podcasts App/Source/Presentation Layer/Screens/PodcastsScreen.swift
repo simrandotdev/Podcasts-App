@@ -1,15 +1,16 @@
 import SwiftUI
 
 struct PodcastsScreen: View {
-    @EnvironmentObject private var viewModel: HomeViewModel
-    @EnvironmentObject private var history: HistoryViewModel
-    @EnvironmentObject private var player: PlayerViewModel
-    @EnvironmentObject private var newEpisodes: NewEpisodesViewModel
+    @Environment(HomeViewModel.self) private var viewModel
+    @Environment(HistoryViewModel.self) private var history
+    @Environment(PlayerViewModel.self) private var player
+    @Environment(NewEpisodesViewModel.self) private var newEpisodes
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
 
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 12)]
 
     var body: some View {
+        @Bindable var viewModel = viewModel
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 24) {
                 if !viewModel.isSearching && !newEpisodes.freshEpisodes.isEmpty {

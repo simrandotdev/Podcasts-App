@@ -1,4 +1,3 @@
-import Combine
 import XCTest
 @testable import Podcasts_Bin
 
@@ -29,12 +28,12 @@ final class MockPodcastsManager: PodcastsManaging {
     /// The number of `fetchPodcasts()` calls that fail before one succeeds.
     var failuresBeforeSuccess = 0
     private(set) var fetchCount = 0
-    private let favoritesSubject = PassthroughSubject<Void, Never>()
+    private let favoritesBroadcaster = ChangeBroadcaster()
 
-    var favoritesDidChange: AnyPublisher<Void, Never> { favoritesSubject.eraseToAnyPublisher() }
+    func favoritesChanges() -> AsyncStream<Void> { favoritesBroadcaster.changes() }
 
     /// Simulates a favorite changing somewhere else in the app.
-    func sendFavoritesDidChange() { favoritesSubject.send() }
+    func sendFavoritesDidChange() { favoritesBroadcaster.send() }
 
     func fetchPodcasts() async throws -> [Podcast] {
         fetchCount += 1
@@ -52,13 +51,13 @@ final class MockPodcastsManager: PodcastsManaging {
     func favorite(podcast: Podcast) async throws {
         if shouldFail { throw URLError(.cannotWriteToFile) }
         if !favorites.contains(where: { $0.rssFeedUrl == podcast.rssFeedUrl }) { favorites.append(podcast) }
-        favoritesSubject.send()
+        favoritesBroadcaster.send()
     }
 
     func unfavorite(podcast: Podcast) async throws {
         if shouldFail { throw URLError(.cannotWriteToFile) }
         favorites.removeAll { $0.rssFeedUrl == podcast.rssFeedUrl }
-        favoritesSubject.send()
+        favoritesBroadcaster.send()
     }
 
     func isFavorite(podcast: Podcast) async throws -> Bool {
@@ -75,9 +74,9 @@ final class MockEpisodesManager: EpisodesManaging {
     var shouldFail = false
     var episodesByFeed: [String: [Episode]] = [:]
     var history: [Episode] = []
-    private let historySubject = PassthroughSubject<Void, Never>()
+    private let historyBroadcaster = ChangeBroadcaster()
 
-    var historyDidChange: AnyPublisher<Void, Never> { historySubject.eraseToAnyPublisher() }
+    func historyChanges() -> AsyncStream<Void> { historyBroadcaster.changes() }
 
     func fetchEpisodes(forFeedUrl feedUrl: String) async throws -> [Episode] {
         if shouldFail { throw URLError(.notConnectedToInternet) }
@@ -87,7 +86,7 @@ final class MockEpisodesManager: EpisodesManaging {
     func saveInHistory(episode: Episode) async throws {
         history.removeAll { $0.streamUrl == episode.streamUrl }
         history.insert(episode, at: 0)
-        historySubject.send()
+        historyBroadcaster.send()
     }
 
     func fetchHistory() async throws -> [Episode] {
@@ -203,7 +202,26 @@ func waitUntil(timeout: TimeInterval = 2, _ condition: () -> Bool) async -> Bool
     let deadline = Date().addingTimeInterval(timeout)
     while !condition() {
         if Date() > deadline { return false }
-        try? await Task.sleep(nanoseconds: 10_000_000)
+        try? await Task.sleep(for: .milliseconds(10))
     }
     return true
+}
+
+/// Counts the changes a stream delivers, so a test can check how many were announced.
+@MainActor
+final class ChangeCounter {
+    private(set) var count = 0
+    private var task: Task<Void, Never>?
+
+    init(_ changes: AsyncStream<Void>) {
+        task = Task { [weak self] in
+            for await _ in changes {
+                self?.count += 1
+            }
+        }
+    }
+
+    deinit {
+        task?.cancel()
+    }
 }

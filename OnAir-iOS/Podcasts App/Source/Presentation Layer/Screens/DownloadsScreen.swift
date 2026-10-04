@@ -2,9 +2,9 @@ import SwiftUI
 
 /// Downloaded episodes and downloads in progress. Storage and the Wi-Fi only setting live in Settings.
 struct DownloadsScreen: View {
-    @EnvironmentObject private var downloads: DownloadsViewModel
-    @EnvironmentObject private var player: PlayerViewModel
-    @EnvironmentObject private var history: HistoryViewModel
+    @Environment(DownloadsViewModel.self) private var downloads
+    @Environment(PlayerViewModel.self) private var player
+    @Environment(HistoryViewModel.self) private var history
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     @State private var detailsEpisode: EpisodeViewModel?
     @State private var isConfirmingRemoveAll = false
@@ -82,8 +82,8 @@ struct DownloadsScreen: View {
         }
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode) { play(episode) }
-                .environmentObject(player)
-                .environmentObject(downloads)
+                .environment(player)
+                .environment(downloads)
         }
     }
 
@@ -161,7 +161,7 @@ private struct DownloadedRow: View {
 }
 
 private struct ActiveDownloadRow: View {
-    @EnvironmentObject private var downloads: DownloadsViewModel
+    @Environment(DownloadsViewModel.self) private var downloads
     let episode: EpisodeViewModel
     let state: DownloadState
     let isWaitingForWiFi: Bool

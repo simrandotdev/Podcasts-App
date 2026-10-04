@@ -3,9 +3,9 @@ import SwiftUI
 /// Horizontally scrolling cards for new episodes of the user's presets. Playing one takes it off the
 /// shelf; opening its podcast clears all of that podcast's new episodes.
 struct FreshOnAirRow: View {
-    @EnvironmentObject private var player: PlayerViewModel
-    @EnvironmentObject private var downloads: DownloadsViewModel
-    @EnvironmentObject private var newEpisodes: NewEpisodesViewModel
+    @Environment(PlayerViewModel.self) private var player
+    @Environment(DownloadsViewModel.self) private var downloads
+    @Environment(NewEpisodesViewModel.self) private var newEpisodes
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     @State private var detailsEpisode: EpisodeViewModel?
 
@@ -21,8 +21,8 @@ struct FreshOnAirRow: View {
         }
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode) { play(episode) }
-                .environmentObject(player)
-                .environmentObject(downloads)
+                .environment(player)
+                .environment(downloads)
         }
     }
 
@@ -34,7 +34,7 @@ struct FreshOnAirRow: View {
 }
 
 private struct FreshEpisodeCard: View {
-    @EnvironmentObject private var downloads: DownloadsViewModel
+    @Environment(DownloadsViewModel.self) private var downloads
     @ScaledMetric(relativeTo: .caption) private var width: CGFloat = 150
     let fresh: NewEpisodesViewModel.Item
 

@@ -25,7 +25,7 @@ The user saves a preset with the Save Preset button on a podcast's page. The req
 
 1. `PodcastDetailViewModel.toggleFavorite()` converts its `PodcastViewModel` to a `Podcast` and calls `PodcastsManaging.favorite(podcast:)` or `unfavorite(podcast:)`.
 2. `PodcastsRepository` saves a `FavoritePodcastEntity` keyed by `rssFeedUrl`, or deletes it.
-3. `PodcastsManager` sends `favoritesDidChange`.
+3. `PodcastsManager` announces the change through `favoritesChanges()`.
 4. `FavoritesViewModel` reloads, so the Favorites tab updates even though the user changed it from another screen.
 
 ### Number the Presets

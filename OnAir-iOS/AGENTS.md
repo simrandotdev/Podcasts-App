@@ -28,7 +28,7 @@ These commands open the workspace, build, list destinations, and run tests. Repl
 
 ## Coding Style & Naming Conventions
 
-Use four-space indentation, `UpperCamelCase` types, and `lowerCamelCase` methods/properties. Match filenames to their main type. Follow existing suffixes such as `Screen`, `Controller`, `Interactor`, `Repository`, and `ViewModel`, and use `// MARK: -` sections where helpful. Preserve Resolver dependency injection and Combine/async-await patterns. Keep UI-observable mutations on the main actor. No SwiftLint or SwiftFormat configuration is checked in; follow surrounding code.
+Use four-space indentation, `UpperCamelCase` types, and `lowerCamelCase` methods/properties. Match filenames to their main type. Follow existing suffixes such as `Screen`, `Controller`, `Interactor`, `Repository`, and `ViewModel`, and use `// MARK: -` sections where helpful. Preserve Resolver dependency injection, Observation (`@Observable`) and async/await patterns; don't add Combine or GCD. Keep UI-observable mutations on the main actor. No SwiftLint or SwiftFormat configuration is checked in; follow surrounding code.
 
 ## Testing Guidelines
 

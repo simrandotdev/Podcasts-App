@@ -1,5 +1,6 @@
 import BackgroundTasks
 import Foundation
+import Observation
 import Resolver
 import UserNotifications
 
@@ -25,7 +26,8 @@ protocol NewEpisodeNotifying {
 /// podcast *and* it's dated after that visit. Requiring both keeps undated episodes (which FeedKit
 /// parsing dates "now") from looking new on every check. Views reach it through `NewEpisodesViewModel`.
 @MainActor
-final class NewEpisodesManager: ObservableObject {
+@Observable
+final class NewEpisodesManager {
     static let shared = NewEpisodesManager()
     static let refreshTaskIdentifier = "ca.bytesizedsoftware.hello-podcasts.refresh"
     static let notificationsKey = "newEpisodeNotificationsEnabled"
@@ -33,10 +35,10 @@ final class NewEpisodesManager: ObservableObject {
     static let foregroundRefreshInterval: TimeInterval = 15 * 60
 
     /// New episodes across all presets, newest first.
-    @Published private(set) var freshEpisodes: [FreshEpisode] = []
-    @Published private(set) var isRefreshing = false
-    @Published private(set) var lastRefresh: Date?
-    @Published private(set) var notificationsEnabled: Bool
+    private(set) var freshEpisodes: [FreshEpisode] = []
+    private(set) var isRefreshing = false
+    private(set) var lastRefresh: Date?
+    private(set) var notificationsEnabled: Bool
 
     /// Persisted between launches so badges and the shelf show before the first check finishes.
     struct State: Codable {
@@ -51,7 +53,7 @@ final class NewEpisodesManager: ObservableObject {
         var lastRefresh: Date?
     }
 
-    private var state: State
+    @ObservationIgnored private var state: State
     private let stateURL: URL
     private let defaults: UserDefaults
     private let loadFavorites: () async throws -> [Podcast]
@@ -59,7 +61,7 @@ final class NewEpisodesManager: ObservableObject {
     private let notifier: NewEpisodeNotifying
     private let now: () -> Date
     /// The latest stream URLs fetched per feed, used to re-baseline when the user opens a podcast.
-    private var latestUrls: [String: [String]] = [:]
+    @ObservationIgnored private var latestUrls: [String: [String]] = [:]
 
     private static let maxFreshPerFeed = 10
     private static let maxRemembered = 500

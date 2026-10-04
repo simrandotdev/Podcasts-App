@@ -1,26 +1,33 @@
 import Foundation
+import Observation
 import Resolver
-import Combine
 
 /// Backs `FavoritesScreen`: the user's favorites, numbered as presets in the order they were saved.
 /// Reloads whenever a podcast is favorited or unfavorited anywhere in the app.
 @MainActor
-final class FavoritesViewModel: ObservableObject {
-    @Published private(set) var favorites: [PodcastViewModel] = []
+@Observable
+final class FavoritesViewModel {
+    private(set) var favorites: [PodcastViewModel] = []
     /// False until the first load finishes, so the empty state doesn't flash on launch.
-    @Published private(set) var hasLoaded = false
-    @Published private(set) var errorMessage: String?
+    private(set) var hasLoaded = false
+    private(set) var errorMessage: String?
 
     private let podcastsManager: PodcastsManaging
-    private var subscription: AnyCancellable?
+    @ObservationIgnored private var changesTask: Task<Void, Never>?
 
     init(podcastsManager: PodcastsManaging = Resolver.resolve()) {
         self.podcastsManager = podcastsManager
-        subscription = podcastsManager.favoritesDidChange
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                Task { await self?.fetchFavorites() }
+        // Subscribe now, so no change is missed, then reload after each one.
+        let changes = podcastsManager.favoritesChanges()
+        changesTask = Task { [weak self] in
+            for await _ in changes {
+                await self?.fetchFavorites()
             }
+        }
+    }
+
+    deinit {
+        changesTask?.cancel()
     }
 
     var isEmpty: Bool { hasLoaded && favorites.isEmpty && errorMessage == nil }

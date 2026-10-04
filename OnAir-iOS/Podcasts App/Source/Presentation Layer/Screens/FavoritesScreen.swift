@@ -2,9 +2,9 @@ import SwiftUI
 
 /// Favorites shown as numbered presets, like the preset buttons on a radio.
 struct FavoritesScreen: View {
-    @EnvironmentObject private var viewModel: FavoritesViewModel
-    @EnvironmentObject private var player: PlayerViewModel
-    @EnvironmentObject private var newEpisodes: NewEpisodesViewModel
+    @Environment(FavoritesViewModel.self) private var viewModel
+    @Environment(PlayerViewModel.self) private var player
+    @Environment(NewEpisodesViewModel.self) private var newEpisodes
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
 
     private let columns = [GridItem(.adaptive(minimum: 150), spacing: 12)]
