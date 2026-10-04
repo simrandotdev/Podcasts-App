@@ -9,6 +9,7 @@ struct PodcastsApp: App {
     @State private var player = PlayerViewModel()
     @State private var downloads = DownloadsViewModel()
     @State private var newEpisodes = NewEpisodesViewModel()
+    @State private var onboarding = OnboardingViewModel()
     @State private var isShowingSplash = true
 
     init() {
@@ -23,11 +24,22 @@ struct PodcastsApp: App {
                 .environment(player)
                 .environment(downloads)
                 .environment(newEpisodes)
+                .environment(onboarding)
                 .font(.system(.body, design: .rounded))
+                // iOS 18 doesn't reliably apply the asset catalog's accent color, so set the app's orange here.
+                .tint(Color.onAir)
                 .overlay {
                     if isShowingSplash {
                         SplashView { isShowingSplash = false }
                     }
+                }
+                // The welcome tour follows the splash on first launch, while Home loads underneath.
+                .fullScreenCover(isPresented: Binding(
+                    get: { onboarding.isPresented && !isShowingSplash },
+                    set: { isPresented in if !isPresented { onboarding.finish() } }
+                )) {
+                    OnboardingView(onboarding: onboarding)
+                        .font(.system(.body, design: .rounded))
                 }
         }
         .onChange(of: scenePhase) { _, phase in

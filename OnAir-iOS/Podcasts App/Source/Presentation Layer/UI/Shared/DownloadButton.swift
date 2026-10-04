@@ -22,10 +22,10 @@ struct DownloadButton: View {
                         Circle().stroke(Color.secondary.opacity(0.3), lineWidth: 2.5)
                         Circle()
                             .trim(from: 0, to: max(progress, 0.03))
-                            .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                            .stroke(Color.onAir, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
                             .rotationEffect(.degrees(-90))
                         RoundedRectangle(cornerRadius: 1.5)
-                            .fill(Color.accentColor)
+                            .fill(Color.onAir)
                             .frame(width: 7, height: 7)
                     }
                     .frame(width: 22, height: 22)
@@ -44,7 +44,7 @@ struct DownloadButton: View {
             }
         }
         .font(onArtwork ? .body : .title3)
-        .foregroundStyle(state == .downloaded ? Color.accentColor : (onArtwork ? Color.primary : Color.secondary))
+        .foregroundStyle(state == .downloaded ? Color.onAir : (onArtwork ? Color.primary : Color.secondary))
         .frame(width: onArtwork ? 30 : nil, height: onArtwork ? 30 : nil)
         .background {
             if onArtwork { Circle().fill(.regularMaterial) }

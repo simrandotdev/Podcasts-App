@@ -90,14 +90,14 @@ struct DownloadsScreen: View {
     private func sectionHeader(_ title: String) -> some View {
         Text(title.uppercased())
             .font(.caption.weight(.heavy).monospaced())
-            .foregroundStyle(Color.accentColor)
+            .foregroundStyle(Color.onAir)
     }
 
     private var emptyState: some View {
         VStack(spacing: 10) {
             Image(systemName: "arrow.down.circle")
                 .font(.system(size: 44))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.onAir)
                 .accessibilityHidden(true)
             Text("No downloads yet")
                 .font(.headline)
@@ -136,7 +136,7 @@ private struct DownloadedRow: View {
                     if !episode.author.isEmpty {
                         Text(episode.author.uppercased())
                             .font(.caption2.weight(.heavy).monospaced())
-                            .foregroundStyle(Color.accentColor)
+                            .foregroundStyle(Color.onAir)
                             .lineLimit(1)
                     }
                     Spacer(minLength: 0)
@@ -179,7 +179,7 @@ private struct ActiveDownloadRow: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else {
-                        ProgressView(value: progress).tint(Color.accentColor)
+                        ProgressView(value: progress).tint(Color.onAir)
                     }
                 case .failed(let message):
                     Text(message)

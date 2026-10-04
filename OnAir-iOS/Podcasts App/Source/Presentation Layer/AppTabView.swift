@@ -112,4 +112,5 @@ struct AppTabView: View {
         .environment(PlayerViewModel(playback: PlaybackManager(systemPlaybackEnabled: false, saveHistory: { _ in })))
         .environment(DownloadsViewModel())
         .environment(NewEpisodesViewModel())
+        .environment(OnboardingViewModel())
 }

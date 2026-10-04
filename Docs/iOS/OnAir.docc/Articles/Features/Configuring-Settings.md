@@ -12,7 +12,7 @@ The Settings tab is `SettingsView`. It reads from three view models: its own `Se
 | Storage | Delete All Downloaded Episodes, and Clear Cache | `DownloadsViewModel` and `SettingsViewModel` |
 | Downloads | Download on Wi-Fi Only | `DownloadsViewModel` |
 | New Episodes | New Episode Alerts, Check Now, and the time of the last check | `NewEpisodesViewModel` |
-| About | The version and build number | `SettingsViewModel` |
+| About | The version and build number, and the Welcome Tour button | `SettingsViewModel` and `OnboardingViewModel` |
 | Debug | A subscriber toggle, in debug builds only | `DebugSettingsViewModel` |
 
 ### Manage Storage
@@ -28,9 +28,11 @@ The Settings tab is `SettingsView`. It reads from three view models: its own `Se
 - term New Episode Alerts: Stored under `newEpisodeNotificationsEnabled`. Turning it on asks for notification permission. If iOS has notifications turned off for the app, the section says so and adds an Allow Notifications in Settings button. See <doc:Tracking-New-Episodes>.
 - term Check Now: Checks every preset for new episodes immediately. While no check is running, the row shows how long ago the last one ran.
 
-### Show the Version
+### Show the Version and the Welcome Tour
 
 The About section shows the version, `CFBundleShortVersionString`, followed by the build number, `CFBundleVersion`, in parentheses.
+
+The Welcome Tour button shows the tour from the first launch again. See <doc:Welcoming-New-Users>.
 
 ## See Also
 

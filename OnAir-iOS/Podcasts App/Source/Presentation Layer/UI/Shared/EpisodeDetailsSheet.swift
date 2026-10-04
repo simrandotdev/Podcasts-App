@@ -26,7 +26,7 @@ struct EpisodeDetailsSheet: View {
                     Divider()
                     Text("SHOW NOTES")
                         .font(.caption.weight(.heavy).monospaced())
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.onAir)
                         .accessibilityAddTraits(.isHeader)
                     Text(showNotes)
                         .font(.body)
@@ -58,7 +58,7 @@ struct EpisodeDetailsSheet: View {
                 if !episode.author.isEmpty {
                     Text(episode.author.uppercased())
                         .font(.caption.weight(.heavy).monospaced())
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.onAir)
                         .lineLimit(2)
                 }
                 Text(episode.title)
@@ -69,7 +69,7 @@ struct EpisodeDetailsSheet: View {
                     .foregroundStyle(.secondary)
                 if let progress, progress > 0 {
                     HStack(spacing: 8) {
-                        ProgressView(value: progress).tint(Color.accentColor)
+                        ProgressView(value: progress).tint(Color.onAir)
                         Text(progress >= 0.99 ? "Finished" : "\(Int(progress * 100))% played")
                             .font(.caption2.monospacedDigit())
                             .foregroundStyle(.secondary)
@@ -91,7 +91,7 @@ struct EpisodeDetailsSheet: View {
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity, minHeight: 48)
-                .background(Color.accentColor, in: Capsule())
+                .background(Color.onAir, in: Capsule())
         }
         .buttonStyle(.plain)
     }
@@ -102,7 +102,7 @@ struct EpisodeDetailsSheet: View {
             secondaryButton("Download", systemImage: "arrow.down.circle") { downloads.download(episode) }
         case .downloading(let fraction):
             HStack(spacing: 12) {
-                ProgressView(value: fraction).tint(Color.accentColor)
+                ProgressView(value: fraction).tint(Color.onAir)
                 Text("\(Int(fraction * 100))%")
                     .font(.subheadline.monospacedDigit())
                     .foregroundStyle(.secondary)
@@ -117,7 +117,7 @@ struct EpisodeDetailsSheet: View {
             HStack {
                 Label("Downloaded for offline listening", systemImage: "arrow.down.circle.fill")
                     .font(.subheadline)
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.onAir)
                 Spacer(minLength: 8)
                 Button("Remove", role: .destructive) { downloads.remove(episode) }
                     .font(.subheadline.weight(.semibold))
@@ -137,9 +137,9 @@ struct EpisodeDetailsSheet: View {
         Button(action: action) {
             Label(title, systemImage: systemImage)
                 .font(.headline)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.onAir)
                 .frame(maxWidth: .infinity, minHeight: 44)
-                .background(Color.accentColor.opacity(0.12), in: Capsule())
+                .background(Color.onAir.opacity(0.12), in: Capsule())
         }
         .buttonStyle(.plain)
     }

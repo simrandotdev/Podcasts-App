@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A0D8B4BDBE0C5CD4C73F0CC /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F270337ACDF25FD99593D456 /* ColorExtensions.swift */; };
+		11C1025167A7E64F139AD017 /* OnboardingViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B988BD2F8FFB4219B0A98FA /* OnboardingViewModelTests.swift */; };
+		E72245895E7187C541691CD9 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76974FE022B6964F7A53CFE5 /* OnboardingView.swift */; };
+		A268AC0AD2AE6C690B006841 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5C8BE1CBD7A7F9CEB2DEC95 /* OnboardingViewModel.swift */; };
 		37C1D9114608F3E8B4CAC437 /* ChangeBroadcasterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06087C45784DCCD00F74B33C /* ChangeBroadcasterTests.swift */; };
 		3C7F96460F4B8B6C51317444 /* ChangeBroadcaster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 380AE9FC9F43722AACFFAF9E /* ChangeBroadcaster.swift */; };
 		E83A133A35B23D610E0D9EC3 /* StationsCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E9A6F9C675EA600EC1C061 /* StationsCacheTests.swift */; };
@@ -97,6 +101,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F270337ACDF25FD99593D456 /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
+		3B988BD2F8FFB4219B0A98FA /* OnboardingViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModelTests.swift; sourceTree = "<group>"; };
+		76974FE022B6964F7A53CFE5 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		A5C8BE1CBD7A7F9CEB2DEC95 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		06087C45784DCCD00F74B33C /* ChangeBroadcasterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeBroadcasterTests.swift; sourceTree = "<group>"; };
 		380AE9FC9F43722AACFFAF9E /* ChangeBroadcaster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeBroadcaster.swift; sourceTree = "<group>"; };
 		A9E9A6F9C675EA600EC1C061 /* StationsCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsCacheTests.swift; sourceTree = "<group>"; };
@@ -221,6 +229,7 @@
 				2922A38F0A8428015A1CED9B /* EpisodesManagerTests.swift */,
 				26690CEA9E59BB65C9DAA28D /* PodcastsRepositoryTests.swift */,
 				A9E9A6F9C675EA600EC1C061 /* StationsCacheTests.swift */,
+				3B988BD2F8FFB4219B0A98FA /* OnboardingViewModelTests.swift */,
 				06087C45784DCCD00F74B33C /* ChangeBroadcasterTests.swift */,
 				C68B8E3CA66530148C626BC3 /* EpisodesRepositoryTests.swift */,
 				36719FD6C988E4AE3F24F083 /* LegacyDatabaseImporterTests.swift */,
@@ -287,6 +296,7 @@
 				492EC3DA2876433700F381FC /* FavoritesScreen.swift */,
 				A1000000000000000000001D /* DownloadsScreen.swift */,
 				49B1AF202772DDB8005F498D /* SettingsView.swift */,
+				76974FE022B6964F7A53CFE5 /* OnboardingView.swift */,
 				49E2B30F2888FF0400081673 /* RecentlyPlayedEpisodesScreen.swift */,
 			);
 			path = Screens;
@@ -377,6 +387,7 @@
 				40DBC86DFA8667967719B81A /* DownloadsViewModel.swift */,
 				37127378E7F879B5C8DA3B7E /* NewEpisodesViewModel.swift */,
 				35DB5568B7C7C48731A81101 /* SettingsViewModel.swift */,
+				A5C8BE1CBD7A7F9CEB2DEC95 /* OnboardingViewModel.swift */,
 			);
 			name = ViewModels;
 			path = ViewModels;
@@ -396,6 +407,7 @@
 			children = (
 				4960E43F24B12B1A009A3806 /* RSSFeed.swift */,
 				84A4329C20AF5CC6004F32AD /* DateExtensions.swift */,
+				F270337ACDF25FD99593D456 /* ColorExtensions.swift */,
 				84A4329820AF5CC5004F32AD /* StringExtension.swift */,
 			);
 			path = Extensions;
@@ -559,6 +571,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11C1025167A7E64F139AD017 /* OnboardingViewModelTests.swift in Sources */,
 				37C1D9114608F3E8B4CAC437 /* ChangeBroadcasterTests.swift in Sources */,
 				E83A133A35B23D610E0D9EC3 /* StationsCacheTests.swift in Sources */,
 				4916CDC1288BC21E00A55A48 /* HomeViewModelTests.swift in Sources */,
@@ -590,6 +603,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A0D8B4BDBE0C5CD4C73F0CC /* ColorExtensions.swift in Sources */,
+				E72245895E7187C541691CD9 /* OnboardingView.swift in Sources */,
+				A268AC0AD2AE6C690B006841 /* OnboardingViewModel.swift in Sources */,
 				3C7F96460F4B8B6C51317444 /* ChangeBroadcaster.swift in Sources */,
 				7FAD97116630F247356B169A /* StationsCache.swift in Sources */,
 				A10000000000000000000004 /* PodcastArtwork.swift in Sources */,

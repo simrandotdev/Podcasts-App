@@ -46,6 +46,7 @@ The app uses SwiftUI with the Model-View-ViewModel (MVVM) pattern and repositori
 
 ### Features
 
+- <doc:Welcoming-New-Users>
 - <doc:Discovering-Podcasts>
 - <doc:Viewing-a-Podcast>
 - <doc:Saving-Presets>
