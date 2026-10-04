@@ -145,7 +145,7 @@ struct StationTile: View {
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(Color.accentColor, lineWidth: isOnAir ? 3 : 0)
+                    .strokeBorder(Color.onAir, lineWidth: isOnAir ? 3 : 0)
             }
             .contentShape(Rectangle())
             .accessibilityElement(children: .ignore)
@@ -175,7 +175,7 @@ struct NewBadge: View {
             .padding(.horizontal, 7)
             .padding(.vertical, 3)
             .background(.black.opacity(0.75), in: Capsule())
-            .overlay { Capsule().strokeBorder(Color.accentColor, lineWidth: 1.5) }
+            .overlay { Capsule().strokeBorder(Color.onAir, lineWidth: 1.5) }
             .accessibilityHidden(true)
     }
 }
@@ -183,7 +183,7 @@ struct NewBadge: View {
 /// Radio-style status capsule; shared by the station tiles and the player.
 struct OnAirBadge: View {
     var text = "ON AIR"
-    var color = Color.accentColor
+    var color = Color.onAir
 
     var body: some View {
         HStack(spacing: 4) {

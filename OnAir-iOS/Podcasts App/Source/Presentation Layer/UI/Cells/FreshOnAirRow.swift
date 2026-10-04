@@ -50,7 +50,7 @@ private struct FreshEpisodeCard: View {
                 .overlay(alignment: .bottomTrailing) { DownloadButton(episode: episode, onArtwork: true) }
             Text(fresh.podcastTitle.uppercased())
                 .font(.caption2.weight(.heavy).monospaced())
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.onAir)
                 .lineLimit(1)
             Text(episode.title)
                 .font(.caption.weight(.semibold))

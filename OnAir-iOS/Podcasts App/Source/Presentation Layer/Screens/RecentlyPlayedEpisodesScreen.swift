@@ -48,7 +48,7 @@ struct RecentlyPlayedEpisodesScreen: View {
         VStack(spacing: 12) {
             Image(systemName: "dot.radiowaves.left.and.right")
                 .font(.system(size: 48))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.onAir)
                 .accessibilityHidden(true)
             Text("Nothing on the log yet")
                 .font(.headline)
@@ -79,7 +79,7 @@ private struct LogEntryRow: View {
                     if !episode.author.isEmpty {
                         Text(episode.author.uppercased())
                             .font(.caption2.weight(.heavy).monospaced())
-                            .foregroundStyle(Color.accentColor)
+                            .foregroundStyle(Color.onAir)
                             .lineLimit(1)
                     }
                     Spacer(minLength: 0)
@@ -91,7 +91,7 @@ private struct LogEntryRow: View {
                     .multilineTextAlignment(.leading)
                 HStack(spacing: 8) {
                     ProgressView(value: progress ?? 0)
-                        .tint(Color.accentColor)
+                        .tint(Color.onAir)
                     Text(status)
                         .font(.caption2.monospacedDigit())
                         .foregroundStyle(.secondary)
@@ -109,7 +109,7 @@ private struct LogEntryRow: View {
         .background(Color.gray.opacity(0.15), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(Color.accentColor, lineWidth: isOnAir ? 2 : 0)
+                .strokeBorder(Color.onAir, lineWidth: isOnAir ? 2 : 0)
         }
         .contentShape(Rectangle())
         .accessibilityElement(children: .ignore)

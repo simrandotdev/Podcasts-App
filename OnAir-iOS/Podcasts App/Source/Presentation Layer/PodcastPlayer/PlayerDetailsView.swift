@@ -46,7 +46,7 @@ struct PlayerDetailsView: View {
                         .overlay {
                             // Same "on air" ring as the station tiles on the Podcasts screen.
                             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                                .strokeBorder(Color.accentColor, lineWidth: player.isPlaying ? 4 : 0)
+                                .strokeBorder(Color.onAir, lineWidth: player.isPlaying ? 4 : 0)
                         }
                         .scaleEffect(player.isPlaying || reduceMotion ? 1 : 0.88)
                         .animation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.75),
@@ -66,7 +66,7 @@ struct PlayerDetailsView: View {
                             isScrubbing = editing
                             if !editing { player.seek(to: scrubTime) }
                         })
-                        .tint(Color.accentColor)
+                        .tint(Color.onAir)
                         .disabled(player.duration <= 0)
                         .accessibilityLabel("Playback position")
                         .accessibilityValue(timeString(isScrubbing ? scrubTime : player.currentTime))
@@ -113,7 +113,7 @@ struct PlayerDetailsView: View {
                                     .frame(width: 44, height: 44)
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("UP NEXT").font(.caption2.weight(.heavy)).foregroundStyle(Color.accentColor)
+                                    Text("UP NEXT").font(.caption2.weight(.heavy)).foregroundStyle(Color.onAir)
                                     Text(upNext.title).font(.subheadline).lineLimit(1)
                                 }
                                 Spacer(minLength: 0)
@@ -182,7 +182,7 @@ struct PlayerDetailsView: View {
                 .font(.title)
                 .foregroundStyle(.white)
                 .frame(width: 72, height: 72)
-                .background(Color.accentColor, in: Circle())
+                .background(Color.onAir, in: Circle())
         }
     }
 
@@ -215,7 +215,7 @@ struct PlayerDetailsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(player.episode?.author.uppercased() ?? "")
                     .font(.caption.weight(.bold).monospaced())
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.onAir)
                     .lineLimit(1)
                 Text(player.episode?.title ?? "")
                     .font(.headline)
@@ -266,7 +266,7 @@ struct PlayerDetailsView: View {
     private var speedLabel: some View {
         Text("SPEED")
             .font(.caption2.weight(.heavy).monospaced())
-            .foregroundStyle(Color.accentColor)
+            .foregroundStyle(Color.onAir)
             .fixedSize()
             .accessibilityHidden(true)
     }
@@ -286,7 +286,7 @@ struct PlayerDetailsView: View {
                 .padding(.horizontal, 6)
                 .foregroundStyle(isSelected ? Color.white : Color.primary)
                 .frame(maxWidth: .infinity, minHeight: 36)
-                .background(isSelected ? Color.accentColor : Color.gray.opacity(0.15),
+                .background(isSelected ? Color.onAir : Color.gray.opacity(0.15),
                             in: RoundedRectangle(cornerRadius: 9, style: .continuous))
                 .contentShape(Rectangle())
         }
@@ -328,7 +328,7 @@ struct PlayerDetailsView: View {
         HStack {
             Text(label)
                 .font(.caption2.weight(.heavy))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.onAir)
             Spacer()
             Text(value)
                 .font(.subheadline.monospacedDigit().weight(.semibold))
@@ -342,7 +342,7 @@ struct PlayerDetailsView: View {
         VStack(alignment: alignment, spacing: 2) {
             Text(label)
                 .font(.caption2.weight(.heavy))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.onAir)
             Text(value)
                 .font(.subheadline.monospacedDigit().weight(.semibold))
                 .foregroundStyle(.primary)
@@ -372,7 +372,7 @@ struct MiniPlayerView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         .overlay {
                             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .strokeBorder(Color.accentColor, lineWidth: player.isPlaying ? 2 : 0)
+                                .strokeBorder(Color.onAir, lineWidth: player.isPlaying ? 2 : 0)
                         }
                     VStack(alignment: .leading, spacing: 2) {
                         HStack(spacing: 4) {
@@ -401,7 +401,7 @@ struct MiniPlayerView: View {
                       systemImage: player.isPlaying ? "pause.fill" : "play.fill")
                     .foregroundStyle(.white)
                     .frame(width: 40, height: 40)
-                    .background(Color.accentColor, in: Circle())
+                    .background(Color.onAir, in: Circle())
             }
             Button { player.skip(by: 15) } label: {
                 Label("Forward 15 seconds", systemImage: "goforward.15")
@@ -426,7 +426,7 @@ struct MiniPlayerView: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 Rectangle().fill(Color.secondary.opacity(0.2))
-                Rectangle().fill(Color.accentColor)
+                Rectangle().fill(Color.onAir)
                     .frame(width: proxy.size.width * fraction)
             }
         }
@@ -452,7 +452,7 @@ struct MiniPlayerView: View {
 
     private var statusColor: Color {
         if player.isBuffering { return .secondary }
-        return player.isPlaying ? Color.accentColor : .secondary
+        return player.isPlaying ? Color.onAir : .secondary
     }
 }
 
@@ -466,7 +466,7 @@ private struct LevelMeter: View {
             HStack(alignment: .bottom, spacing: 3) {
                 ForEach(0..<barCount, id: \.self) { bar in
                     Capsule()
-                        .fill(Color.accentColor)
+                        .fill(Color.onAir)
                         .frame(height: barHeight(bar, date: context.date))
                 }
             }

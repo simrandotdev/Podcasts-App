@@ -44,9 +44,12 @@ Screens never hold the player. `AppTabView` passes each screen a `maximizePlayer
 
 iOS shows a static launch screen, defined by `UILaunchScreen` in `Info.plist`, with the `SplashIcon` image on the system background. `PodcastsApp` then lays `SplashView` over the app, with the same image at the same size, so the handoff is seamless. After a short pause, the icon dips slightly, then zooms past the edges of the screen while the background fades to reveal the app. With Reduce Motion on, the splash simply fades out.
 
+On the first launch after the app is installed, the welcome tour follows the splash as a full-screen cover. See <doc:Welcoming-New-Users>.
+
 ### Apply the Station Style
 
 - `PodcastsApp` sets the rounded system font for the whole app.
+- The app's orange is `Color.onAir`, the `AccentColor` asset. iOS 18 doesn't reliably apply the asset catalog's accent color, which leaves `Color.accentColor` the system blue, so views use `Color.onAir` instead, and `PodcastsApp` sets it as the root `.tint` for buttons, toggles, and the tab bar.
 - Screen titles carry an emoji, such as "On Air 📻" and "Favorites ❤️".
 - `OnAirBadge` and `NewBadge` mark playing podcasts and new episodes wherever podcasts appear.
 - Layouts use `ViewThatFits` to stack controls vertically at large text sizes instead of truncating them, and level meters stand still when Reduce Motion is on.

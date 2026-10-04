@@ -49,7 +49,7 @@ struct FavoritesScreen: View {
         VStack(spacing: 12) {
             Image(systemName: "radio")
                 .font(.system(size: 48))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.onAir)
                 .accessibilityHidden(true)
             Text("No presets yet")
                 .font(.headline)

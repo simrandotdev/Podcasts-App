@@ -13,6 +13,7 @@ struct SettingsView: View {
     @State private var viewModel = SettingsViewModel()
     @Environment(DownloadsViewModel.self) private var downloads
     @Environment(NewEpisodesViewModel.self) private var newEpisodes
+    @Environment(OnboardingViewModel.self) private var onboarding
     @Environment(\.openURL) private var openURL
     /// Set when the user turned alerts on but iOS has notifications off for the app.
     @State private var notificationsDenied = false
@@ -54,7 +55,7 @@ struct SettingsView: View {
                 Toggle(isOn: $downloads.wifiOnly) {
                     Label("Download on Wi-Fi Only", systemImage: "wifi")
                 }
-                .tint(Color.accentColor)
+                .tint(Color.onAir)
             } header: {
                 sectionHeader("Downloads")
             }
@@ -68,7 +69,7 @@ struct SettingsView: View {
                 })) {
                     Label("New Episode Alerts", systemImage: "bell.badge")
                 }
-                .tint(Color.accentColor)
+                .tint(Color.onAir)
                 if notificationsDenied {
                     Button("Allow Notifications in Settings") {
                         if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
@@ -105,6 +106,12 @@ struct SettingsView: View {
                     Text(viewModel.appVersion).foregroundStyle(.secondary)
                 }
                 .accessibilityElement(children: .combine)
+                Button {
+                    onboarding.showAgain()
+                } label: {
+                    Label("Welcome Tour", systemImage: "hand.wave")
+                }
+                .accessibilityHint("Shows the tour from your first launch")
             } header: {
                 sectionHeader("About")
             }
@@ -149,7 +156,7 @@ struct SettingsView: View {
     private func sectionHeader(_ title: String) -> some View {
         Text(title.uppercased())
             .font(.caption.weight(.heavy).monospaced())
-            .foregroundStyle(Color.accentColor)
+            .foregroundStyle(Color.onAir)
     }
 
     static func formattedSize(_ bytes: Int64) -> String {
