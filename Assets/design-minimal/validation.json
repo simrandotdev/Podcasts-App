@@ -1,0 +1,65 @@
+[
+  {
+    "file": "01-discover.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "frame": "iPhone 16 Pro — Natural Titanium",
+    "bytes": 1158738
+  },
+  {
+    "file": "02-favorites.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "frame": "iPhone 16 Pro — Natural Titanium",
+    "bytes": 988126
+  },
+  {
+    "file": "03-player.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "frame": "iPhone 16 Pro — Natural Titanium",
+    "bytes": 1147439
+  },
+  {
+    "file": "04-mini-player.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "frame": "iPhone 16 Pro — Natural Titanium",
+    "bytes": 793634
+  },
+  {
+    "file": "05-history.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "frame": "iPhone 16 Pro — Natural Titanium",
+    "bytes": 750481
+  },
+  {
+    "file": "06-episode-details.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "frame": "iPhone 16 Pro — Natural Titanium",
+    "bytes": 744341
+  },
+  {
+    "file": "07-on-air.png",
+    "width": 1242,
+    "height": 2688,
+    "bitDepth": 8,
+    "colorType": "RGB, no alpha",
+    "frame": "iPhone 16 Pro — Natural Titanium",
+    "bytes": 864599
+  }
+]
