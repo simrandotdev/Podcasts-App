@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct AppTabView: View {
-    @EnvironmentObject private var player: PlayerViewModel
+    @Environment(PlayerViewModel.self) private var player
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     // Shared by several screens: Home and Favorites both show presets; Home, Recently Played and
     // Downloads all use the listening history.
-    @StateObject private var home = HomeViewModel()
-    @StateObject private var favorites = FavoritesViewModel()
-    @StateObject private var history = HistoryViewModel()
+    @State private var home = HomeViewModel()
+    @State private var favorites = FavoritesViewModel()
+    @State private var history = HistoryViewModel()
     @State private var isPlayerExpanded = false
     @State private var selection: AppSection? = .home
 
@@ -56,9 +56,9 @@ struct AppTabView: View {
                 }
             }
         }
-        .environmentObject(home)
-        .environmentObject(favorites)
-        .environmentObject(history)
+        .environment(home)
+        .environment(favorites)
+        .environment(history)
         .overlay(alignment: .trailing) {
             if isPlayerExpanded, player.episode != nil {
                 PlayerDetailsView { isPlayerExpanded = false }
@@ -69,7 +69,7 @@ struct AppTabView: View {
         }
         .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.9),
                    value: isPlayerExpanded)
-        .onChange(of: player.episode == nil) { isEmpty in
+        .onChange(of: player.episode == nil) { _, isEmpty in
             if isEmpty { isPlayerExpanded = false }
         }
         .alert("Playback", isPresented: Binding(
@@ -107,11 +107,9 @@ struct AppTabView: View {
     }
 }
 
-struct AppTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        AppTabView()
-            .environmentObject(PlayerViewModel(playback: PlaybackManager(systemPlaybackEnabled: false, saveHistory: { _ in })))
-            .environmentObject(DownloadsViewModel())
-            .environmentObject(NewEpisodesViewModel())
-    }
+#Preview {
+    AppTabView()
+        .environment(PlayerViewModel(playback: PlaybackManager(systemPlaybackEnabled: false, saveHistory: { _ in })))
+        .environment(DownloadsViewModel())
+        .environment(NewEpisodesViewModel())
 }

@@ -7,23 +7,23 @@
 //
 
 import SwiftUI
-import Combine
 
 /// Listening analytics, storage, and app settings.
 struct SettingsView: View {
-    @StateObject private var viewModel = SettingsViewModel()
-    @EnvironmentObject private var downloads: DownloadsViewModel
-    @EnvironmentObject private var newEpisodes: NewEpisodesViewModel
+    @State private var viewModel = SettingsViewModel()
+    @Environment(DownloadsViewModel.self) private var downloads
+    @Environment(NewEpisodesViewModel.self) private var newEpisodes
     @Environment(\.openURL) private var openURL
     /// Set when the user turned alerts on but iOS has notifications off for the app.
     @State private var notificationsDenied = false
     #if DEBUG
-    @StateObject private var settingsViewModel = DebugSettingsViewModel()
+    @State private var settingsViewModel = DebugSettingsViewModel()
     #endif
     @State private var isConfirmingDeleteDownloads = false
     @State private var isConfirmingClearCache = false
 
     var body: some View {
+        @Bindable var downloads = downloads
         List {
             Section {
                 ListeningHeatmapView(heatmap: viewModel.heatmap)
@@ -344,21 +344,11 @@ private struct ListeningHeatmapView: View {
 }
 
 #if DEBUG
-class DebugSettingsViewModel: ObservableObject {
-
-    @Published var isUserSubscriber = false
-
-    private var cancallable = Set<AnyCancellable>()
-
-    init() {
-
-        isUserSubscriber = Constants.InAppSubscribed.isUserSubscribed
-
-        $isUserSubscriber
-            .sink { isUserSubscriber in
-            Constants.InAppSubscribed.isUserSubscribed = isUserSubscriber
-        }
-        .store(in: &cancallable)
+@MainActor
+@Observable
+final class DebugSettingsViewModel {
+    var isUserSubscriber = Constants.InAppSubscribed.isUserSubscribed {
+        didSet { Constants.InAppSubscribed.isUserSubscribed = isUserSubscriber }
     }
 }
 #endif

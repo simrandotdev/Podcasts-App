@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37C1D9114608F3E8B4CAC437 /* ChangeBroadcasterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06087C45784DCCD00F74B33C /* ChangeBroadcasterTests.swift */; };
+		3C7F96460F4B8B6C51317444 /* ChangeBroadcaster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 380AE9FC9F43722AACFFAF9E /* ChangeBroadcaster.swift */; };
 		E83A133A35B23D610E0D9EC3 /* StationsCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9E9A6F9C675EA600EC1C061 /* StationsCacheTests.swift */; };
 		7FAD97116630F247356B169A /* StationsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BCE2BD00BFA014C7F1BEC75 /* StationsCache.swift */; };
 		D4ACF414F9CF8D429FBF0D67 /* FeedKit in Frameworks */ = {isa = PBXBuildFile; productRef = E8E89B49BC0D5AD8F07B4814 /* FeedKit */; };
@@ -95,6 +97,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		06087C45784DCCD00F74B33C /* ChangeBroadcasterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeBroadcasterTests.swift; sourceTree = "<group>"; };
+		380AE9FC9F43722AACFFAF9E /* ChangeBroadcaster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeBroadcaster.swift; sourceTree = "<group>"; };
 		A9E9A6F9C675EA600EC1C061 /* StationsCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsCacheTests.swift; sourceTree = "<group>"; };
 		2BCE2BD00BFA014C7F1BEC75 /* StationsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationsCache.swift; sourceTree = "<group>"; };
 		05D5A314D04EDED5413F5AE0 /* FavoritePodcastEntity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = FavoritePodcastEntity.swift; sourceTree = "<group>"; };
@@ -217,6 +221,7 @@
 				2922A38F0A8428015A1CED9B /* EpisodesManagerTests.swift */,
 				26690CEA9E59BB65C9DAA28D /* PodcastsRepositoryTests.swift */,
 				A9E9A6F9C675EA600EC1C061 /* StationsCacheTests.swift */,
+				06087C45784DCCD00F74B33C /* ChangeBroadcasterTests.swift */,
 				C68B8E3CA66530148C626BC3 /* EpisodesRepositoryTests.swift */,
 				36719FD6C988E4AE3F24F083 /* LegacyDatabaseImporterTests.swift */,
 				52BE76D5992597D8BCAB5DE3 /* ItemViewModelTests.swift */,
@@ -345,6 +350,7 @@
 				84A4329620AF5CB7004F32AD /* Extensions */,
 				494AA17A27B042E50009E357 /* Constants.swift */,
 				495EF2B927B17F2900C85191 /* Log.swift */,
+				380AE9FC9F43722AACFFAF9E /* ChangeBroadcaster.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -553,6 +559,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37C1D9114608F3E8B4CAC437 /* ChangeBroadcasterTests.swift in Sources */,
 				E83A133A35B23D610E0D9EC3 /* StationsCacheTests.swift in Sources */,
 				4916CDC1288BC21E00A55A48 /* HomeViewModelTests.swift in Sources */,
 				A10000000000000000000008 /* APIServiceTests.swift in Sources */,
@@ -583,6 +590,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C7F96460F4B8B6C51317444 /* ChangeBroadcaster.swift in Sources */,
 				7FAD97116630F247356B169A /* StationsCache.swift in Sources */,
 				A10000000000000000000004 /* PodcastArtwork.swift in Sources */,
 				A1000000000000000000000E /* EpisodeDetailsSheet.swift in Sources */,
@@ -655,7 +663,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WC362J72KA;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -677,7 +685,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WC362J72KA;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "apps.bytesizedsoftware.Podcasts-App-Unit-Tests";
@@ -741,7 +749,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -797,7 +805,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -820,7 +828,7 @@
 				DEVELOPMENT_TEAM = WC362J72KA;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "On Air";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -853,7 +861,7 @@
 				DEVELOPMENT_TEAM = WC362J72KA;
 				INFOPLIST_FILE = "Podcasts App/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "On Air";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

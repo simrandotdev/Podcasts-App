@@ -7,14 +7,13 @@
 //
 
 import Foundation
-import Combine
 
 // MARK: - EpisodesManaging protocol
 
 protocol EpisodesManaging {
 
-    /// Sends after an episode is added to the listening history, on an arbitrary thread.
-    var historyDidChange: AnyPublisher<Void, Never> { get }
+    /// A new stream for each caller, which delivers a value after an episode is added to the listening history.
+    func historyChanges() -> AsyncStream<Void>
 
     func fetchEpisodes(forFeedUrl feedUrl: String) async throws -> [Episode]
     func saveInHistory(episode: Episode) async throws
@@ -33,9 +32,7 @@ final class EpisodesManager: EpisodesManaging {
 
     private let repository: EpisodesRepositoryProtocol
 
-    private let historySubject = PassthroughSubject<Void, Never>()
-
-    var historyDidChange: AnyPublisher<Void, Never> { historySubject.eraseToAnyPublisher() }
+    private let historyBroadcaster = ChangeBroadcaster()
 
     init(repository: EpisodesRepositoryProtocol) {
         self.repository = repository
@@ -43,6 +40,12 @@ final class EpisodesManager: EpisodesManaging {
 
 
     // MARK: Public methods
+
+
+    func historyChanges() -> AsyncStream<Void> {
+
+        historyBroadcaster.changes()
+    }
 
 
     func fetchEpisodes(forFeedUrl feedUrl: String) async throws -> [Episode] {
@@ -54,7 +57,7 @@ final class EpisodesManager: EpisodesManaging {
     func saveInHistory(episode: Episode) async throws {
 
         try await repository.saveInHistory(episode: episode)
-        historySubject.send()
+        historyBroadcaster.send()
     }
 
 

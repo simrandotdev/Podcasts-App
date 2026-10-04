@@ -29,7 +29,7 @@ final class PlayerDetailsViewTests: XCTestCase {
         playback.load(current, queue: [current, episode("next")], autoplay: false)
 
         let host = UIHostingController(rootView: PlayerDetailsView {}
-            .environmentObject(viewModel)
+            .environment(viewModel)
             .environment(\.sizeCategory, size))
         let window = UIWindow(frame: CGRect(x: 0, y: 0, width: width, height: height))
         window.rootViewController = host

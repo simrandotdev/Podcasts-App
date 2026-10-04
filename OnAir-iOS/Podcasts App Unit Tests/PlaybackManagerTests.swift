@@ -49,7 +49,7 @@ final class PlaybackManagerTests: XCTestCase {
         player.play()
         for _ in 0..<50 {
             if session.nowPlayingInfoCenter.nowPlayingInfo?[MPMediaItemPropertyArtwork] != nil { break }
-            try await Task.sleep(nanoseconds: 100_000_000)
+            try await Task.sleep(for: .milliseconds(100))
         }
         XCTAssertNotNil(session.nowPlayingInfoCenter.nowPlayingInfo?[MPMediaItemPropertyArtwork],
                         "Published metadata: \(String(describing: session.nowPlayingInfoCenter.nowPlayingInfo))")

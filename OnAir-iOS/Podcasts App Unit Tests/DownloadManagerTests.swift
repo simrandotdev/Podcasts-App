@@ -48,7 +48,7 @@ final class DownloadManagerTests: XCTestCase {
     private func waitForState(_ expected: DownloadState, timeout: TimeInterval = 5) async throws {
         let deadline = Date().addingTimeInterval(timeout)
         while manager.state(for: streamUrl) != expected && Date() < deadline {
-            try await Task.sleep(nanoseconds: 20_000_000)
+            try await Task.sleep(for: .milliseconds(20))
         }
         XCTAssertEqual(manager.state(for: streamUrl), expected)
     }
@@ -78,7 +78,7 @@ final class DownloadManagerTests: XCTestCase {
 
         XCTAssertEqual(store.existingFile(for: streamUrl), file)
         XCTAssertEqual(file.pathExtension, "mp3")
-        XCTAssertEqual(try String(contentsOf: file), "second")
+        XCTAssertEqual(try String(contentsOf: file, encoding: .utf8), "second")
         XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: directory.path).count, 1)
     }
 
@@ -98,7 +98,7 @@ final class DownloadManagerTests: XCTestCase {
         try await waitForState(.downloaded)
 
         let file = try XCTUnwrap(manager.localFile(for: streamUrl))
-        XCTAssertEqual(try String(contentsOf: file), "audio bytes")
+        XCTAssertEqual(try String(contentsOf: file, encoding: .utf8), "audio bytes")
     }
 
     func test_download_httpErrorReportsFailure() async throws {

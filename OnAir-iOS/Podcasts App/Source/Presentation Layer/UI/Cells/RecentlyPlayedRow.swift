@@ -4,8 +4,8 @@ import SwiftUI
 /// has been listened to. Tapping a card resumes the episode from its saved position; long-pressing
 /// shows its show notes.
 struct RecentlyPlayedRow: View {
-    @EnvironmentObject private var player: PlayerViewModel
-    @EnvironmentObject private var downloads: DownloadsViewModel
+    @Environment(PlayerViewModel.self) private var player
+    @Environment(DownloadsViewModel.self) private var downloads
     let episodes: [EpisodeViewModel]
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
     @State private var detailsEpisode: EpisodeViewModel?
@@ -22,8 +22,8 @@ struct RecentlyPlayedRow: View {
         }
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode) { resume(episode) }
-                .environmentObject(player)
-                .environmentObject(downloads)
+                .environment(player)
+                .environment(downloads)
         }
     }
 
@@ -33,7 +33,7 @@ struct RecentlyPlayedRow: View {
 }
 
 struct RecentEpisodeCard: View {
-    @EnvironmentObject private var downloads: DownloadsViewModel
+    @Environment(DownloadsViewModel.self) private var downloads
     @ScaledMetric(relativeTo: .caption) private var width: CGFloat = 140
     let episode: EpisodeViewModel
     let progress: Double?

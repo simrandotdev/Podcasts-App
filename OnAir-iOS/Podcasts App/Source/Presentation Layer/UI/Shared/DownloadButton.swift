@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Compact download control for an episode row: download, progress (tap to cancel), downloaded, or retry.
 struct DownloadButton: View {
-    @EnvironmentObject private var downloads: DownloadsViewModel
+    @Environment(DownloadsViewModel.self) private var downloads
     let episode: EpisodeViewModel
     /// Draws the icon on a small material disc, for overlaying on artwork.
     var onArtwork = false

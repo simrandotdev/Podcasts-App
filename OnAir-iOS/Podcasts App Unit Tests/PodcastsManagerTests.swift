@@ -1,19 +1,14 @@
-import Combine
 import XCTest
 @testable import Podcasts_Bin
 
 final class PodcastsManagerTests: XCTestCase {
     private var repository: MockPodcastsRepository!
     private var sut: PodcastsManager!
-    private var changes = 0
-    private var subscription: AnyCancellable?
 
     override func setUp() {
         super.setUp()
         repository = MockPodcastsRepository()
         sut = PodcastsManager(repository: repository)
-        changes = 0
-        subscription = sut.favoritesDidChange.sink { [unowned self] in self.changes += 1 }
     }
 
     func test_fetchPodcasts_loadsTrendingPodcasts() async throws {
@@ -34,27 +29,34 @@ final class PodcastsManagerTests: XCTestCase {
         XCTAssertEqual(repository.searches, ["science"])
     }
 
+    @MainActor
     func test_favoriteAndUnfavorite_saveAndAnnounceTheChange() async throws {
+        let changes = ChangeCounter(sut.favoritesChanges())
         let podcast = makePodcast()
 
         try await sut.favorite(podcast: podcast)
         let isFavorite = try await sut.isFavorite(podcast: podcast)
         XCTAssertTrue(isFavorite)
-        XCTAssertEqual(changes, 1)
+        let announcedFavorite = await waitUntil { changes.count == 1 }
+        XCTAssertTrue(announcedFavorite)
 
         try await sut.unfavorite(podcast: podcast)
         let favorites = try await sut.fetchFavorites()
         XCTAssertTrue(favorites.isEmpty)
-        XCTAssertEqual(changes, 2)
+        let announcedUnfavorite = await waitUntil { changes.count == 2 }
+        XCTAssertTrue(announcedUnfavorite)
     }
 
+    @MainActor
     func test_failedFavorite_throwsWithoutAnnouncingAChange() async {
+        let changes = ChangeCounter(sut.favoritesChanges())
         repository.shouldFail = true
         do {
             try await sut.favorite(podcast: makePodcast())
             XCTFail("Expected an error")
         } catch {
-            XCTAssertEqual(changes, 0)
+            let announced = await waitUntil(timeout: 0.2) { changes.count > 0 }
+            XCTAssertFalse(announced)
         }
     }
 }

@@ -1,10 +1,11 @@
 import Foundation
-import Combine
+import Observation
 
 /// New episodes of the user's favorites, for the Fresh on Air shelf, NEW badges and Settings.
 /// Wraps the app's `NewEpisodesManager`.
 @MainActor
-final class NewEpisodesViewModel: ObservableObject {
+@Observable
+final class NewEpisodesViewModel {
     /// A new episode on the Fresh on Air shelf.
     struct Item: Identifiable {
         let episode: EpisodeViewModel
@@ -14,20 +15,17 @@ final class NewEpisodesViewModel: ObservableObject {
     }
 
     /// New episodes across all favorites, newest first.
-    @Published private(set) var freshEpisodes: [Item] = []
+    var freshEpisodes: [Item] {
+        manager.freshEpisodes.map { Item(episode: EpisodeViewModel(episode: $0.episode), podcastTitle: $0.podcastTitle,
+                                         podcastImage: $0.podcastImage) }
+    }
 
     private let manager: NewEpisodesManager
-    private var subscription: AnyCancellable?
 
     /// - Parameter manager: Defaults to the app's shared new-episodes manager.
     init(manager: NewEpisodesManager? = nil) {
-        let manager = manager ?? .shared
-        self.manager = manager
-        manager.$freshEpisodes
-            .map { $0.map { Item(episode: EpisodeViewModel(episode: $0.episode), podcastTitle: $0.podcastTitle,
-                                 podcastImage: $0.podcastImage) } }
-            .assign(to: &$freshEpisodes)
-        subscription = manager.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+        // Every property below reads NewEpisodesManager, which is observable, so views update as it changes.
+        self.manager = manager ?? .shared
     }
 
     // MARK: - State

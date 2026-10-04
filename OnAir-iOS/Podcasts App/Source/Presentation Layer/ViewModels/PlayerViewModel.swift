@@ -1,26 +1,23 @@
 import Foundation
-import Combine
+import Observation
 
 /// Playback state and controls for every view that shows or starts playback: the player, the mini
 /// player, and episode rows (progress and ON AIR). Wraps the app's `PlaybackManager`.
 @MainActor
-final class PlayerViewModel: ObservableObject {
+@Observable
+final class PlayerViewModel {
     static let playbackRates = PlaybackManager.playbackRates
 
-    @Published private(set) var episode: EpisodeViewModel?
-    @Published private(set) var queue: [EpisodeViewModel] = []
+    /// The loaded episode. Views that read it update when `PlaybackManager` changes episode.
+    var episode: EpisodeViewModel? { playback.episode.map(EpisodeViewModel.init(episode:)) }
+    var queue: [EpisodeViewModel] { playback.queue.map(EpisodeViewModel.init(episode:)) }
 
     private let playback: PlaybackManager
-    private var subscription: AnyCancellable?
 
     /// - Parameter playback: Defaults to the app's shared player.
     init(playback: PlaybackManager? = nil) {
-        let playback = playback ?? .shared
-        self.playback = playback
-        playback.$episode.map { $0.map(EpisodeViewModel.init(episode:)) }.assign(to: &$episode)
-        playback.$queue.map { $0.map(EpisodeViewModel.init(episode:)) }.assign(to: &$queue)
-        // Republish every change (position, buffering, rate…) so views observing this update too.
-        subscription = playback.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() }
+        // Every property below reads PlaybackManager, which is observable, so views update as it changes.
+        self.playback = playback ?? .shared
     }
 
     // MARK: - State

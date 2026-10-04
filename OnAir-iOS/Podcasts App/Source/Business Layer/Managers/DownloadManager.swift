@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import Observation
 
 enum DownloadState: Equatable {
     case notDownloaded
@@ -13,7 +14,8 @@ enum DownloadState: Equatable {
 /// while the app is suspended or not running. Episodes are identified by `streamUrl`. Views reach it
 /// through `DownloadsViewModel`.
 @MainActor
-final class DownloadManager: ObservableObject {
+@Observable
+final class DownloadManager {
     static let sessionIdentifier = "ca.bytesizedsoftware.hello-podcasts.downloads"
 
     /// One instance per process: iOS allows only one session per background identifier, and the
@@ -26,27 +28,27 @@ final class DownloadManager: ObservableObject {
     static let wifiOnlyKey = "downloadsWiFiOnly"
 
     /// Downloads in progress or failed. Finished downloads are tracked by `downloadedStems`.
-    @Published private(set) var activeStates: [String: DownloadState] = [:]
-    @Published private(set) var downloadedStems: Set<String>
+    private(set) var activeStates: [String: DownloadState] = [:]
+    private(set) var downloadedStems: Set<String>
     /// Finished downloads with their details, newest first.
-    @Published private(set) var library: [DownloadStore.Item] = []
+    private(set) var library: [DownloadStore.Item] = []
     /// Bytes used by all downloads.
-    @Published private(set) var totalBytes: Int64 = 0
+    private(set) var totalBytes: Int64 = 0
     /// Downloads whose episode isn't known yet (saved before details were recorded).
-    @Published private(set) var unidentifiedCount = 0
-    @Published private(set) var unidentifiedBytes: Int64 = 0
+    private(set) var unidentifiedCount = 0
+    private(set) var unidentifiedBytes: Int64 = 0
     /// Only download over Wi-Fi or wired networks. Applies to downloads started after it changes.
-    @Published private(set) var wifiOnly: Bool
+    private(set) var wifiOnly: Bool
     /// Whether the device currently has a Wi-Fi or wired connection.
-    @Published private(set) var hasWiFi = true
+    private(set) var hasWiFi = true
 
     let store: DownloadStore
     private let defaults: UserDefaults
-    private var session: URLSession!
-    private var tasks: [String: URLSessionDownloadTask] = [:]
+    @ObservationIgnored private var session: URLSession!
+    @ObservationIgnored private var tasks: [String: URLSessionDownloadTask] = [:]
     /// Details of episodes being downloaded, for the Downloads screen.
     private var pendingEpisodes: [String: Episode] = [:]
-    private var pathMonitor: NWPathMonitor?
+    @ObservationIgnored private var networkTask: Task<Void, Never>?
 
     init(store: DownloadStore = .standard, configuration: URLSessionConfiguration? = nil,
          defaults: UserDefaults = .standard, monitorsNetwork: Bool = true) {
@@ -80,18 +82,18 @@ final class DownloadManager: ObservableObject {
     }
 
     deinit {
-        pathMonitor?.cancel()
+        networkTask?.cancel()
     }
 
     private func startMonitoringNetwork() {
-        let monitor = NWPathMonitor()
-        monitor.pathUpdateHandler = { [weak self] path in
-            let hasWiFi = path.status == .satisfied
-                && (path.usesInterfaceType(.wifi) || path.usesInterfaceType(.wiredEthernet))
-            Task { @MainActor in self?.hasWiFi = hasWiFi }
+        networkTask = Task { [weak self] in
+            // Iterating the monitor starts it, and cancelling the task stops it.
+            for await path in NWPathMonitor() {
+                guard let self else { return }
+                self.hasWiFi = path.status == .satisfied
+                    && (path.usesInterfaceType(.wifi) || path.usesInterfaceType(.wiredEthernet))
+            }
         }
-        monitor.start(queue: DispatchQueue(label: "DownloadManager.network"))
-        pathMonitor = monitor
     }
 
     private func refreshLibrary() {
@@ -239,18 +241,17 @@ final class DownloadManager: ObservableObject {
 
     /// After a relaunch, pick up downloads that kept running while the app was gone.
     private func restoreRunningTasks() {
-        session.getAllTasks { [weak self] tasks in
-            let running = tasks.compactMap { task -> (String, URLSessionDownloadTask)? in
+        let session: URLSession = session
+        Task { [weak self] in
+            let running = await session.allTasks.compactMap { task -> (String, URLSessionDownloadTask)? in
                 guard let task = task as? URLSessionDownloadTask, let streamUrl = task.taskDescription,
                       task.state == .running || task.state == .suspended else { return nil }
                 return (streamUrl, task)
             }
-            Task { @MainActor in
-                guard let self else { return }
-                for (streamUrl, task) in running where self.tasks[streamUrl] == nil {
-                    self.tasks[streamUrl] = task
-                    self.activeStates[streamUrl] = .downloading(progress: task.progress.fractionCompleted)
-                }
+            guard let self else { return }
+            for (streamUrl, task) in running where self.tasks[streamUrl] == nil {
+                self.tasks[streamUrl] = task
+                self.activeStates[streamUrl] = .downloading(progress: task.progress.fractionCompleted)
             }
         }
     }

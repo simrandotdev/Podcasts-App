@@ -1,23 +1,26 @@
 import AVKit
-import Combine
 import MediaPlayer
+import Observation
 import Resolver
 
 /// Owns playback independently of the currently visible screen or player size. Views reach it
 /// through `PlayerViewModel`.
 @MainActor
-final class PlaybackManager: ObservableObject {
+@Observable
+final class PlaybackManager {
     /// One player for the whole app, so playback survives navigation.
     static let shared = PlaybackManager()
 
-    @Published private(set) var episode: Episode?
-    @Published private(set) var queue: [Episode] = []
-    @Published private(set) var isPlaying = false
-    @Published private(set) var isBuffering = false
-    @Published private(set) var currentTime: Double = 0
-    @Published private(set) var duration: Double = 0
-    @Published private(set) var playbackRate: Float = 1
-    @Published var errorMessage: String?
+    private(set) var episode: Episode?
+    private(set) var queue: [Episode] = []
+    private(set) var isPlaying = false
+    private(set) var isBuffering = false
+    private(set) var currentTime: Double = 0
+    private(set) var duration: Double = 0
+    private(set) var playbackRate: Float = 1
+    var errorMessage: String?
+    /// Goes up each time listening time is recorded, so views that show `listeningStats` update.
+    private(set) var listeningStatsRevision = 0
 
     private let player: AVPlayer
     private let defaults: UserDefaults
@@ -25,20 +28,22 @@ final class PlaybackManager: ObservableObject {
     /// The downloaded copy of an episode, by stream URL, to play instead of streaming.
     private let localFile: (String) -> URL?
     private let systemPlaybackEnabled: Bool
-    private var session: MPNowPlayingSession?
-    private var timeObserver: Any?
-    private var subscriptions = Set<AnyCancellable>()
-    private var itemSubscription: AnyCancellable?
-    private var artworkTask: Task<Void, Never>?
-    private var historyTask: Task<Void, Never>?
-    private var commandTargets: [(MPRemoteCommand, Any)] = []
-    private var resumeAfterInterruption = false
-    private var isSeeking = false
-    private var seekGeneration = 0
+    @ObservationIgnored private var session: MPNowPlayingSession?
+    @ObservationIgnored private var timeObserver: Any?
+    @ObservationIgnored private var itemStatusObservation: NSKeyValueObservation?
+    @ObservationIgnored private var timeControlObservation: NSKeyValueObservation?
+    /// Tasks that read system notifications for as long as the manager exists.
+    @ObservationIgnored private var notificationTasks: [Task<Void, Never>] = []
+    @ObservationIgnored private var artworkTask: Task<Void, Never>?
+    @ObservationIgnored private var historyTask: Task<Void, Never>?
+    @ObservationIgnored private var commandTargets: [(MPRemoteCommand, Any)] = []
+    @ObservationIgnored private var resumeAfterInterruption = false
+    @ObservationIgnored private var isSeeking = false
+    @ObservationIgnored private var seekGeneration = 0
     /// Total and per-day listening time, for the Settings screen.
     let listeningStats: ListeningStats
     /// When listening time was last counted; nil whenever audio isn't advancing normally.
-    private var lastListeningTick: Date?
+    @ObservationIgnored private var lastListeningTick: Date?
 
     static let playbackRates: [Float] = [1, 1.25, 1.5, 2]
     private static let playbackRateKey = "playbackRate"
@@ -75,6 +80,7 @@ final class PlaybackManager: ObservableObject {
         if let timeObserver { player.removeTimeObserver(timeObserver) }
         artworkTask?.cancel()
         historyTask?.cancel()
+        for task in notificationTasks { task.cancel() }
         for (command, target) in commandTargets { command.removeTarget(target) }
     }
 
@@ -114,20 +120,14 @@ final class PlaybackManager: ObservableObject {
         item.audioTimePitchAlgorithm = .timeDomain
         item.nowPlayingInfo = Self.nowPlayingInfo(for: episode)
         player.replaceCurrentItem(with: item)
-        itemSubscription = item.publisher(for: \.status).receive(on: DispatchQueue.main)
-            .sink { [weak self, weak item] status in
-                guard let self, let item, item === self.player.currentItem else { return }
-                if status == .readyToPlay {
-                    self.duration = Self.validTime(item.duration.seconds)
-                    if self.duration > 0 { self.defaults.set(self.duration, forKey: Self.durationKey(for: episode.streamUrl)) }
-                    // Restore only when loading a new item, never on ordinary play/pause.
-                    let saved = Self.validTime(self.defaults.double(forKey: episode.streamUrl))
-                    self.seek(to: self.duration > 0 && saved >= self.duration ? 0 : saved)
-                } else if status == .failed {
-                    self.pause()
-                    self.errorMessage = item.error?.localizedDescription ?? "This episode could not be played."
-                }
+        // KVO reports on whichever thread changed the status, so handle it on the main actor.
+        itemStatusObservation = item.observe(\.status, options: [.initial, .new]) { [weak self] item, _ in
+            let status = item.status
+            Task { @MainActor in
+                guard let self, item === self.player.currentItem else { return }
+                self.itemStatusChanged(status, item: item, episode: episode)
             }
+        }
         if systemPlaybackEnabled { loadArtwork(for: episode, item: item) }
         let previousHistoryTask = historyTask
         historyTask = Task { [saveHistory] in
@@ -143,6 +143,19 @@ final class PlaybackManager: ObservableObject {
         if autoplay { play() }
     }
 
+    private func itemStatusChanged(_ status: AVPlayerItem.Status, item: AVPlayerItem, episode: Episode) {
+        if status == .readyToPlay {
+            duration = Self.validTime(item.duration.seconds)
+            if duration > 0 { defaults.set(duration, forKey: Self.durationKey(for: episode.streamUrl)) }
+            // Restore only when loading a new item, never on ordinary play/pause.
+            let saved = Self.validTime(defaults.double(forKey: episode.streamUrl))
+            seek(to: duration > 0 && saved >= duration ? 0 : saved)
+        } else if status == .failed {
+            pause()
+            errorMessage = item.error?.localizedDescription ?? "This episode could not be played."
+        }
+    }
+
     func play() {
         guard episode != nil else { return }
         if player.currentItem?.status == .failed, let episode {
@@ -153,7 +166,7 @@ final class PlaybackManager: ObservableObject {
             do {
                 try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
                 try AVAudioSession.sharedInstance().setActive(true)
-                session?.becomeActiveIfPossible(completion: nil)
+                if let session { Task { _ = await session.becomeActiveIfPossible() } }
             } catch {
                 errorMessage = "Unable to start audio: \(error.localizedDescription)"
                 return
@@ -198,12 +211,12 @@ final class PlaybackManager: ObservableObject {
         seekGeneration += 1
         let generation = seekGeneration
         saveProgress()
-        player.seek(to: CMTime(seconds: target, preferredTimescale: 600), toleranceBefore: .zero,
-                    toleranceAfter: .zero) { [weak self] _ in
-            Task { @MainActor in
-                guard let self, self.seekGeneration == generation else { return }
-                self.isSeeking = false
-            }
+        Task {
+            _ = await player.seek(to: CMTime(seconds: target, preferredTimescale: 600), toleranceBefore: .zero,
+                                  toleranceAfter: .zero)
+            // A later seek or load owns isSeeking now.
+            guard seekGeneration == generation else { return }
+            isSeeking = false
         }
     }
 
@@ -222,7 +235,7 @@ final class PlaybackManager: ObservableObject {
     func close() {
         pause()
         artworkTask?.cancel()
-        itemSubscription = nil
+        itemStatusObservation = nil
         seekGeneration += 1
         isSeeking = false
         player.replaceCurrentItem(with: nil)
@@ -251,7 +264,10 @@ final class PlaybackManager: ObservableObject {
         }
         if let last = lastListeningTick {
             let elapsed = now.timeIntervalSince(last)
-            if elapsed > 0 && elapsed < 5 { listeningStats.record(elapsed, at: now) }
+            if elapsed > 0 && elapsed < 5 {
+                listeningStats.record(elapsed, at: now)
+                listeningStatsRevision += 1
+            }
         }
         lastListeningTick = now
     }
@@ -274,9 +290,10 @@ final class PlaybackManager: ObservableObject {
     }
 
     private func observePlayer() {
+        // With no queue, AVFoundation calls the observer on the main queue, which is the main actor.
         timeObserver = player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 600),
-                                                       queue: .main) { [weak self] time in
-            Task { @MainActor in
+                                                       queue: nil) { [weak self] time in
+            MainActor.assumeIsolated {
                 guard let self, self.episode != nil, !self.isSeeking,
                       self.player.currentItem?.status == .readyToPlay else { return }
                 self.currentTime = Self.validTime(time.seconds)
@@ -285,30 +302,31 @@ final class PlaybackManager: ObservableObject {
                 self.noteListeningTick()
             }
         }
-        player.publisher(for: \.timeControlStatus).receive(on: DispatchQueue.main)
-            .sink { [weak self] status in
+        timeControlObservation = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] player, _ in
+            let status = player.timeControlStatus
+            Task { @MainActor in
                 guard let self else { return }
                 self.isBuffering = self.isPlaying && status == .waitingToPlayAtSpecifiedRate
-            }.store(in: &subscriptions)
-        NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                guard let self, let item = notification.object as? AVPlayerItem,
-                      item === self.player.currentItem else { return }
+            }
+        }
+        notificationTasks.append(Task { [weak self] in
+            for await notification in NotificationCenter.default.notifications(named: AVPlayerItem.didPlayToEndTimeNotification) {
+                guard let self else { return }
+                guard let item = notification.object as? AVPlayerItem, item === self.player.currentItem else { continue }
                 // Keep the position at the end so the episode reads as fully played;
                 // load() and play() restart from zero when the saved position reaches the duration.
                 if self.duration > 0 { self.currentTime = self.duration }
                 self.pause()
-            }.store(in: &subscriptions)
+            }
+        })
     }
 
     private func observeAudioSession() {
-        NotificationCenter.default.publisher(for: AVAudioSession.interruptionNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                guard let self,
-                      let raw = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
-                      let type = AVAudioSession.InterruptionType(rawValue: raw) else { return }
+        notificationTasks.append(Task { [weak self] in
+            for await notification in NotificationCenter.default.notifications(named: AVAudioSession.interruptionNotification) {
+                guard let self else { return }
+                guard let raw = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+                      let type = AVAudioSession.InterruptionType(rawValue: raw) else { continue }
                 if type == .began {
                     self.resumeAfterInterruption = self.isPlaying
                     self.pause()
@@ -318,13 +336,15 @@ final class PlaybackManager: ObservableObject {
                     if self.resumeAfterInterruption && shouldResume { self.play() }
                     self.resumeAfterInterruption = false
                 }
-            }.store(in: &subscriptions)
-        NotificationCenter.default.publisher(for: AVAudioSession.routeChangeNotification)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
+            }
+        })
+        notificationTasks.append(Task { [weak self] in
+            for await notification in NotificationCenter.default.notifications(named: AVAudioSession.routeChangeNotification) {
+                guard let self else { return }
                 let reason = notification.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt
-                if reason == AVAudioSession.RouteChangeReason.oldDeviceUnavailable.rawValue { self?.pause() }
-            }.store(in: &subscriptions)
+                if reason == AVAudioSession.RouteChangeReason.oldDeviceUnavailable.rawValue { self.pause() }
+            }
+        })
     }
 
     private func configureRemoteCommands(_ center: MPRemoteCommandCenter) {

@@ -27,23 +27,21 @@ struct SplashView: View {
     @MainActor
     private func animate() async {
         // Give the first screen a moment to render underneath before revealing it.
-        try? await Task.sleep(nanoseconds: 250_000_000)
+        try? await Task.sleep(for: .milliseconds(250))
         if reduceMotion {
             withAnimation(.easeOut(duration: 0.3)) { opacity = 0 }
-            try? await Task.sleep(nanoseconds: 300_000_000)
+            try? await Task.sleep(for: .milliseconds(300))
         } else {
             withAnimation(.easeInOut(duration: 0.25)) { iconScale = 0.8 }
-            try? await Task.sleep(nanoseconds: 250_000_000)
+            try? await Task.sleep(for: .milliseconds(250))
             withAnimation(.easeIn(duration: 0.45)) { iconScale = 25 }
             withAnimation(.easeIn(duration: 0.35).delay(0.1)) { opacity = 0 }
-            try? await Task.sleep(nanoseconds: 450_000_000)
+            try? await Task.sleep(for: .milliseconds(450))
         }
         onFinished()
     }
 }
 
-struct SplashView_Previews: PreviewProvider {
-    static var previews: some View {
-        SplashView {}
-    }
+#Preview {
+    SplashView {}
 }

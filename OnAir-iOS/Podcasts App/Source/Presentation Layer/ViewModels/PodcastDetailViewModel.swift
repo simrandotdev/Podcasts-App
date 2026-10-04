@@ -1,15 +1,17 @@
 import Foundation
+import Observation
 import Resolver
 
 /// Backs `EpisodesScreen`: one podcast's episodes, newest first, and whether it's a favorite.
 @MainActor
-final class PodcastDetailViewModel: ObservableObject {
+@Observable
+final class PodcastDetailViewModel {
     let podcast: PodcastViewModel
-    @Published private(set) var episodes: [EpisodeViewModel] = []
-    @Published private(set) var isLoading = false
-    @Published private(set) var errorMessage: String?
-    @Published private(set) var isFavorite = false
-    @Published private(set) var isUpdatingFavorite = false
+    private(set) var episodes: [EpisodeViewModel] = []
+    private(set) var isLoading = false
+    private(set) var errorMessage: String?
+    private(set) var isFavorite = false
+    private(set) var isUpdatingFavorite = false
 
     private let podcastsManager: PodcastsManaging
     private let episodesManager: EpisodesManaging

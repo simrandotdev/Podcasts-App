@@ -2,14 +2,14 @@ import SwiftUI
 
 /// A podcast presented as a radio station: a station header, then its episodes as the schedule.
 struct EpisodesScreen: View {
-    @EnvironmentObject private var player: PlayerViewModel
-    @EnvironmentObject private var downloads: DownloadsViewModel
-    @StateObject private var viewModel: PodcastDetailViewModel
+    @Environment(PlayerViewModel.self) private var player
+    @Environment(DownloadsViewModel.self) private var downloads
+    @State private var viewModel: PodcastDetailViewModel
     @State private var detailsEpisode: EpisodeViewModel?
     let maximizePlayerView: (EpisodeViewModel?, [EpisodeViewModel]?) -> Void
 
     init(podcast: PodcastViewModel, maximizePlayerView: @escaping (EpisodeViewModel?, [EpisodeViewModel]?) -> Void) {
-        _viewModel = StateObject(wrappedValue: PodcastDetailViewModel(podcast: podcast))
+        _viewModel = State(initialValue: PodcastDetailViewModel(podcast: podcast))
         self.maximizePlayerView = maximizePlayerView
     }
 
@@ -52,8 +52,8 @@ struct EpisodesScreen: View {
         .navigationTitle(podcast.title)
         .sheet(item: $detailsEpisode) { episode in
             EpisodeDetailsSheet(episode: episode, fallbackImageUrl: podcast.image) { play(episode) }
-                .environmentObject(player)
-                .environmentObject(downloads)
+                .environment(player)
+                .environment(downloads)
         }
         .navigationBarTitleDisplayMode(.inline)
         .task(id: podcast.rssFeedUrl) { await viewModel.load() }
@@ -146,7 +146,7 @@ private extension View {
 
 /// One slot in the station schedule: a date "time slot", the episode, and how much was heard.
 private struct ScheduleRow: View {
-    @EnvironmentObject private var downloads: DownloadsViewModel
+    @Environment(DownloadsViewModel.self) private var downloads
     let date: Date
     let title: String
     let summary: String
