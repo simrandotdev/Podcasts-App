@@ -27,7 +27,7 @@ When `PlaybackManager` loads an episode, it calls its `saveHistory` closure, whi
 
 1. `EpisodesRepository` looks for a `HistoryEpisodeEntity` with the episode's `streamUrl`. It updates that row if it exists, and inserts one otherwise.
 2. It sets `lastPlayedAt` to now, so playing an episode again moves it to the top.
-3. `EpisodesManager` sends `historyDidChange`, and `HistoryViewModel` reloads.
+3. `EpisodesManager` announces the change through `historyChanges()`, and `HistoryViewModel` reloads.
 
 `PlaybackManager` waits for each history write to finish before starting the next, so episodes chosen in quick succession are recorded in the order they were played. If a write fails, the player shows the error.
 

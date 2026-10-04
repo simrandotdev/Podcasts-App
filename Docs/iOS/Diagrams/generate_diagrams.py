@@ -346,7 +346,7 @@ def state_propagation():
     d = Diagram("state-propagation", 920, 524)
     rows = [48, 148, 248, 348, 448]
     h = 52
-    for x, title in ((155, "Write path"), (465, "Change events"), (780, "Republished state")):
+    for x, title in ((155, "Write path"), (465, "Change events"), (780, "Observed state")):
         d.text(x, 26, title, 13, "secondary", bold=True)
     column = [("EpisodesScreen", [], "blue"), ("PodcastDetailViewModel", [], "blue"),
               ("PodcastsManager", [], "purple"), ("PodcastsRepository", [], "green"),
@@ -357,16 +357,16 @@ def state_propagation():
         d.arrow([(155, top + h + 2), (155, top + 100 - 2)], label, at=(165, top + h + 28), anchor="start")
     d.box(350, rows[0], 230, h, "FavoritesScreen", [], "blue")
     d.box(350, rows[1], 230, h, "FavoritesViewModel", [], "blue")
-    d.arrow([(272, rows[2] + h / 2), (465, rows[2] + h / 2), (465, rows[1] + h + 2)], "favoritesDidChange",
+    d.arrow([(272, rows[2] + h / 2), (465, rows[2] + h / 2), (465, rows[1] + h + 2)], "favoritesChanges()",
             at=(284, rows[2] + h / 2 - 8), anchor="start", color="purple")
-    d.arrow([(465, rows[1] - 2), (465, rows[0] + h + 2)], "@Published favorites", at=(475, rows[1] - 20),
+    d.arrow([(465, rows[1] - 2), (465, rows[0] + h + 2)], "Observation", at=(475, rows[1] - 20),
             anchor="start")
     d.box(660, rows[0], 240, h, "PlayerDetailsView", ["MiniPlayerView and rows"], "blue")
     d.box(660, rows[1], 240, h, "PlayerViewModel", [], "blue")
-    d.box(660, rows[2], 240, h, "PlaybackManager", ["@Published state"], "purple")
-    d.arrow([(780, rows[2] - 2), (780, rows[1] + h + 2)], "objectWillChange", at=(790, rows[2] - 20),
+    d.box(660, rows[2], 240, h, "PlaybackManager", ["@Observable state"], "purple")
+    d.arrow([(780, rows[2] - 2), (780, rows[1] + h + 2)], "Observation", at=(790, rows[2] - 20),
             anchor="start", color="purple")
-    d.arrow([(780, rows[1] - 2), (780, rows[0] + h + 2)], "objectWillChange", at=(790, rows[1] - 20),
+    d.arrow([(780, rows[1] - 2), (780, rows[0] + h + 2)], "Observation", at=(790, rows[1] - 20),
             anchor="start")
     return d
 
@@ -388,7 +388,7 @@ def search_sequence():
     seq.message("APIService", "PodcastsRepository", 458, "[Podcast]", dashed=True)
     seq.message("PodcastsRepository", "PodcastsManager", 500, "[Podcast]", dashed=True)
     seq.message("PodcastsManager", "HomeViewModel", 542, "[Podcast]", dashed=True)
-    seq.message("HomeViewModel", "PodcastsScreen", 584, "@Published podcasts", dashed=True)
+    seq.message("HomeViewModel", "PodcastsScreen", 584, "podcasts (observed)", dashed=True)
     return d
 
 
@@ -409,9 +409,9 @@ def playback_sequence():
     seq.message("PlaybackManager", "AVPlayer", 362, "replaceCurrentItem")
     seq.note("PlaybackManager", 382, ["Seeks to the saved", "position when ready"], 150)
     seq.message("PlaybackManager", "EpisodesManager", 456, "saveInHistory(episode:)")
-    seq.note("EpisodesManager", 476, ["Sends", "historyDidChange"], 128)
+    seq.note("EpisodesManager", 476, ["Announces", "historyChanges()"], 128)
     seq.message("AVPlayer", "PlaybackManager", 550, "time, every second", dashed=True, mono=False)
-    seq.message("PlaybackManager", "PlayerViewModel", 588, "objectWillChange", dashed=True)
+    seq.message("PlaybackManager", "PlayerViewModel", 588, "Observation", dashed=True)
     return d
 
 
@@ -421,7 +421,7 @@ def playback_system():
     d.box(320, 124, 280, 176, "PlaybackManager.shared",
           ["One AVPlayer for the whole app", "Queue and Up Next", "Resume positions and durations",
            "Speed: 1×, 1.25×, 1.5× or 2×", "Listening time"], "purple", line_size=12)
-    d.arrow([(460, 122), (460, 76)], "@Published", at=(468, 103), anchor="start", color="purple")
+    d.arrow([(460, 122), (460, 76)], "Observation", at=(468, 103), anchor="start", color="purple")
     d.box(20, 124, 250, 76, "MPRemoteCommandCenter", ["Play, pause, ±15 s, next,", "previous and scrubbing"], "gray")
     d.box(20, 224, 250, 76, "AVAudioSession", ["Pauses for interruptions", "and unplugged headphones"], "gray")
     d.arrow([(272, 162), (318, 162)])

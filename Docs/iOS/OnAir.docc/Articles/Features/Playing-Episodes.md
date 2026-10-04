@@ -6,7 +6,7 @@ Listen with a player that survives navigation, remembers each episode's position
 
 One object plays every episode: `PlaybackManager.shared`. It owns a single `AVPlayer` for the life of the app, so playback continues while the user moves between screens. Views reach it through `PlayerViewModel`, which `PodcastsApp` places in the environment.
 
-![PlaybackManager in the center. Above it, PlayerViewModel reads its published state. On the left, MPRemoteCommandCenter and AVAudioSession send it commands and interruptions. On the right, it drives AVPlayer and MPNowPlayingSession. Below it, it reads and writes UserDefaults, asks DownloadStore for downloaded files, and records plays through EpisodesManaging.](playback-system)
+![PlaybackManager in the center. Above it, PlayerViewModel reads its observable state. On the left, MPRemoteCommandCenter and AVAudioSession send it commands and interruptions. On the right, it drives AVPlayer and MPNowPlayingSession. Below it, it reads and writes UserDefaults, asks DownloadStore for downloaded files, and records plays through EpisodesManaging.](playback-system)
 
 ### Start Playback
 

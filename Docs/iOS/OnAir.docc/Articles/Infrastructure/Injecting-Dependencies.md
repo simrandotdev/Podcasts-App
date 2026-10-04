@@ -32,7 +32,7 @@ extension Resolver: ResolverRegistering {
 }
 ```
 
-Repositories and managers are registered by protocol. Application scope gives the whole app one instance of each, which matters for the managers: every view model must subscribe to the same `favoritesDidChange` and `historyDidChange` publishers.
+Repositories and managers are registered by protocol. Application scope gives the whole app one instance of each, which matters for the managers: every view model must listen to the same `favoritesChanges()` and `historyChanges()` streams.
 
 ### Resolve Dependencies in View Models
 

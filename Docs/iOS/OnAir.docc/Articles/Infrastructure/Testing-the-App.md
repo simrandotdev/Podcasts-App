@@ -22,9 +22,10 @@ Two rules apply to every test:
 | `MockPodcastsRepository` and `MockEpisodesRepository` | Stand in for the repositories |
 | `SilentNotifier` | A `NewEpisodeNotifying` that never notifies |
 | `IsolatedManagers` | Builds app-wide managers on a temporary directory and a private `UserDefaults` suite. Call `tearDown()` when done |
+| `ChangeCounter` | Counts the changes an `AsyncStream<Void>` delivers, such as `favoritesChanges()`, so a test can check how many were announced |
 | `waitUntil(timeout:_:)` | Waits for state that updates asynchronously, such as a reload after a change event |
 
-A view model test passes a mock to the view model's initializer, acts, and checks the published state:
+A view model test passes a mock to the view model's initializer, acts, and checks its state:
 
 ```swift
 @MainActor

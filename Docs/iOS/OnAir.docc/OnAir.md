@@ -28,7 +28,8 @@ The app uses SwiftUI with the Model-View-ViewModel (MVVM) pattern and repositori
 
 | Area | Technology |
 | --- | --- |
-| Interface | SwiftUI on iOS 16 and later, for iPhone and iPad |
+| Interface | SwiftUI on iOS 18 and later, for iPhone and iPad |
+| State and concurrency | Observation (`@Observable`) and Swift concurrency, with no Combine or GCD |
 | Playback | AVFoundation and MediaPlayer |
 | Persistence | Core Data, files in Application Support, and `UserDefaults` |
 | Networking | `URLSession`, the On Air API backed by Podcast Index, and FeedKit for RSS |
